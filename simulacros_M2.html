@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacros M2 — Trastornos del Lenguaje</title>
+<link href="https://fonts.googleapis.com/css2?family=Cabinet+Grotesk:wght@400;500;700;800&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #faf8f2;
+    --bg2:      #ffffff;
+    --bg3:      #f0ece0;
+    --teal:     #0d6e6e;
+    --teal2:    #0f8f8f;
+    --teal3:    #d4f0ef;
+    --mustard:  #c47b00;
+    --mustard2: #e09010;
+    --mustard3: #fef3d0;
+    --text:     #161210;
+    --text2:    #4a3f30;
+    --muted:    #9a8c78;
+    --border:   #e4dccf;
+    --green:    #1a7a50;
+    --green2:   #d6f5e6;
+    --red:      #c0321c;
+    --red2:     #fde8e4;
+    --shadow:   0 2px 18px rgba(13,110,110,.09);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Manrope', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* diagonal stripe texture */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent, transparent 18px,
+      rgba(13,110,110,.025) 18px, rgba(13,110,110,.025) 19px
+    );
+  }
+  #home, #quiz, #results { position: relative; z-index: 1; }
+
+  /* HEADER */
+  .header {
+    background: var(--teal);
+    padding: 0 32px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 14px rgba(13,110,110,.3);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .header-tag {
+    background: var(--mustard2); color: #fff;
+    font-weight: 800; font-size: .95rem; letter-spacing: .05em;
+    padding: 5px 16px; border-radius: 6px;
+  }
+  .header-title { font-size: 1rem; font-weight: 700; color: #fff; letter-spacing: .02em; }
+  .header-sub { font-size: .7rem; color: rgba(255,255,255,.55); margin-top: 1px; }
+  .header-badge {
+    font-size: .72rem; color: rgba(255,255,255,.8);
+    border: 1px solid rgba(255,255,255,.3); padding: 4px 14px; border-radius: 20px; font-weight: 500;
+  }
+
+  /* HOME */
+  #home { max-width: 860px; margin: 0 auto; padding: 56px 24px; }
+
+  .home-hero { margin-bottom: 56px; }
+  .hero-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 32px; }
+  .hero-left { flex: 1; }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--teal3); color: var(--teal);
+    font-size: .72rem; font-weight: 700; padding: 6px 16px; border-radius: 6px;
+    text-transform: uppercase; letter-spacing: .1em; margin-bottom: 20px;
+    border: 1px solid rgba(13,110,110,.2);
+  }
+  .home-hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 4rem; line-height: 1.0; color: var(--text); font-weight: 600;
+  }
+  .home-hero h1 strong { color: var(--teal); font-weight: 600; }
+  .home-hero h1 em { color: var(--mustard); font-style: italic; }
+  .home-hero p { color: var(--text2); font-size: .93rem; margin-top: 18px; line-height: 1.75; max-width: 460px; font-weight: 400; }
+
+  .hero-right {
+    flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; padding-top: 8px;
+  }
+  .hero-stat-box {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 14px 20px; text-align: center;
+    min-width: 110px; box-shadow: var(--shadow);
+  }
+  .hero-stat-val { font-size: 1.8rem; font-weight: 800; color: var(--teal); line-height: 1; }
+  .hero-stat-lbl { font-size: .68rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 3px; font-weight: 600; }
+
+  .sim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px,1fr)); gap: 14px; margin-top: 40px; }
+  .sim-card {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 16px; padding: 24px 22px 20px;
+    cursor: pointer; transition: all .2s ease;
+    box-shadow: var(--shadow); overflow: hidden; position: relative;
+  }
+  .sim-card::after {
+    content: '0' attr(data-idx);
+    position: absolute; right: -8px; bottom: -16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 6rem; font-weight: 600; color: rgba(13,110,110,.06);
+    line-height: 1; pointer-events: none; transition: color .2s;
+  }
+  .sim-card:hover { border-color: var(--teal2); transform: translateY(-3px); box-shadow: 0 10px 32px rgba(13,110,110,.15); }
+  .sim-card:hover::after { color: rgba(13,110,110,.1); }
+  .sim-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .sim-label { font-size: .7rem; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); }
+  .sim-chip {
+    font-size: .68rem; font-weight: 700; padding: 3px 10px; border-radius: 6px;
+    background: var(--mustard3); color: var(--mustard); border: 1px solid rgba(196,123,0,.2);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .sim-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem; font-weight: 600; color: var(--teal); line-height: 1; margin-bottom: 6px;
+  }
+  .sim-count { font-size: .75rem; color: var(--muted); font-weight: 500; }
+  .sim-score-badge { display: none; margin-top: 10px; font-size: .73rem; font-weight: 700; padding: 4px 12px; border-radius: 6px; width: fit-content; }
+  .sim-score-badge.shown { display: inline-block; }
+  .sim-score-badge.pass { background: var(--green2); color: var(--green); border: 1px solid rgba(26,122,80,.25); }
+  .sim-score-badge.fail { background: var(--red2); color: var(--red); border: 1px solid rgba(192,50,28,.25); }
+  .sim-score-badge.partial { background: var(--mustard3); color: var(--mustard); border: 1px solid rgba(196,123,0,.25); }
+
+  /* QUIZ */
+  #quiz { display: none; max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .quiz-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .btn-back {
+    background: var(--bg2); border: 1.5px solid var(--border); color: var(--text2);
+    padding: 8px 16px; border-radius: 9px; cursor: pointer; font-size: .82rem;
+    transition: .18s; font-family: 'Manrope', sans-serif; font-weight: 600;
+    box-shadow: var(--shadow);
+  }
+  .btn-back:hover { border-color: var(--teal2); color: var(--teal); }
+  .quiz-title { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--teal); flex: 1; }
+
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: .74rem; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+  .progress-bar { height: 6px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--mustard2)); border-radius: 4px; transition: width .4s ease; }
+
+  .q-card {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 18px; padding: 34px 30px; margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .q-number {
+    font-size: .7rem; font-weight: 800; letter-spacing: .18em;
+    text-transform: uppercase; margin-bottom: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .q-number .badge {
+    background: var(--teal3); color: var(--teal);
+    padding: 3px 12px; border-radius: 20px; font-size: .7rem; font-weight: 700;
+  }
+  .q-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem; line-height: 1.72; color: var(--text); margin-bottom: 28px; font-weight: 400;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 14px 18px; cursor: pointer;
+    text-align: left; color: var(--text2);
+    font-family: 'Manrope', sans-serif; font-size: .91rem; line-height: 1.55; font-weight: 400;
+    transition: all .16s ease;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--teal2); background: var(--teal3); color: var(--teal); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    min-width: 28px; height: 28px; border-radius: 7px;
+    background: var(--border); color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .74rem; font-weight: 800; flex-shrink: 0; margin-top: 1px; transition: .16s;
+  }
+  .opt-btn.selected-correct { border-color: var(--green); background: var(--green2); color: #0f4a30; }
+  .opt-btn.selected-correct .opt-letter { background: var(--green); color: #fff; }
+  .opt-btn.selected-wrong { border-color: var(--red); background: var(--red2); color: #7a1a0a; }
+  .opt-btn.selected-wrong .opt-letter { background: var(--red); color: #fff; }
+  .opt-btn.show-correct { border-color: var(--green); background: var(--green2); opacity: .72; }
+  .opt-btn.show-correct .opt-letter { background: var(--green); color: #fff; }
+
+  .feedback-box {
+    display: none; margin-top: 16px; padding: 16px 20px;
+    border-radius: 12px; font-size: .88rem; line-height: 1.65; animation: fadeUp .28s ease;
+    font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+  }
+  .feedback-box.correct { background: var(--green2); border: 1.5px solid rgba(26,122,80,.3); color: #0f4a30; }
+  .feedback-box.wrong { background: var(--red2); border: 1.5px solid rgba(192,50,28,.3); color: #7a1a0a; }
+  .feedback-ref { font-size: .82rem; margin-top: 6px; opacity: .65; font-style: italic; }
+
+  .quiz-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .btn-primary {
+    background: var(--teal); color: #fff; border: none;
+    padding: 13px 30px; border-radius: 10px; cursor: pointer;
+    font-size: .9rem; font-weight: 700; transition: .18s;
+    font-family: 'Manrope', sans-serif; letter-spacing: .02em;
+    box-shadow: 0 4px 16px rgba(13,110,110,.3);
+  }
+  .btn-primary:hover { background: var(--teal2); }
+  .btn-primary:disabled { opacity: .3; cursor: default; box-shadow: none; }
+  .btn-secondary {
+    background: var(--bg2); border: 1.5px solid var(--mustard); color: var(--mustard);
+    padding: 12px 22px; border-radius: 10px; cursor: pointer;
+    font-size: .88rem; font-weight: 700; transition: .18s;
+    font-family: 'Manrope', sans-serif; box-shadow: var(--shadow);
+  }
+  .btn-secondary:hover { background: var(--mustard3); }
+
+  /* RESULTS */
+  #results { display: none; max-width: 700px; margin: 0 auto; padding: 52px 24px 80px; }
+  .results-header { text-align: center; margin-bottom: 44px; }
+  .results-score-ring {
+    width: 140px; height: 140px; border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: var(--shadow);
+  }
+  .results-score-ring.pass { background: var(--green2); border: 3px solid var(--green); }
+  .results-score-ring.fail { background: var(--red2); border: 3px solid var(--red); }
+  .results-score-ring.partial { background: var(--mustard3); border: 3px solid var(--mustard); }
+  .score-pct { font-family: 'Cormorant Garamond', serif; font-size: 3rem; font-weight: 600; line-height: 1; }
+  .score-pct.pass { color: var(--green); }
+  .score-pct.fail { color: var(--red); }
+  .score-pct.partial { color: var(--mustard); }
+  .score-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); margin-top: 4px; font-weight: 700; }
+  .results-title { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: var(--teal); margin-bottom: 8px; font-weight: 600; }
+  .results-meta { font-size: .88rem; color: var(--muted); }
+
+  .results-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 32px 0; }
+  .stat-box {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 14px; padding: 20px; text-align: center; box-shadow: var(--shadow);
+  }
+  .stat-val { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; font-weight: 600; line-height: 1; }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-val.teal { color: var(--teal); }
+  .stat-lbl { font-size: .7rem; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
+
+  .review-section { margin-top: 36px; }
+  .review-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--teal); margin-bottom: 16px; font-weight: 600; }
+  .review-item {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 10px;
+    border-left: 4px solid transparent; font-size: .87rem; line-height: 1.6;
+    box-shadow: var(--shadow);
+  }
+  .review-item.correct { border-left-color: var(--green); }
+  .review-item.wrong { border-left-color: var(--red); }
+  .review-item-q { color: var(--text); margin-bottom: 6px; font-weight: 500; font-family: 'Cormorant Garamond', serif; font-size: 1rem; }
+  .review-item-ans { font-size: .81rem; margin-top: 4px; color: var(--text2); }
+  .review-item-ans .my { color: var(--red); font-weight: 700; }
+  .review-item-ans .ok { color: var(--green); font-weight: 700; }
+  .review-item-retro { font-size: .78rem; color: var(--muted); margin-top: 5px; font-style: italic; font-family: 'Cormorant Garamond', serif; }
+  .results-actions { display: flex; gap: 14px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
+  .fade-in { animation: fadeUp .3s ease; }
+  @media(max-width:600px) {
+    .hero-top { flex-direction: column; }
+    .hero-right { flex-direction: row; }
+    .home-hero h1 { font-size: 2.8rem; }
+    .q-card { padding: 22px 16px; }
+    .results-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-tag">M2</div>
+    <div>
+      <div class="header-title">Simulacros</div>
+      <div class="header-sub">Trastornos del lenguaje</div>
+    </div>
+  </div>
+  <div class="header-badge">5 × 30 preguntas</div>
+</div>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-hero">
+    <div class="hero-top">
+      <div class="hero-left">
+        <div class="hero-tag">📙 Módulo 2 · Banco de preguntas</div>
+        <h1><strong>Banco</strong> de<br><em>Simulacros</em></h1>
+        <p>Selecciona un simulacro para comenzar tu práctica. Cada uno contiene 30 preguntas de opción múltiple con retroalimentación inmediata.</p>
+      </div>
+      <div class="hero-right">
+        <div class="hero-stat-box">
+          <div class="hero-stat-val">5</div>
+          <div class="hero-stat-lbl">Simulacros</div>
+        </div>
+        <div class="hero-stat-box">
+          <div class="hero-stat-val">150</div>
+          <div class="hero-stat-lbl">Preguntas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="sim-grid" id="simGrid"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-nav">
+    <button class="btn-back" onclick="goHome()">← Inicio</button>
+    <div class="quiz-title" id="quizTitle"></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-meta"><span id="progressText"></span><span id="scoreText"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div id="qWrap"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="results-header">
+    <div class="results-score-ring" id="scoreRing">
+      <div class="score-pct" id="scorePct"></div>
+      <div class="score-label">puntuación</div>
+    </div>
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-meta" id="resultsMeta"></div>
+  </div>
+  <div class="results-stats">
+    <div class="stat-box"><div class="stat-val green" id="statCorr">0</div><div class="stat-lbl">Correctas</div></div>
+    <div class="stat-box"><div class="stat-val red" id="statWrong">0</div><div class="stat-lbl">Incorrectas</div></div>
+    <div class="stat-box"><div class="stat-val teal" id="statPct">0%</div><div class="stat-lbl">Porcentaje</div></div>
+  </div>
+  <div class="review-section">
+    <div class="review-title">📋 Revisión detallada</div>
+    <div id="reviewList"></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-secondary" onclick="retryQuiz()">🔁 Repetir simulacro</button>
+    <button class="btn-primary" onclick="goHome()">← Volver al inicio</button>
+  </div>
+</div>
+
+<script>
+const SIMS = [
+  [
+    {id:1,p:'¿Qué tipo de metas establecen los alumnos que valoran la obtención de evaluaciones positivas por encima del aprendizaje?',a:'Metas de esfuerzo.',b:'Metas de superación.',c:'Metas de aprendizaje.',d:'Metas de rendimiento.',ok:'D',r:'Correcta: D. Metas de rendimiento. — Extracto: "…utoevaluación de sus actos. El docente es considerado por el alumnado como una fuente de información y ayuda. Metas de rendimiento. Son las establecidas por los alumnos que valoran la obtención de evaluaciones positivas…" (M2, p. 54)',ref:'54'},
+    {id:2,p:'¿Por qué es importante enseñar a los niños a reconocer las emociones de otras personas?',a:'Para evitar conflictos.',b:'Para desarrollar la empatía.',c:'Para controlar sus propias emociones.',d:'Para ser más inteligentes emocionalmente.',ok:'B',r:'Correcta: B. Para desarrollar la empatía. — Extracto: "…rocesos cognitivos y los procesos afectivos o emocionales. Las instituciones educativas tienen como finalidad desarrollar a personas emocionalmente inteligentes, que se caractericen por ser capaces de resaltar los aspect…" (M2, p. 1)',ref:'1'},
+    {id:3,p:'Según el texto, ¿cómo ayudan los padres demócratas a los niños a aprender a valerse por sí mismos?',a:'Explicando las razones de ciertas expectativas.',b:'Castigando el mal comportamiento.',c:'Dando órdenes claras.',d:'Reforzando el mal comportamiento.',ok:'A',r:'Correcta: A. Explicando las razones de ciertas expectativas. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI1517YT] La intelige…" (M2, p. 12)',ref:'12'},
+    {id:4,p:'¿Cuál es uno de los principales contextos socializadores fundamentales en el desarrollo emocional de los niños?',a:'El hogar.',b:'La calle.',c:'El parque.',d:'La escuela.',ok:'D',r:'Correcta: D. La escuela. — Extracto: "…r tanto afectará a distintas actividades de su vida cotidiana, entre ellas el aprendizaje y el rendimiento en la escuela. En conclusión, el desarrollo de las habilidades sociales y de la inteligencia emocional es fundame…" (M2, p. 5)',ref:'5'},
+    {id:5,p:'¿Cuáles son los objetivos del aprendizaje emocional y motivacional en el ámbito escolar?',a:'Desarrollar inteligencia emocional.',b:'Identificar emociones.',c:'Relacionar familia y desarrollo infantil.',d:'Analizar modelos familiares.',ok:'A',r:'Correcta: A. Desarrollar inteligencia emocional. — Extracto: "…rocesos cognitivos y los procesos afectivos o emocionales. Las instituciones educativas tienen como finalidad desarrollar a personas emocionalmente inteligentes, que se caractericen por ser capaces de resaltar los aspect…" (M2, p. 1)',ref:'1'},
+    {id:6,p:'¿Cuál es el primer objetivo para la enseñanza de las emociones según el texto?',a:'Enseñar comportamientos alternativos.',b:'Imitar expresiones faciales.',c:'Prevenir comportamientos inadecuados.',d:'Identificar las emociones.',ok:'D',r:'Correcta: D. Identificar las emociones. — Extracto: "…tanto, los objetivos generales de los programas son: Adquirir un mejor conocimiento de las propias emociones. Identificar las emociones de los demás. Desarrollar la habilidad de regular las propias emociones. Prevenir lo…" (M2, p. 6)',ref:'6'},
+    {id:7,p:'¿Cuál es una de las finalidades del aprendizaje cooperativo según el texto?',a:'Limitar la capacidad de comunicación.',b:'Fomentar la competencia entre los alumnos.',c:'Incrementar el sentido de la responsabilidad.',d:'Promover la dependencia de las figuras de autoridad.',ok:'C',r:'Correcta: C. Incrementar el sentido de la responsabilidad. — Extracto: "…ia para superar prejuicios y desarrollar la tolerancia. Favorecer una actitud más activa ante el aprendizaje. Incrementar el sentido de la responsabilidad. Desarrollar la capacidad de cooperación. Desarrolla r las capaci…" (M2, p. 83)',ref:'83'},
+    {id:8,p:'¿Cuáles son los componentes esenciales que hacen que funcione el aprendizaje cooperativo?',a:'Diagnóstico e intervención.',b:'Competencia y esfuerzos individualistas.',c:'Estructuración y organización.',d:'Planificación e implementación.',ok:'D',r:'Correcta: D. Planificación e implementación. — Extracto: "…cción entre ambos factores determina la orientación de la meta (de aprendizaje o de rendimiento), así como la implementación de rutinas motivacionales diferentes y, por consecuencia, de diferentes formas de aprendizaje y…" (M2, p. 55)',ref:'55'},
+    {id:9,p:'¿Qué tipo de padres tratan de establecer normas de conducta estrictas y generalmente son muy críticos de los niños?',a:'Padres negligentes.',b:'Padres permisivos.',c:'Padres democráticos.',d:'Padres autoritarios.',ok:'D',r:'Correcta: D. Padres autoritarios. — Extracto: "…Estilo permisivo Baja calidez afectiva (frialdad) Estilo autoritario Estilo negligente Estilo autoritario Los padres autoritarios siempre tratan de estar en control y ejercer control sobre los niños. Estos padres fijan r…" (M2, p. 90)',ref:'90'},
+    {id:10,p:'Según la Teoría de la Atribución de Weiner, ¿qué hace referencia el lugar de control en la explicación de los éxitos o fracasos escolares?',a:'A la suerte o la falta de ayuda.',b:'A la estandarización del pensamiento.',c:'A la capacidad del estudiante.',d:'A la manifestación de emociones.',ok:'A',r:'Correcta: A. A la suerte o la falta de ayuda. — Extracto: "…unción a su capacidad, esfuerzo o cansancio (control interno) o a la explicación de los mismos derivada de la suerte, la manía que el docente les tiene o la falta de ayuda por parte de otras personas (control externo). C…" (M2, p. 59)',ref:'59'},
+    {id:11,p:'¿Qué representa un conflicto en una situación social?',a:'Experiencias subjetivas.',b:'Mismos objetivos.',c:'Diferentes fines.',d:'Elementos manifiestos.',ok:'C',r:'Correcta: C. Diferentes fines. — Extracto: "…y Sociales en el Aprendizaje Escolar [UDI151802] Presentación ueca.euroinnova.com 2 / 3 Objetivos Identificar diferentes emociones. Aprender a desarrollar la inteligencia emocional. Establecer los factores que determinan…" (M2, p. 2)',ref:'2'},
+    {id:12,p:'Según el texto, ¿qué tendencia suelen tener los hijos de padres permisivos?',a:'Falta de autocontrol.',b:'Poca empatía.',c:'Falta de iniciativa.',d:'Baja autoestima.',ok:'A',r:'Correcta: A. Falta de autocontrol. — Extracto: "…ios internos (metas de aprendizaje). El tipo de actividad implica la visión psicológica, la autoeficacia y el autocontrol derivadas de la motivación. El sistema de evaluación hace referencia a la comparación de resultado…" (M2, p. 57)',ref:'57'},
+    {id:13,p:'¿Qué factores contextuales son fundamentales en el entorno educativo?',a:'Tipo de actividad, sistema de evaluación, clima, familia.',b:'Tipo de examen, horario escolar, clima, transporte.',c:'Tipo de actividad, sistema de evaluación, actitud docente, horario escolar.',d:'Tipo de actividad, sistema de evaluación, actitud docente, familia.',ok:'D',r:'Correcta: D. Tipo de actividad, sistema de evaluación, actitud docente, familia. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI1517YQ] La intelige…" (M2, p. 6)',ref:'6'},
+    {id:14,p:'¿Cuál es el enfoque metodológico que considera al alumno como un elemento activo de su aprendizaje?',a:'Enfoque tradicional.',b:'Enfoque humanista.',c:'Enfoque conductista.',d:'Enfoque constructivista.',ok:'D',r:'Correcta: D. Enfoque constructivista. — Extracto: "…cir, el alumnado debe estar motivado e interesado por sus tareas académicas. El aprendizaje cooperativo es un enfoque de enseñanza en el cual se procura utilizar al máximo actividades en las cuales es necesaria la ayuda…" (M2, p. 1)',ref:'1'},
+    {id:15,p:'¿Qué es importante enseñarle al niño para evitar desmotivación en el aprendizaje?',a:'Evitar problemas.',b:'Dividir grandes problemas en problemas más pequeños.',c:'Realizar grandes problemas.',d:'No enfrentar problemas.',ok:'B',r:'Correcta: B. Dividir grandes problemas en problemas más pequeños. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI1517YR] La intelige…" (M2, p. 7)',ref:'7'},
+    {id:16,p:'¿Cuáles son los objetivos generales de los programas de inteligencia emocional?',a:'Adquirir conocimiento propio.',b:'Prevenir efectos perjudiciales.',c:'Potenciar la automotivación.',d:'Desarrollar habilidades sociales.',ok:'B',r:'Correcta: B. Prevenir efectos perjudiciales. — Extracto: "…emociones. Identificar las emociones de los demás. Desarrollar la habilidad de regular las propias emociones. Prevenir los efectos perjudiciales de las emociones negativas. Desarrollar la habilidad para generar emociones…" (M2, p. 6)',ref:'6'},
+    {id:17,p:'¿Cuál es el objetivo de la fase de Análisis en el proceso de negociación?',a:'Generar ideas.',b:'Recoger información.',c:'Tomar decisiones.',d:'Buscar el acuerdo.',ok:'B',r:'Correcta: B. Recoger información. — Extracto: "…que estructuran el modelo de Goleman comentadas anteriormente. Se presenta en dos modalidades que permiten recoger información de distintas fuentes. Por un lado, existe una" (M2, p. 125)',ref:'125'},
+    {id:18,p:'¿Cuál es uno de los tipos de aprendizaje entre iguales que distingue Damon?',a:'Aprendizaje cooperativo.',b:'Relación de tutoría.',c:'Colaboración entre iguales.',d:'Relación de profesor-alumno.',ok:'A',r:'Correcta: A. Aprendizaje cooperativo. — Extracto: "…vación y el rendimiento escolar. Aprender estrategias para motivar al alumnado. Detectar las dificultades del aprendizaje cooperativo. Establecer los componentes del aprendizaje cooperativo. Relacionar familia y desarrol…" (M2, p. 2)',ref:'2'},
+    {id:19,p:'¿Por qué es importante relacionar los contenidos con experiencias y conocimientos previos en la exposición de los mismos?',a:'Para fomentar la memorización de los contenidos.',b:'Para evitar la participación activa del alumnado.',c:'Ninguna de las anteriores.',d:'Para incrementar las competencias del alumnado.',ok:'D',r:'Correcta: D. Para incrementar las competencias del alumnado. — Extracto: "…que lo importante no es acertar sino aprender. Las intervenciones psicopedagógicas para el desarrollo de las competencias emocionales están centradas en el diseño y en la aplicación de programas específicos. Sin embargo…" (M2, p. 5)',ref:'5'},
+    {id:20,p:'¿Qué implica el procesamiento grupal en el aprendizaje cooperativo según el texto?',a:'Reflexión y evaluación.',b:'Competencia individual.',c:'Falta de comunicación.',d:'Rivalidad entre grupos.',ok:'A',r:'Correcta: A. Reflexión y evaluación. — Extracto: "…El quinto componente esencial del aprendizaje cooperativo es el procesamiento grupal, o lo que es lo mismo la reflexión y evaluación. Éste se da cuando los integrantes del grupo discuten como están alcanzando sus objetiv…" (M2, p. 81)',ref:'81'},
+    {id:21,p:'¿Por qué es necesaria la evaluación previa del menor antes de aplicar un programa de inteligencia emocional?',a:'Para identificar las emociones de los demás.',b:'Para adoptar una actitud positiva ante la vida.',c:'Para favorecer una mayor competencia emocional.',d:'Para adaptar el programa a cada caso en concreto.',ok:'D',r:'Correcta: D. Para adaptar el programa a cada caso en concreto. — Extracto: "…gógicas para el desarrollo de las competencias emocionales están centradas en el diseño y en la aplicación de programas específicos. Sin embargo, actualmente está surgiendo una nueva estrategia de la enseñanza de esas co…" (M2, p. 5)',ref:'5'},
+    {id:22,p:'¿Qué consecuencias tienen los estilos educativos de los profesores en los niños?',a:'Desinterés por alcanzar objetivos.',b:'Dependencia emocional.',c:'Inseguridad en sí mismos.',d:'Seguridad en sí mismos.',ok:'D',r:'Correcta: D. Seguridad en sí mismos. — Extracto: "…que no son capaces de tomar algunas decisiones, al igual que es muy positivo para aumentar la autoestima y la seguridad en sí mismos. Como solución alternativa, podemos adaptar la toma de decisiones de acuerdo a la edad…" (M2, p. 29)',ref:'29'},
+    {id:23,p:'¿Qué caracteriza al estilo de educación parental permisivo?',a:'Son muy afectuosos.',b:'Priorizan el trabajo.',c:'Dan muchas opciones a los niños.',d:'Establecen límites claros.',ok:'C',r:'Correcta: C. Dan muchas opciones a los niños. — Extracto: "…blemas ueca.euroinnova.com 2 / 2 vida diaria. De esta manera, busca solución del problema de su muñeco, busca opciones, alternativas hasta que se llega a la solución de aquello que necesita resolver por sí mismo. Una vez…" (M2, p. 30)',ref:'30'},
+    {id:24,p:'¿Qué habilidades desarrollan los estudiantes a través del aprendizaje cooperativo?',a:'Habilidades sociales y comunicativas.',b:'Habilidades de liderazgo y control.',c:'Habilidades de trabajo en solitario.',d:'Habilidades competitivas y individualistas.',ok:'A',r:'Correcta: A. Habilidades sociales y comunicativas. — Extracto: "…, es decir, a través de una verdadera interrelación. Usando este método, los estudiantes también aprenden las habilidades sociales y comunicativas que necesitan para participar en sociedad y “convivir”. [[[Elemento Multi…" (M2, p. 70)',ref:'70'},
+    {id:25,p:'¿Cuál es uno de los componentes del aprendizaje cooperativo?',a:'Identificar emociones.',b:'Establecer metas.',c:'Detectar dificultades del aprendizaje cooperativo.',d:'Relacionar familia y desarrollo integral infantil.',ok:'C',r:'Correcta: C. Detectar dificultades del aprendizaje cooperativo. — Extracto: "…os éxitos/fracasos con la motivación y el rendimiento escolar. Aprender estrategias para motivar al alumnado. Detectar las dificultades del aprendizaje cooperativo. Establecer los componentes del aprendizaje cooperativo.…" (M2, p. 2)',ref:'2'},
+    {id:26,p:'Según las investigaciones de Johnson y Johnson, ¿cuál es el sistema de organización de la docencia por parte del profesor que aporta mejores resultados a los alumnos?',a:'Sistema individualista.',b:'Sistema cooperativo sin competir con otros grupos de compañeros.',c:'Sistema competitivo.',d:'Sistema cooperativo compitiendo con grupos de compañeros.',ok:'B',r:'Correcta: B. Sistema cooperativo sin competir con otros grupos de compañeros. — Extracto: "…ivacionales, es decir, el alumnado debe estar motivado e interesado por sus tareas académicas. El aprendizaje cooperativo es un enfoque de enseñanza en el cual se procura utilizar al máximo actividades en las cuales es n…" (M2, p. 1)',ref:'1'},
+    {id:27,p:'¿Qué es la autoestima?',a:'Conjunto de creencias acerca de nosotros mismos.',b:'Conjunto de percepciones y pensamientos dirigidos hacia los demás.',c:'Conjunto de evaluaciones sobre la sociedad.',d:'Conjunto de tendencias de comportamiento hacia los demás.',ok:'A',r:'Correcta: A. Conjunto de creencias acerca de nosotros mismos. — Extracto: "…e contiene muchos referentes que el niño utiliza para modificar su autoconcepto, interacciones con los demás, creencias, actitudes sobre el mundo, etc. Por tanto, el profesorado va a tener un papel fundamental en el esta…" (M2, p. 10)',ref:'10'},
+    {id:28,p:'¿Qué actitud pervierte la idea de trabajo cooperativo según el texto?',a:'Trabajar en equipo.',b:'Resolver con la ayuda del grupo.',c:'Separarse de la tarea común.',d:'Contribuir al proyecto común.',ok:'C',r:'Correcta: C. Separarse de la tarea común. — Extracto: "…dose con lo que las demás personas ofrecen. Se dan situaciones que pervierten la idea de trabajo cooperativo: separarse de la tarea común, ponerse a trabajar y resolver con algún miembro del grupo por separado, no tener…" (M2, p. 74)',ref:'74'},
+    {id:29,p:'¿Cuál es uno de los principales aspectos para enseñar habilidades sociales?',a:'Reforzar los comportamientos negativos.',b:'Ignorar los logros del niño.',c:'No prestar atención a las manifestaciones de afecto.',d:'Ofrecer un modelo adecuado.',ok:'D',r:'Correcta: D. Ofrecer un modelo adecuado. — Extracto: "…na de los principales aspectos para enseñar habilidades sociales, al igual que con otro tipo de habilidad, es ofrecer un modelo adecuado. Cuando los padres tienen hábitos de convivencia social, ofrecen manifestaciones de…" (M2, p. 35)',ref:'35'},
+    {id:30,p:'¿Qué características suelen presentar los alumnos con falta de inteligencia emocional en el contexto escolar?',a:'Bajos grados de ansiedad.',b:'Evitan el contacto con los demás.',c:'Pacientes y colaborativos.',d:'Altos grados de concentración.',ok:'B',r:'Correcta: B. Evitan el contacto con los demás. — Extracto: "…iguientes características: Presentan altos grados de ansiedad. Impulsivos y conflictivos. Tienden a evitar el contacto con los demás, tanto en el aula como en el recreo. Se relacionan solo con niños que no tienen casi am…" (M2, p. 4)',ref:'4'},
+  ],
+  [
+    {id:1,p:'¿Qué permite a los docentes el dominio de los componentes esenciales de la cooperación?',a:'Estructurar los programas de manera individualista.',b:'Incrementar la competencia entre estudiantes.',c:'Eliminar la necesidad de intervención docente.',d:'Adaptar las actividades de aprendizaje cooperativo.',ok:'D',r:'Correcta: D. Adaptar las actividades de aprendizaje cooperativo. — Extracto: "…los docentes: Tomar las decisiones, los programas y los cursos existentes y estructurarlos cooperativamente. Adaptar las actividades de aprendizaje cooperativo a las diferentes necesidades educativas, circunstancias, pr…" (M2, p. 79)',ref:'79'},
+    {id:2,p:'¿Qué tipo de evaluaciones se deben organizar para potenciar nuevos aprendizajes?',a:'Evaluaciones de alto riesgo.',b:'Evaluaciones de baja calidad.',c:'Evaluaciones no comparativas.',d:'Evaluaciones comparativas.',ok:'C',r:'Correcta: C. Evaluaciones no comparativas. — Extracto: "…de autoestima puesta en marcha por medio de la participación activa. Finalmente, resulta necesario organizar evaluaciones no comparativas, sino potenciadoras de nuevos aprendizajes." (M2, p. 65)',ref:'65'},
+    {id:3,p:'¿Qué rompe el modelo de familia homoparental?',a:'Vínculo jurídico con los hijos.',b:'Obligación de que los padres sean de diferente sexo.',c:'Vínculo de sexualidad y reproducción.',d:'Vínculo afectivo sin parentesco biológico.',ok:'B',r:'Correcta: B. Obligación de que los padres sean de diferente sexo. — Extracto: "…dres o dos madres homosexuales. En este modelo se rompe el vínculo de sexualidad y reproducción, y también la obligación de que los padres sean de diferente sexo. El ambiente familiar... Es el conjunto de relaciones que…" (M2, p. 89)',ref:'89'},
+    {id:4,p:'¿Qué característica presenta un buen líder en uso de su inteligencia emocional?',a:'Individualista.',b:'Autoritario.',c:'Competitivo.',d:'Empático.',ok:'D',r:'Correcta: D. Empático. — Extracto: "…plo depresión, problemas de habilidades sociales, ansiedad, etc. Quizá el primer paso para que los niños sean empáticos es solucionar los daños emocionales de los adultos que vayan a enseñar al niño. Ser ejemplo: los niñ…" (M2, p. 25)',ref:'25'},
+    {id:5,p:'¿Qué caracteriza al aprendizaje cooperativo?',a:'Grupo homogéneo en habilidad.',b:'División de tareas entre los niños.',c:'Competición entre grupos.',d:'Alto grado de mutualidad.',ok:'B',r:'Correcta: B. División de tareas entre los niños. — Extracto: "…n con el mismo nivel de competencia y trabajan conjuntamente en el mismo problema sin realizar ningún tipo de división de tareas. Generalmente, las relaciones que se establecen son simétricas y se caracterizan por una al…" (M2, p. 23)',ref:'23'},
+    {id:6,p:'¿Qué se considera como consecuencia de un esfuerzo insuficiente o de la falta de conocimientos?',a:'El fracaso.',b:'El éxito.',c:'La ayuda externa.',d:'La suerte.',ok:'A',r:'Correcta: A. El fracaso. — Extracto: "…bargo, al asumir “No puedo sacar más nota porque soy muy torpe” es un tipo de atribución estable que potencia el fracaso. Las atribuciones inestables no afectan a las perspectivas futuras de éxito o fracaso ya que, al ba…" (M2, p. 59)',ref:'59'},
+    {id:7,p:'¿Qué es la negociación?',a:'Llegar a un acuerdo con alguien.',b:'Hacer concesiones inmediatas.',c:'Permitir disputas de voluntades.',d:'Evitar enfrentamientos personales.',ok:'A',r:'Correcta: A. Llegar a un acuerdo con alguien. — Extracto: "…gencia emocional. 3. Técnicas de resolución de conflictos: la negociación Mediante la negociación se pretende llegar a un acuerdo con alguien acerca de algo de interés común. Negociar es una medida fundamental para conse…" (M2, p. 43)',ref:'43'},
+    {id:8,p:'¿Qué puede ocurrir si se actúa para cambiar una emoción de manera inadecuada?',a:'Se desestabiliza emocionalmente.',b:'Se generalizan comportamientos a distintos contextos.',c:'Se adquieren pautas adecuadas de comportamiento.',d:'Se desarrolla la conciencia emocional.',ok:'B',r:'Correcta: B. Se generalizan comportamientos a distintos contextos. — Extracto: "…dos y poco sanos. En consecuencia, se puede ir aprendiendo algunas pautas inadecuadas de comportamiento, e ir generalizando estos comportamientos a distintos contextos dando lugar a problemas de comportamiento, como por…" (M2, p. 7)',ref:'7'},
+    {id:9,p:'¿Qué tipo de padres tienden a tener hijos con baja autoestima, poca empatía y déficit en el desarrollo de la inteligencia emocional?',a:'Padres autoritarios.',b:'Padres complacientes',c:'Padres democráticos.',d:'Padres negligentes.',ok:'D',r:'Correcta: D. Padres negligentes. — Extracto: "…to del niño, sea bueno o malo, y no hacen ningún comentario sobre si le beneficia o no. Estilo negligente Los padres Negligentes no suelen establecer reglas de comportamiento, y tampoco son muy afectuosos. Suelen prioriz…" (M2, p. 91)',ref:'91'},
+    {id:10,p:'Según Ferreiro y Calderón, el aprendizaje cooperativo implica la organización de los alumnos en:',a:'Grupos pequeños y heterogéneos.',b:'Grupos de competencia.',c:'Grupos grandes y homogéneos.',d:'Grupos individuales.',ok:'A',r:'Correcta: A. Grupos pequeños y heterogéneos. — Extracto: "…como un método o técnica para aprender. El aprendizaje cooperativo implica la organización de los alumnos en grupos pequeños y heterogéneos para potenciar el desarrollo de cada uno con la colaboración de los demás miemb…" (M2, p. 67)',ref:'67'},
+    {id:11,p:'¿Cuál es una posible dificultad en el aprendizaje cooperativo según el texto?',a:'Falta de organización inicial.',b:'Falta de motivación individual.',c:'Falta de tiempo para trabajar en grupo.',d:'Falta de material didáctico.',ok:'A',r:'Correcta: A. Falta de organización inicial. — Extracto: "…situación compleja que refleja una estructura de relaciones sociales, que puede enfrentar a personas, grupos, organizaciones, etc. Sin embargo, su naturaleza puede ser enormemente variada: en algunos casos, las partes en…" (M2, p. 37)',ref:'37'},
+    {id:12,p:'¿Cuál es una posible dificultad en los procesos de aprendizaje cooperativo según el texto?',a:'Variación de estrategias a pesar de no obtener resultados.',b:'Trabajo individual antes de la tarea común.',c:'Control e imposición de un método por parte de un miembro.',d:'Falta de tiempo de preparación previo.',ok:'C',r:'Correcta: C. Control e imposición de un método por parte de un miembro. — Extracto: "…espera que la mejora de la enseñanza en el aula provenga del compromiso activo del profesorado, más que del control y la gestión. No obstante, esto conlleva unos cambios hacia la descentralización que pueden ser, dig…" (M2, p. 200)',ref:'200'},
+    {id:13,p:'¿Cuál es una de las finalidades del aprendizaje cooperativo según el texto?',a:'Limitar la participación de los alumnos en la toma de decisiones.',b:'Facilitar la comunicación intercultural.',c:'Promover la individualidad por encima del trabajo en grupo.',d:'Fomentar la competencia entre los alumnos.',ok:'B',r:'Correcta: B. Facilitar la comunicación intercultural. — Extracto: "…rticipación de todo el alumnado en la toma de decisiones sobre todo lo que afecta a este entorno. Facilita la comunicación Intercultural, posibilitando la ruptura de estereotipos y prejuicios que favorezcan el acercamien…" (M2, p. 82)',ref:'82'},
+    {id:14,p:'Según el texto, ¿qué emociones se generan cuando el factor de éxito es controlable?',a:'Emociones neutras.',b:'Emociones confusas.',c:'Emociones negativas.',d:'Emociones positivas.',ok:'D',r:'Correcta: D. Emociones positivas. — Extracto: "…ociones. Prevenir los efectos perjudiciales de las emociones negativas. Desarrollar la habilidad para generar emociones positivas. Favorecer una mayor competencia emocional. Potenciar la habilidad de automotivarse. Adopt…" (M2, p. 6)',ref:'6'},
+    {id:15,p:'¿Qué se entiende por socialización primaria?',a:'Proceso de adaptación social.',b:'Integración a grupos secundarios.',c:'Relaciones basadas en la dimensión afectiva.',d:'Etapa de relaciones formales.',ok:'C',r:'Correcta: C. Relaciones basadas en la dimensión afectiva. — Extracto: "…ancia en la educación. 1. Enseñanza de la IE ueca.euroinnova.com 2 / 3 Les cuesta establecer conversaciones o relaciones con los demás. Son menos populares. Son pesimistas, suelen ver el fracaso o el rechazo como un defe…" (M2, p. 5)',ref:'5'},
+    {id:16,p:'¿Cuál es la importancia de enseñar a los niños a solucionar problemas cotidianos desde edades tempranas?',a:'Fomentar la autoestima y la seguridad en sí mismos.',b:'Generar impulsividad.',c:'Aumentar la sobreprotección.',d:'Reducir las habilidades interpersonales.',ok:'A',r:'Correcta: A. Fomentar la autoestima y la seguridad en sí mismos. — Extracto: "…hazo como un defecto personal. Generalmente, todas estas características llevan al niño a tener un déficit de autoestima y de habilidades sociales, que influirá en su estado de ánimo, y por tanto afectará a distintas act…" (M2, p. 5)',ref:'5'},
+    {id:17,p:'¿Cuál es una característica del aprendizaje competitivo?',a:'Los alumnos compiten entre sí para alcanzar sus metas.',b:'Los alumnos trabajan en equipo para alcanzar metas comunes.',c:'Cada alumno trabaja para conseguir su meta al margen de los compañeros.',d:'Los alumnos se apoyan mutuamente para alcanzar sus metas.',ok:'A',r:'Correcta: A. Los alumnos compiten entre sí para alcanzar sus metas. — Extracto: "…ofesor Cada uno de los estilos educativos que tenga el profesor, va a tener una influencia determinada en los alumnos. En general, los niños que tienen un profesor con estilo punitivo pueden llegar a tener un bajo autoco…" (M2, p. 14)',ref:'14'},
+    {id:18,p:'¿Qué es el aprendizaje cooperativo?',a:'Aprendizaje pasivo.',b:'Trabajo individual.',c:'Uso instructivo de grupos pequeños.',d:'Aprendizaje competitivo.',ok:'C',r:'Correcta: C. Uso instructivo de grupos pequeños. — Extracto: "…es lo mismo que el trabajo en grupos tal y como lo conocemos tradicionalmente. Aprendizaje cooperativo: Es el uso instructivo de grupos pequeños para que los estudiantes trabajen juntos y aprovechen al máximo el aprendiz…" (M2, p. 69)',ref:'69'},
+    {id:19,p:'¿Cuáles son algunas características de los niños con déficit de habilidades sociales?',a:'Alto rendimiento escolar.',b:'Buenas relaciones con los demás.',c:'Poca popularidad.',d:'Optimistas.',ok:'C',r:'Correcta: C. Poca popularidad. — Extracto: "…er relaciones, se refiere a la competencia social y las habilidades que conlleva, son la base del liderazgo, popularidad y eficiencia interpersonal. Mientras que la IE es representada por Mayer y Salovey como nu…" (M2, p. 125)',ref:'125'},
+    {id:20,p:'¿Cuál es la diferencia entre la motivación externa y la motivación interna en el aprendizaje cooperativo?',a:'La motivación externa se basa en el esfuerzo personal, mientras que la motivación interna se fundamenta en el convencimiento de que todos tienen algo que aportar a los demás.',b:'La motivación externa depende de la percepción de la propia valía personal, mientras que la motivación interna se basa en el esfuerzo realizado por los compañeros del grupo.',c:'La motivación externa se centra en quedar mejor que los demás, mientras que la motivación interna se enfoca en contribuir a que los compañeros también logren sus metas.',d:'La motivación externa se atribuye a que el estudiante ganará, mientras que la motivación interna se atribuye al esfuerzo personal y al de los compañeros del grupo.',ok:'C',r:'Correcta: C. La motivación externa se centra en quedar mejor que los demás, mientras que la motivación interna se enfoca en contribuir a que los compañeros también logren sus metas. — Extracto: "…ario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI1517ZF] La inteligencia emocional. 5. La inteligencia…" (M2, p. 50)',ref:'50'},
+    {id:21,p:'Según Daniel Goleman, ¿en qué no depende exclusivamente el éxito del liderazgo?',a:'Experiencia laboral.',b:'Competencias prácticas e intelectuales.',c:'Habilidades técnicas.',d:'Inteligencia emocional.',ok:'B',r:'Correcta: B. Competencias prácticas e intelectuales. — Extracto: "…l liderazgo y argumenta que el éxito en éste no depende exclusivamente de las cualidades más tradicionales de competencias prácticas e intelectuales. Goleman escribió: “No es que las habilidades intelectuales y técnicas…" (M2, p. 50)',ref:'50'},
+    {id:22,p:'¿Qué actitud puede llevar a que un individuo se desentienda de la tarea común en el aprendizaje cooperativo?',a:'Falta de tiempo de preparación previo.',b:'Esperar a que la tarea esté aclarada para aportar.',c:'Trabajo individual sin aportación al grupo.',d:'Control e imposición de un método por parte de un miembro.',ok:'B',r:'Correcta: B. Esperar a que la tarea esté aclarada para aportar. — Extracto: "…impulsivamente, sin dirección, dando bandazos. Si no hay objetivo, tampoco hay un método de resolución de la tarea adecuado, por lo que se va modificando sin criterio, sin debate previo o sin haber sido probado. Depende…" (M2, p. 74)',ref:'74'},
+    {id:23,p:'¿Cuál es uno de los componentes esenciales del aprendizaje cooperativo según el texto?',a:'Competencia.',b:'Liderazgo.',c:'Individualismo.',d:'Rivalidad.',ok:'B',r:'Correcta: B. Liderazgo. — Extracto: "…n otros estudios recientes, muestra claramente que la inteligencia emocional es la condición sine qua non del liderazgo. Sin" (M2, p. 50)',ref:'50'},
+    {id:24,p:'¿Qué determina la implementación de diferentes formas de aprendizaje y rendimiento académico real?',a:'La orientación de la meta.',b:'La percepción del estudiante sobre su capacidad intelectual.',c:'La actitud del profesor en el aula.',d:'La interacción entre factores individuales y contextuales.',ok:'D',r:'Correcta: D. La interacción entre factores individuales y contextuales. — Extracto: "…en el Aprendizaje Escolar [UDI1517ZM] El Aprendizaje Escolar desde la Perspectiva Cognitivo- Motivacional. 6. Factores contextuales ueca.euroinnova.com 1 / 2 El Aprendizaje Escolar desde la Perspectiva Cognitivo- Motivac…" (M2, p. 57)',ref:'57'},
+    {id:25,p:'¿Cuál es uno de los aspectos principales que el adulto debe cumplir para transmitir la habilidad de empatía a los niños?',a:'Reprimir las emociones de los niños.',b:'Trabajar la empatía propia.',c:'No reconocer las emociones propias.',d:'Ignorar las emociones de los niños.',ok:'B',r:'Correcta: B. Trabajar la empatía propia. — Extracto: "…terpretando y poner ejemplos de cuando podemos sentir esa emoción. Este último ejercicio, también nos ayuda a trabajar el lenguaje corporal. Es decir, el hecho de que cada emoción produce una expresión facial y una postu…" (M2, p. 8)',ref:'8'},
+    {id:26,p:'¿Cuál es un elemento fundamental para que el ambiente familiar influya correctamente en los niños?',a:'Amor.',b:'Distancia emocional.',c:'Disciplina estricta.',d:'Desinterés.',ok:'A',r:'Correcta: A. Amor. — Extracto: "…fluir correctamente a los niños, es fundamental que los siguientes elementos tengan una presencia importante: Amor: que los padres a sus hijos es algo evidente, sin embargo el hecho de manifestarlo de manera adecuada no…" (M2, p. 86)',ref:'86'},
+    {id:27,p:'¿Cuáles son las características distintivas de los grupos de aprendizaje cooperativo según Johnson y Johnson?',a:'Fomentar la competencia entre los miembros.',b:'Maximizar el liderazgo.',c:'Motivar a los alumnos a esforzarse.',d:'Desarrollar el trabajo individual.',ok:'C',r:'Correcta: C. Motivar a los alumnos a esforzarse. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI1517YW] La intelige…" (M2, p. 17)',ref:'17'},
+    {id:28,p:'¿En qué situación se emplea la estrategia de evitación en la resolución de conflictos?',a:'Cuando se quiere establecer un clima de armonía y estabilidad.',b:'Cuando se quiere obtener soluciones adecuadas ante la falta de tiempo.',c:'Cuando se trata de una cuestión trivial o existen problemas más importantes que se deben resolver.',d:'Cuando se descubre que se está equivocado.',ok:'C',r:'Correcta: C. Cuando se trata de una cuestión trivial o existen problemas más importantes que se deben resolver. — Extracto: "…contramos a lo largo de la vida, a pesar de las problemas y malestares que puedan causarnos. Por lo tanto, se trata de una actitud, y como tal puede aprenderse y desarrollarse. En la vida, hay situaciones en las que cons…" (M2, p. 16)',ref:'16'},
+    {id:29,p:'¿Qué característica comparten los equipos en el aprendizaje cooperativo según Coll y Colomina?',a:'Planificación conjunta y discusión.',b:'Homogeneidad en los miembros.',c:'Interacción mutua limitada.',d:'Distribución desigual de responsabilidades.',ok:'A',r:'Correcta: A. Planificación conjunta y discusión. — Extracto: "…observar las opciones ya propuestas e identificar cualquier criterio sugerido que pueda llevar a un acuerdo. Planificación: en esta etapa se tratan ampliamente los cuatro elementos descritos en la primera fase, esto es,…" (M2, p. 45)',ref:'45'},
+    {id:30,p:'¿Qué tipo de estudiantes implican poca implicación en las tareas del aula y la existencia de emociones de aversión y ansiedad?',a:'Los autoconsiderados inútiles.',b:'Los autoconsiderados muy inteligentes.',c:'Los que generan expectativas altas de rendimiento.',d:'Los que se perciben como inteligentes.',ok:'A',r:'Correcta: A. Los autoconsiderados inútiles. — Extracto: "…otivación enfocados a la obtención de resultados y a la construcción de su autoimagen como referencia grupal. Los autoconsiderados inútiles. Ya sea por su baja capacidad real o por dificultades específicas de aprendizaje…" (M2, p. 56)',ref:'56'},
+  ],
+  [
+    {id:1,p:'¿Qué rol debe desempeñar el profesorado en el aprendizaje cooperativo según el texto?',a:'Fomentar la competencia entre los alumnos.',b:'Limitar la capacidad de comunicación.',c:'Ayudar al alumnado a madurar y a resolver problemas.',d:'Mantener la excesiva dependencia de las figuras de autoridad.',ok:'C',r:'Correcta: C. Ayudar al alumnado a madurar y a resolver problemas. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI1517YR] La intelige…" (M2, p. 7)',ref:'7'},
+    {id:2,p:'Según el modelo de Munduate y Martínez (1998), ¿qué dimensiones determinan los estilos de gestión del conflicto?',a:'Interés por los demás y dominancia.',b:'Interés propio y evitación.',c:'Interés propio y colaboración.',d:'Interés por los demás y compromiso.',ok:'C',r:'Correcta: C. Interés propio y colaboración. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI1517Z0] La intelige…" (M2, p. 22)',ref:'22'},
+    {id:3,p:'¿Qué aspecto se reivindica como parte de las competencias básicas en la formación inicial del profesorado?',a:'Competencias matemáticas.',b:'Competencias científicas.',c:'Competencias lingüísticas.',d:'Competencias emocionales.',ok:'D',r:'Correcta: D. Competencias emocionales. — Extracto: "…orma, Goleman afirma que los sujetos nacen con una IE que determina su potencial para el aprendizaje de las competencias emocionales. En este sentido, la IE puede predecir la facilidad con la que un individuo podría d…" (M2, p. 125)',ref:'125'},
+    {id:4,p:'¿Cuál es la importancia del aprendizaje según el artículo revisado?',a:'Variables emocionales.',b:'Variables cognitivas.',c:'Variables motivacionales.',d:'Variables sociales.',ok:'C',r:'Correcta: C. Variables motivacionales. — Extracto: "…) 4) TÍTULO: Motivación, Aprendizaje y Rendimiento académico DESCRIPCIÓN: El aprendizaje está determinado por variables motivacionales pero también cognitivas que nos introducen en una variedad de procesos y estrategias…" (M2, p. 98)',ref:'98'},
+    {id:5,p:'¿Qué se refiere a la participación igualitaria en el aprendizaje cooperativo según el texto?',a:'Individualismo.',b:'Competencia entre miembros.',c:'Comunicación simultánea.',d:'División de tareas.',ok:'D',r:'Correcta: D. División de tareas. — Extracto: "…n con el mismo nivel de competencia y trabajan conjuntamente en el mismo problema sin realizar ningún tipo de división de tareas. Generalmente, las relaciones que se establecen son simétricas y se caracterizan por una al…" (M2, p. 23)',ref:'23'},
+    {id:6,p:'¿Cuál es la importancia de enseñar la inteligencia emocional en la educación?',a:'Mejorar el rendimiento académico.',b:'Fomentar la empatía.',c:'Controlar las emociones.',d:'Desarrollar habilidades sociales.',ok:'A',r:'Correcta: A. Mejorar el rendimiento académico. — Extracto: "…lecer los factores que determinan la elección de metas. Relacionar los éxitos/fracasos con la motivación y el rendimiento escolar. Aprender estrategias para motivar al alumnado. Detectar las dificultades del aprendizaje…" (M2, p. 2)',ref:'2'},
+    {id:7,p:'¿Qué tipo de autoridad es necesaria para una función educativa correcta?',a:'Autoridad participativa.',b:'Autoridad permisiva.',c:'Autoridad autoritaria.',d:'Autoridad pasiva.',ok:'A',r:'Correcta: A. Autoridad participativa. — Extracto: "…le ha ido el día, felicitando, sabiendo lo que le gusta e interesa, y mostrándonos comprensivos y pacientes. Autoridad participativa: tiene que ver con la manera de ejercer la autoridad. La autoridad es un derecho y una…" (M2, p. 87)',ref:'87'},
+    {id:8,p:'¿Cómo se define el liderazgo en términos generales?',a:'Controlar a las personas para alcanzar objetivos individuales.',b:'Influir en las personas para lograr metas personales.',c:'Dirigir a las personas con autoridad.',d:'Influir en las personas para lograr metas del grupo.',ok:'D',r:'Correcta: D. Influir en las personas para lograr metas del grupo. — Extracto: "…ivos y los procesos afectivos o emocionales. Las instituciones educativas tienen como finalidad desarrollar a personas emocionalmente inteligentes, que se caractericen por ser capaces de resaltar los aspectos positivos p…" (M2, p. 1)',ref:'1'},
+    {id:9,p:'¿Qué diferencia al aprendizaje cooperativo del trabajo en grupo?',a:'La tradicionalidad del método.',b:'La organización en grupos pequeños.',c:'La realización de tareas por sí mismos.',d:'La colaboración entre los alumnos.',ok:'D',r:'Correcta: D. La colaboración entre los alumnos. — Extracto: "…nsiones, se distinguen tres tipos de aprendizaje o relaciones: relación de tutoría, aprendizaje cooperativo y colaboración entre iguales. Relación de tutoría Lo principal en este tipo de relación es que un niño, que pued…" (M2, p. 22)',ref:'22'},
+    {id:10,p:'¿Qué tipo de metas procuran la satisfacción individual al superar desafíos para la mejora?',a:'Metas de aprendizaje.',b:'Metas fáciles.',c:'Metas externas.',d:'Metas de desempeño.',ok:'A',r:'Correcta: A. Metas de aprendizaje. — Extracto: "…aje Para planificar y establecer metas, seguiremos a Dweck y Elliot (1983) que establecen dos tipos de metas: Metas de aprendizaje. Definen al tipo de estudiante que trata de progresar y aprender independientemente a los…" (M2, p. 54)',ref:'54'},
+    {id:11,p:'¿Qué hacen los padres demócratas al corregir el comportamiento de sus hijos?',a:'Castigan severamente.',b:'Explican la razón por la que no se debe comportar así.',c:'Recompensan el mal comportamiento.',d:'Ignoran el mal comportamiento.',ok:'B',r:'Correcta: B. Explican la razón por la que no se debe comportar así. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI1517YT] La intelige…" (M2, p. 13)',ref:'13'},
+    {id:12,p:'¿Qué diferencia hay entre autoestima y egocentrismo?',a:'Sentimiento de superioridad y exclusividad.',b:'Armonía personal.',c:'Exceso de confianza en uno mismo.',d:'Coherencia y autorrespeto.',ok:'D',r:'Correcta: D. Coherencia y autorrespeto. — Extracto: "…n exceso de confianza en uno mismo. La autoestima, en cambio, es una forma de armonía personal, representa la coherencia y el autorrespeto y permite progresar y aprender. Los niños necesitan sentir que pueden cumplir con…" (M2, p. 27)',ref:'27'},
+    {id:13,p:'¿Por qué se considera a la familia como un contexto socializador principal?',a:'Porque es el único agente socializador.',b:'Porque influye en el desarrollo de la inteligencia emocional.',c:'Porque es el primer agente socializador.',d:'Porque establece vínculos afectivos.',ok:'B',r:'Correcta: B. Porque influye en el desarrollo de la inteligencia emocional. — Extracto: "…a actualidad, el proceso de enseñanza-aprendizaje está atravesado por variables cognitivas y emocionales, que influyen de manera entrelazada. La mejora del aprendizaje, por tanto, pasa por la consideración de componentes…" (M2, p. 1)',ref:'1'},
+    {id:14,p:'¿Cómo pueden los padres ayudar a sus hijos a volverse más independientes?',a:'Ofreciendo recompensas.',b:'Elogiando constantemente.',c:'Dándoles responsabilidades ajustadas a su edad.',d:'No permitiendo que realicen tareas del hogar.',ok:'C',r:'Correcta: C. Dándoles responsabilidades ajustadas a su edad. — Extracto: "…ducación. 8. Enseñar la motivación Los padres pueden ayudar a su hijo a volverse más independiente, ofrecerle responsabilidades ajustadas a su edad, realizando recompensas y elogios para que mantengan ese tipo de comport…" (M2, p. 19)',ref:'19'},
+    {id:15,p:'¿Cuál es uno de los puntos que define un proceso de negociación directo?',a:'Ignorar las emociones de la otra parte.',b:'Tomar posiciones para ganar.',c:'Separar a las personas del problema.',d:'Aferrarse a las ideas propias.',ok:'C',r:'Correcta: C. Separar a las personas del problema. — Extracto: "…ce alusión a uno de los elementos básicos del conflicto y sugiere lo que se debe hacer al respecto: Personas: separar a las personas del problema Las personas podemos llegar a tener percepciones radicalmente distintas so…" (M2, p. 44)',ref:'44'},
+    {id:16,p:'¿Qué consecuencias pueden experimentar los niños que sufren rechazo y no tienen amigos?',a:'Independencia emocional.',b:'Confianza social.',c:'Baja autoestima.',d:'Alta autoestima.',ok:'C',r:'Correcta: C. Baja autoestima. — Extracto: "…o con estilo asertivo tendrán: Un autoconcepto positivo y una autoestima alta. Un autoconcepto negativo y una baja autoestima. Poca seguridad en sí mismos. ¿En qué etapa del desarrollo los niños desarrollan un fuerte sen…" (M2, p. 220)',ref:'220'},
+    {id:17,p:'¿Cuál es uno de los principios clave del aprendizaje cooperativo según el texto?',a:'Competencia.',b:'Jerarquía.',c:'Individualismo.',d:'Responsabilidad.',ok:'D',r:'Correcta: D. Responsabilidad. — Extracto: "…desarrollar la tolerancia. Favorecer una actitud más activa ante el aprendizaje. Incrementar el sentido de la responsabilidad. Desarrollar la capacidad de cooperación. Desarrolla r las capacidades de comunicación. Desarr…" (M2, p. 83)',ref:'83'},
+    {id:18,p:'¿Qué tipo de estudiantes desarrollan tácticas y estrategias de autorregulación para afrontar las dificultades de aprendizaje?',a:'Los autoconsiderados muy inteligentes.',b:'Los autoconsiderados inútiles.',c:'Los que se perciben como inteligentes.',d:'Los que generan expectativas altas de rendimiento.',ok:'C',r:'Correcta: C. Los que se perciben como inteligentes. — Extracto: "…con una percepción modificable de su capacidad, mediante el esfuerzo y el interés por su aprendizaje, ya sea los que se perciben como inteligentes, con baja capacidad o son conscientes de sus dificultades de aprendizaje…" (M2, p. 56)',ref:'56'},
+    {id:19,p:'¿Qué factores determinan la elección de metas en el aprendizaje escolar?',a:'Factores emocionales y conductuales.',b:'Factores individuales y contextuales.',c:'Factores cognitivos y motivacionales.',d:'Factores familiares y metodológicos.',ok:'B',r:'Correcta: B. Factores individuales y contextuales. — Extracto: "…en el Aprendizaje Escolar [UDI1517ZM] El Aprendizaje Escolar desde la Perspectiva Cognitivo- Motivacional. 6. Factores contextuales ueca.euroinnova.com 1 / 2 El Aprendizaje Escolar desde la Perspectiva Cognitivo- Motivac…" (M2, p. 57)',ref:'57'},
+    {id:20,p:'¿Qué implica el tipo de actividad en el proceso de aprendizaje?',a:'Evaluación del docente, implementación de patrones de motivación.',b:'Visión psicológica, autoeficacia, autocontrol.',c:'Comparación de resultados, patrones de motivación.',d:'Desarrollo económico, ambiente local, etapa educativa.',ok:'B',r:'Correcta: B. Visión psicológica, autoeficacia, autocontrol. — Extracto: "…ciones del mismo según sus propios criterios internos (metas de aprendizaje). El tipo de actividad implica la visión psicológica, la autoeficacia y el autocontrol derivadas de la motivación. El sistema de evaluación hace…" (M2, p. 57)',ref:'57'},
+    {id:21,p:'¿Qué consecuencias puede tener el estilo de educación parental negligente en los niños?',a:'Desarrollo de habilidades de toma de decisiones.',b:'Sentimientos de desconcierto.',c:'Comportamiento claro y definido.',d:'Autoestima saludable.',ok:'B',r:'Correcta: B. Sentimientos de desconcierto. — Extracto: "…iños no saben de qué manera comportarse, qué es lo que se espera de ellos, etc. Esto suele generar en el niño sentimientos de desconcierto y puede dañarse su autoestima. Estilo democrático o autorizativo Los padres demóc…" (M2, p. 92)',ref:'92'},
+    {id:22,p:'Según el texto, ¿cómo suelen actuar los padres autoritarios ante el comportamiento de sus hijos?',a:'Ignoran el comportamiento.',b:'Castigan severamente.',c:'Explican las razones.',d:'Ceden el control.',ok:'B',r:'Correcta: B. Castigan severamente. — Extracto: "…"porque lo digo yo". Los padres tienden a concentrarse en el comportamiento negativo, en vez del positivo, y castigan o regañan a los niños, muchas veces severamente, porque éstos no siguen las reglas. Los hijos de padr…" (M2, p. 91)',ref:'91'},
+    {id:23,p:'¿Por qué es importante el tiempo de convivencia con los hijos?',a:'Para controlar sus acciones.',b:'Para evitar las críticas.',c:'Para supervisar sus tareas escolares.',d:'Para fomentar la autoestima.',ok:'D',r:'Correcta: D. Para fomentar la autoestima. — Extracto: "…hazo como un defecto personal. Generalmente, todas estas características llevan al niño a tener un déficit de autoestima y de habilidades sociales, que influirá en su estado de ánimo, y por tanto afectará a distintas act…" (M2, p. 5)',ref:'5'},
+    {id:24,p:'Según Goleman, ¿cuál es la condición sine qua non del liderazgo?',a:'Inteligencia emocional.',b:'Inteligencia analítica.',c:'Experiencia laboral.',d:'Habilidades técnicas.',ok:'A',r:'Correcta: A. Inteligencia emocional. — Extracto: "…Presentación ueca.euroinnova.com 2 / 3 Objetivos Identificar diferentes emociones. Aprender a desarrollar la inteligencia emocional. Establecer los factores que determinan la elección de metas. Relacionar los éxitos/fra…" (M2, p. 2)',ref:'2'},
+    {id:25,p:'¿Cuándo es recomendable que el docente proporcione feedback durante una actividad?',a:'Antes y después de la actividad.',b:'Después de la actividad.',c:'Antes de la actividad.',d:'Durante la actividad.',ok:'A',r:'Correcta: A. Antes y después de la actividad. — Extracto: "…nseñanza en el cual se procura utilizar al máximo actividades en las cuales es necesaria la ayuda entre estudiantes, ya sea en pares o grupos pequeños, dentro de un contexto de enseñanza-aprendizaje. El aprendizaje coope…" (M2, p. 1)',ref:'1'},
+    {id:26,p:'¿Cuál es uno de los objetivos concretos del feedback después de la actividad?',a:'Enfatizar el progreso a corto plazo.',b:'Facilitar la atribución correcta de resultados.',c:'Recompensar solo los logros óptimos.',d:'Señalar que la capacidad es inmodificable.',ok:'B',r:'Correcta: B. Facilitar la atribución correcta de resultados. — Extracto: "…ados, atendiendo al proceso y a la adquisición de competencias. Esta etapa implica cinco objetivos concretos: Facilitar la atribución correcta de resultados: causas internas, modificables y controlables, valorando el esf…" (M2, p. 64)',ref:'64'},
+    {id:27,p:'¿Qué se busca al fomentar que cada alumno tenga la oportunidad de afirmar su identidad personal y cultural?',a:'Generar conflictos entre los alumnos.',b:'Limitar la participación de los alumnos en la toma de decisiones.',c:'Fomentar la aceptación compartida de todos los miembros del aula.',d:'Promover la competencia entre los alumnos.',ok:'C',r:'Correcta: C. Fomentar la aceptación compartida de todos los miembros del aula. — Extracto: "…uro suelen tener más comportamientos de agresividad hacia sus compañeros, lo que produce rechazo de estos. La aceptación emocional y la amistad son muy importantes para el bienestar emocional de los niños. En caso de niñ…" (M2, p. 20)',ref:'20'},
+    {id:28,p:'¿Cómo afectan las emociones positivas al desempeño escolar del niño?',a:'Debilitan el desempeño escolar.',b:'No tienen influencia en el desempeño escolar.',c:'Mejoran la concentración y permiten un aprendizaje más adecuado y eficaz.',d:'Generan ansiedad en el niño.',ok:'C',r:'Correcta: C. Mejoran la concentración y permiten un aprendizaje más adecuado y eficaz. — Extracto: "…mpeño escolar del niño, mientras que las emociones positivas como la motivación por aprender o el entusiasmo, mejoran la concentración y permiten un aprendizaje más adecuado y eficaz. Para que el ambiente familiar pueda…" (M2, p. 86)',ref:'86'},
+    {id:29,p:'¿Qué beneficio tiene enseñar a los niños a identificar emociones?',a:'Desarrolla la empatía.',b:'Aumenta la agresividad.',c:'Mejora la memoria.',d:'Genera confusión.',ok:'A',r:'Correcta: A. Desarrolla la empatía. — Extracto: "…rocesos cognitivos y los procesos afectivos o emocionales. Las instituciones educativas tienen como finalidad desarrollar a personas emocionalmente inteligentes, que se caractericen por ser capaces de resaltar los aspect…" (M2, p. 1)',ref:'1'},
+    {id:30,p:'¿En qué consiste el aprendizaje individualista?',a:'Cada alumno trabaja para conseguir su meta al margen de los compañeros.',b:'Los alumnos se apoyan mutuamente para alcanzar sus metas.',c:'Los alumnos trabajan en equipo para alcanzar metas comunes.',d:'Los alumnos compiten entre sí para alcanzar sus metas.',ok:'A',r:'Correcta: A. Cada alumno trabaja para conseguir su meta al margen de los compañeros. — Extracto: "…nseñanza-aprendizaje Para Gavilán y Alario, cuando un profesor decide las actividades que han de realizar sus alumnos, cómo tienen que llevar a cabo la tarea propuesta, qué grado de autonomía van a tener para tomar decis…" (M2, p. 71)',ref:'71'},
+  ],
+  [
+    {id:1,p:'¿Cuál es la finalidad de la enseñanza de la inteligencia emocional?',a:'Desarrollar la memoria.',b:'Promover la individualidad.',c:'Fomentar la competencia entre estudiantes.',d:'Equilibrar procesos cognitivos y emocionales.',ok:'D',r:'Correcta: D. Equilibrar procesos cognitivos y emocionales. — Extracto: "…aster Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI151802] Presentación ueca.euroin…" (M2, p. 1)',ref:'1'},
+    {id:2,p:'Según Mayer, el aprendizaje consiste en \'un cambio relativamente estable en el conocimiento de alguien como consecuencia de la experiencia de esa persona\'. Desde esta perspectiva, ¿qué implica el aprendizaje cooperativo?',a:'Un cambio de comportamiento o conocimiento en un sujeto como consecuencia de la interacción con el docente.',b:'Un cambio de comportamiento o conocimiento en un sujeto como consecuencia de la interacción con la tecnología.',c:'Un cambio de comportamiento o conocimiento en un sujeto como consecuencia de la interacción con otros.',d:'Un cambio de comportamiento o conocimiento en un sujeto como consecuencia de la interacción con los materiales de estudio.',ok:'C',r:'Correcta: C. Un cambio de comportamiento o conocimiento en un sujeto como consecuencia de la interacción con otros. — Extracto: "…del equipo. Mayer, desde la óptica del aprendizaje significativo, propone que el aprendizaje consiste en “un cambio relativamente estable en el conocimiento de alguien como consecuencia de la experiencia de esa persona”…" (M2, p. 67)',ref:'67'},
+    {id:3,p:'¿Qué aspectos son fundamentales para que se produzca el aprendizaje en el alumno desde la perspectiva cognitivo-motivacional?',a:'Capacidad intelectual y estrategias de aprendizaje.',b:'Capacidad intelectual y actitud del alumno.',c:'Conocimientos previos y actitud del alumno.',d:'Conocimientos previos y estrategias de aprendizaje.',ok:'D',r:'Correcta: D. Conocimientos previos y estrategias de aprendizaje. — Extracto: "…trata de una relación informal. En este caso, el tutor es menos experto que el profesor en la transmisión de conocimientos. La tutoría se caracteriza por relaciones de no-igualdad, y por presentar una mutualidad variabl…" (M2, p. 22)',ref:'22'},
+    {id:4,p:'¿Qué tipo de padres tienden a tener hijos con mayor competencia social, buena autoestima y autonomía?',a:'Padres negligentes.',b:'Padres complacientes',c:'Padres democráticos.',d:'Padres autoritarios.',ok:'C',r:'Correcta: C. Padres democráticos. — Extracto: "…influyen en el desarrollo del niño y de las habilidades implicadas en la inteligencia emocional. Los hijos de padres democráticos, suelen valorarse más a sí mismos, además de tener más habilidades y herramientas para des…" (M2, p. 93)',ref:'93'},
+    {id:5,p:'¿Qué tipo de atribución estable contribuye a la estandarización de un pensamiento o autopercepción?',a:'Atribución estable exitosa.',b:'Atribución estable fracasada.',c:'Atribución inestable fracasada.',d:'Atribución inestable exitosa.',ok:'A',r:'Correcta: A. Atribución estable exitosa. — Extracto: "…un alumno exterioriza “Al ser un estudiante inteligente, consigo buenas calificaciones”, está realizando una atribución estable exitosa que incrementa las perspectivas de éxito en un futuro. Sin embargo, al asumir “No p…" (M2, p. 59)',ref:'59'},
+    {id:6,p:'¿Qué habilidad es necesaria para llegar a acuerdos de manera más efectiva en la resolución de conflictos?',a:'Lenguaje neutral y directo.',b:'Paciencia y tenacidad.',c:'Capacidad de escuchar.',d:'Capacidad para analizar problemas.',ok:'D',r:'Correcta: D. Capacidad para analizar problemas. — Extracto: "…nicas de resolución de conﬂictos: la negociación ueca.euroinnova.com 4 / 4 Capacidad de escuchar activamente. Capacidad para analizar problemas, identificar y separar sus componentes y tomar una decisión acertada. Lengua…" (M2, p. 46)',ref:'46'},
+    {id:7,p:'¿Qué necesidad emocional básica satisfacen las relaciones con los iguales?',a:'Sentirse controlados.',b:'Sentirse superiores.',c:'Sentirse aceptados.',d:'Sentirse solos.',ok:'C',r:'Correcta: C. Sentirse aceptados. — Extracto: "…Las relaciones con los iguales satisfacen una de las necesidades emocionales básicas de las personas, que es sentirse aceptados, integrados entre los compañeros y vinculados afectivamente con los iguales a través de rel…" (M2, p. 20)',ref:'20'},
+    {id:8,p:'¿Cuál es una recomendación para fomentar la educación emocional en la familia?',a:'Ignorar las acciones negativas.',b:'Hacer críticas negativas.',c:'No comentar nada sobre las acciones de los demás.',d:'Hacer críticas constructivas.',ok:'D',r:'Correcta: D. Hacer críticas constructivas. — Extracto: "…n la asertividad, enseñarles a defender sus opiniones y derechos sin causar daño al resto, y también expresar críticas constructivas y a reconocer los propios errores." (M2, p. 34)',ref:'34'},
+    {id:9,p:'¿Qué comportamiento daña la autoestima del menor según el texto?',a:'Sumiso.',b:'Inhibido.',c:'Agresivo.',d:'Pasivo.',ok:'C',r:'Correcta: C. Agresivo. — Extracto: "…se burla de él. Esta actitud daña la autoestima del menor. En el polo opuesto, se encuentra un comportamiento agresivo. En este caso, el niño se defiende, pero lo hace de una manera violenta y dominante sin tener en cuen…" (M2, p. 34)',ref:'34'},
+    {id:10,p:'¿De quién depende en gran medida la motivación de los menores?',a:'De sus amigos.',b:'De sus maestros.',c:'De sus hermanos.',d:'De ellos mismos.',ok:'D',r:'Correcta: D. De ellos mismos. — Extracto: "…os que lo cuidan. Sin embargo, a medida que crecen deben aprender a automotivarse, que la motivación provenga de ellos mismos. Es fundamental que los adultos vayan guiando al niño en la manera adecuada de plantearse obje…" (M2, p. 18)',ref:'18'},
+    {id:11,p:'¿Qué tipo de alumno muestra altos niveles de interés por la adquisición de nuevas habilidades y da importancia al proceso de aprendizaje?',a:'El alumno que se fija metas de aprendizaje.',b:'El alumno que valora los fracasos como un peligro.',c:'El alumno que evita lo negativo.',d:'El alumno que prefiere el rendimiento al riesgo.',ok:'A',r:'Correcta: A. El alumno que se fija metas de aprendizaje. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI151802] Presentació…" (M2, p. 1)',ref:'1'},
+    {id:12,p:'¿Qué estrategia se sugiere para enseñar resolución de problemas a los niños?',a:'Escuchar y preguntar.',b:'Ignorar lo que hacen.',c:'No prestar atención.',d:'No involucrarse.',ok:'A',r:'Correcta: A. Escuchar y preguntar. — Extracto: "…remos que la mejor forma de saber cómo se sienten o qué les gusta a otras personas es atender a lo que hacen, escuchar qué dicen, y preguntar. A través de dibujos o muñecos, podemos representar situaciones que él puede r…" (M2, p. 29)',ref:'29'},
+    {id:13,p:'¿Qué puede generar carencias en las capacidades cognitivas e intelectuales de los niños?',a:'Falta de atención en clase.',b:'Falta de inteligencia emocional.',c:'Falta de habilidades motoras.',d:'Falta de habilidades sociales.',ok:'B',r:'Correcta: B. Falta de inteligencia emocional. — Extracto: "…maestro regule su actitud y su tono afectivo durante su comunicación con los menores. Se ha observado que la falta de inteligencia emocional puede generar carencias en las capacidades cognitivas e intelectuales de los n…" (M2, p. 4)',ref:'4'},
+    {id:14,p:'¿Cuáles son ejemplos de habilidades no verbales en el ámbito social?',a:'Pedir juguetes.',b:'Iniciar conversaciones.',c:'Dar las gracias.',d:'Expresar afecto.',ok:'D',r:'Correcta: D. Expresar afecto. — Extracto: "…saludar y despedirse, decir su nombre, dejar y pedir juguetes, dar las gracias, etc. Habilidades no verbales: expresar el afecto y a alegría, saber aproximarse a un grupo, imitar," (M2, p. 31)',ref:'31'},
+    {id:15,p:'¿Qué son las habilidades sociales en el contexto escolar?',a:'Capacidades para interactuar.',b:'Habilidades deportivas.',c:'Conocimientos académicos.',d:'Habilidades artísticas.',ok:'A',r:'Correcta: A. Capacidades para interactuar. — Extracto: "…y su importancia en la educación. 16. Las habilidades sociales Las habilidades sociales son las habilidades o capacidades que permiten al niño interactuar con las diferentes personas de su entorno, ya sean sus compañeros…" (M2, p. 31)',ref:'31'},
+    {id:16,p:'Según Schaeffer, ¿cuál es el estilo parental que se caracteriza por alto control y baja calidez afectiva?',a:'Estilo autoritario.',b:'Estilo democrático.',c:'Estilo permisivo.',d:'Estilo negligente.',ok:'A',r:'Correcta: A. Estilo autoritario. — Extracto: "…mocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI151803] Examen ueca.euroinnova.com 4 / 10 Estilo autoritario. Estilo negligente. Estilo permisivo. ¿Cuál de los siguientes factores constituye un factor…" (M2, p. 215)',ref:'215'},
+    {id:17,p:'¿Qué diferencia fundamental existe entre el aprendizaje cooperativo y el trabajo en grupo?',a:'El aprendizaje cooperativo no toma en cuenta la responsabilidad individual.',b:'El trabajo en grupo no incluye la interacción cooperativa entre estudiantes.',c:'El aprendizaje cooperativo no requiere planificación ni conocimiento de la dinámica de grupo.',d:'El trabajo en grupo no implica discusión ni resolución de problemas a nivel grupal.',ok:'A',r:'Correcta: A. El aprendizaje cooperativo no toma en cuenta la responsabilidad individual. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Social…" (M2, p. 19)',ref:'19'},
+    {id:18,p:'¿Cuál es una característica del aprendizaje cooperativo?',a:'Implica la participación activa de todos los miembros del grupo.',b:'Es una forma tradicional de trabajo en grupo.',c:'Se basa en la realización individual de tareas.',d:'No requiere colaboración entre los alumnos.',ok:'A',r:'Correcta: A. Implica la participación activa de todos los miembros del grupo. — Extracto: "…rado de conexión, bidireccionalidad, reciprocidad y profundidad de las conversaciones que se establecen en la participación. En función del nivel en el que se presenta estas dimensiones, se distinguen tres tipos de apren…" (M2, p. 22)',ref:'22'},
+    {id:19,p:'¿Qué habilidades de control de las emociones presentan un déficit en los hijos de padres permisivos?',a:'Inteligencia emocional.',b:'Autoestima.',c:'Empatía.',d:'Iniciativa.',ok:'A',r:'Correcta: A. Inteligencia emocional. — Extracto: "…Presentación ueca.euroinnova.com 2 / 3 Objetivos Identificar diferentes emociones. Aprender a desarrollar la inteligencia emocional. Establecer los factores que determinan la elección de metas. Relacionar los éxitos/fra…" (M2, p. 2)',ref:'2'},
+    {id:20,p:'¿Qué es la socialización?',a:'Interiorización de normas.',b:'Proceso de aprendizaje.',c:'Relaciones sociales.',d:'Reconocimiento en la sociedad.',ok:'D',r:'Correcta: D. Reconocimiento en la sociedad. — Extracto: "…s dado el primer paso para el desarrollo de la empatía. Para el desarrollo de la empatía, es fundamental este reconocimiento ya que para poder comprender la razón por la que una persona tiene una determinada emoción, pri…" (M2, p. 24)',ref:'24'},
+    {id:21,p:'¿Qué consecuencias pueden tener los niños que tienen un profesor con estilo sobreprotector?',a:'Desinterés y despreocupación.',b:'Autoestima alta.',c:'Inseguridad para tomar decisiones.',d:'Autoconcepto positivo.',ok:'A',r:'Correcta: A. Desinterés y despreocupación. — Extracto: "…encia personal, lo que les hace buscar constantemente seguridad en otras personas. Estos niños suelen mostrar desinterés y despreocupación por sus asuntos, ya que han cogido el hábito de que siempre se lo solucionan otro…" (M2, p. 14)',ref:'14'},
+    {id:22,p:'¿Qué aspecto es fundamental para enseñar a conocer las emociones?',a:'Identificar las emociones.',b:'Controlar las emociones.',c:'Expresar las emociones.',d:'Ignorar las emociones.',ok:'A',r:'Correcta: A. Identificar las emociones. — Extracto: "…tanto, los objetivos generales de los programas son: Adquirir un mejor conocimiento de las propias emociones. Identificar las emociones de los demás. Desarrollar la habilidad de regular las propias emociones. Prevenir lo…" (M2, p. 6)',ref:'6'},
+    {id:23,p:'¿Cuál es el primer contexto social donde el niño se desenvuelve?',a:'Vecindario.',b:'Familia.',c:'Club deportivo.',d:'Escuela.',ok:'B',r:'Correcta: B. Familia. — Extracto: "…sde la perspectiva cognitivo- motivacional, el desarrollo de aprendizajes cooperativos y la importancia de la familia, entre otros." (M2, p. 1)',ref:'1'},
+    {id:24,p:'¿Qué caracteriza a una familia de acogida?',a:'Vínculo jurídico con los hijos.',b:'Vínculo afectivo sin parentesco biológico.',c:'Vínculo de sexualidad y reproducción.',d:'Vínculo de parentesco tradicional.',ok:'B',r:'Correcta: B. Vínculo afectivo sin parentesco biológico. — Extracto: "…el padre con quienes viven, aunque ambos mantengan entre sí una relación de convivencia, en lugar de tener un vínculo matrimonial. En este modelo, coinciden sexualidad, reproducción y filiación, pero no está presente el…" (M2, p. 88)',ref:'88'},
+    {id:25,p:'¿Qué es un nuevo modelo familiar según el texto?',a:'Familia extensa.',b:'Pareja de hecho heterosexual.',c:'Familia nuclear.',d:'Familia monoparental.',ok:'D',r:'Correcta: D. Familia monoparental. — Extracto: "…sde la perspectiva cognitivo- motivacional, el desarrollo de aprendizajes cooperativos y la importancia de la familia, entre otros." (M2, p. 1)',ref:'1'},
+    {id:26,p:'¿Cuál es una de las funciones fundamentales de la familia en el desarrollo integral infantil?',a:'Estimular conductas para la autonomía de los hijos.',b:'Inhibir la expresión emocional.',c:'Promover la supervivencia familiar.',d:'Fomentar la dependencia emocional.',ok:'A',r:'Correcta: A. Estimular conductas para la autonomía de los hijos. — Extracto: "…e dar a los menores muchas posibilidades de que puedan tener éxito. El objetivo de los adultos se centrará en estimular el aprendizaje, pero sin olvidar sus gustos y las propias habilidades del niño. Sin embargo, también…" (M2, p. 27)',ref:'27'},
+    {id:27,p:'¿Qué caracteriza al estilo educativo punitivo de los profesores?',a:'Castigan de vez en cuando los comportamientos inadecuados.',b:'Elogian el comportamiento sobresaliente.',c:'Prestan poca atención al comportamiento adecuado del alumno.',d:'Ignoran el esfuerzo y el desempeño normal de los alumnos.',ok:'D',r:'Correcta: D. Ignoran el esfuerzo y el desempeño normal de los alumnos. — Extracto: "…ción, de forma intermitente y con muchas amenazas previas. Solamente elogian el comportamiento sobresaliente, ignorando el esfuerzo y el desempeño normal de los alumnos. Estilo inhibicionista Estas personas prestan poca…" (M2, p. 12)',ref:'12'},
+    {id:28,p:'¿Qué emociones suelen predisponer a afrontar una tarea y aportar entusiasmo y disposición a la acción?',a:'Alegría.',b:'Tristeza.',c:'Ira.',d:'Miedo.',ok:'A',r:'Correcta: A. Alegría. — Extracto: "…ar los propios objetivos. Sin embargo, cuando se percibe un logro se experimentan emociones positivas como la alegría. Normalmente, son estas emociones positivas las que predisponen a afrontar una tarea, aportando entusi…" (M2, p. 28)',ref:'28'},
+    {id:29,p:'¿Qué significa la gestión de conflictos en la resolución de problemas?',a:'Ceder en algo para acercar posturas.',b:'Ignorar las diferencias.',c:'Evitar el conflicto a toda costa.',d:'Buscar una posición extrema.',ok:'A',r:'Correcta: A. Ceder en algo para acercar posturas. — Extracto: "…ntre el interés propio y el interés por los demás. Cuando se adopta esta posición, todas las partes tienden a ceder en algo para acercar las posturas y llegar a una solución beneficiosa para todos. Algunas veces," (M2, p. 41)',ref:'41'},
+    {id:30,p:'¿Cuál es el sistema de motivación del alumno para el aprendizaje que aporta mejores resultados según Johnson y Johnson?',a:'Sistema cooperativo compitiendo con grupos de compañeros.',b:'Sistema competitivo.',c:'Sistema individualista.',d:'Sistema cooperativo sin competir con otros grupos de compañeros.',ok:'D',r:'Correcta: D. Sistema cooperativo sin competir con otros grupos de compañeros. — Extracto: "…ivacionales, es decir, el alumnado debe estar motivado e interesado por sus tareas académicas. El aprendizaje cooperativo es un enfoque de enseñanza en el cual se procura utilizar al máximo actividades en las cuales es n…" (M2, p. 1)',ref:'1'},
+  ],
+  [
+    {id:1,p:'¿Quiénes ayudan a los niños a identificar y etiquetar las diferentes emociones?',a:'Maestros.',b:'Psicólogos.',c:'Padres y hermanos.',d:'Amigos.',ok:'C',r:'Correcta: C. Padres y hermanos. — Extracto: "…s habilidades implicadas en la inteligencia emocional, al igual que otras, comienzan con la interacción entre padres, hijos y hermanos. Todos los miembros de la familia ayudan a los niños a identificar y etiquetar las di…" (M2, p. 84)',ref:'84'},
+    {id:2,p:'¿Por qué en el aprendizaje cooperativo la participación y contribución de cada miembro del grupo es fundamental?',a:'Porque se evalúa el trabajo individual de cada miembro.',b:'Porque se busca la dominación de un líder en el grupo.',c:'Porque se busca la competencia entre los miembros.',d:'Porque el resultado final depende del esfuerzo de todos.',ok:'D',r:'Correcta: D. Porque el resultado final depende del esfuerzo de todos. — Extracto: "…ñanza-aprendizaje. El aprendizaje cooperativo se basa en que cada estudiante intenta mejorar su aprendizaje y resultados, pero también el de sus compañeros. Este enfoque depende del intercambio de información entre los e…" (M2, p. 1)',ref:'1'},
+    {id:3,p:'¿Qué implica la adopción en un modelo familiar?',a:'Residencia en el mismo hogar.',b:'Relación de convivencia.',c:'Matrimonio obligatorio.',d:'Filiación sin vínculo biológico.',ok:'D',r:'Correcta: D. Filiación sin vínculo biológico. — Extracto: "…confiere a esta persona una filiación, que sustituye a la filiación de origen. En este modelo se permite una filiación sin vínculo biológico. Familia de acogida: cuestiona aún más el esquema de parentesco tradicional ya…" (M2, p. 88)',ref:'88'},
+    {id:4,p:'¿Qué favorece el ejercicio y la práctica de habilidades sociales en los niños?',a:'Corregir inmediatamente los errores.',b:'Limitar las interacciones sociales.',c:'Ignorar las conductas sociales inapropiadas.',d:'Ofrecer experiencias variadas.',ok:'D',r:'Correcta: D. Ofrecer experiencias variadas. — Extracto: "…orar. En conclusión, en la niñez es cuando se va desarrollando el concepto de uno mismo, a través de diversas experiencias vividas, lo que ven y escuchan en su entorno, y las oportunidades que reciben. Sin embargo, hay q…" (M2, p. 27)',ref:'27'},
+    {id:5,p:'¿Qué tipo de comunicación familiar eleva los niveles de rendimiento académico y autoeficacia en los hijos?',a:'Comunicación unidireccional.',b:'Comunicación autoritaria.',c:'Comunicación pasiva.',d:'Comunicación afectiva y bidireccional.',ok:'D',r:'Correcta: D. Comunicación afectiva y bidireccional. — Extracto: "…iones sobre su propia capacidad y la visión propia del mundo. En este sentido, aquellas familias que usan una comunicación afectiva y bidireccional, respetuosa con las actitudes de independencia, interés, persistencia o…" (M2, p. 58)',ref:'58'},
+    {id:6,p:'¿Qué se reemplaza en la socialización secundaria?',a:'La distribución social del conocimiento.',b:'El aprendizaje de roles.',c:'La carga afectiva.',d:'La división social del trabajo.',ok:'C',r:'Correcta: C. La carga afectiva. — Extracto: "…ligencia emocional ueca.euroinnova.com 3 / 3 El individuo descubre que el mundo de sus padres no es el único. La carga afectiva es reemplazada por técnicas pedagógicas que facilitan el aprendizaje. Se caracteriza por la…" (M2, p. 49)',ref:'49'},
+    {id:7,p:'¿Cuál es la finalidad de la enseñanza de la inteligencia emocional en las instituciones educativas?',a:'Promover el perfeccionismo.',b:'Fomentar la individualidad.',c:'Desarrollar la competitividad.',d:'Equilibrar procesos cognitivos y emocionales.',ok:'D',r:'Correcta: D. Equilibrar procesos cognitivos y emocionales. — Extracto: "…aster Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI151802] Presentación ueca.euroin…" (M2, p. 1)',ref:'1'},
+    {id:8,p:'¿Cuál es el factor fundamental de influencia contextual en el rendimiento académico del alumnado?',a:'La familia.',b:'El contexto escolar.',c:'La comunicación afectiva.',d:'La visión propia del mundo.',ok:'A',r:'Correcta: A. La familia. — Extracto: "…s a los diferentes ambientes educativos: el tipo de actividad, el sistema de evaluación, la actitud docente y la familia. El tipo de actividad resulta fundamental a la hora de definir el esfuerzo y la utilidad que su rea…" (M2, p. 57)',ref:'57'},
+    {id:9,p:'¿Qué actividad se sugiere para enseñar a los niños más pequeños a identificar emociones?',a:'Poner ejemplos de comportamientos adecuados.',b:'Pedir al niño que imite expresiones faciales.',c:'Utilizar apoyo visual.',d:'Realizar actividades de imitación de emociones.',ok:'C',r:'Correcta: C. Utilizar apoyo visual. — Extracto: "…resado por sus tareas académicas. El aprendizaje cooperativo es un enfoque de enseñanza en el cual se procura utilizar al máximo actividades en las cuales es necesaria la ayuda entre estudiantes, ya sea en pares o grupos…" (M2, p. 1)',ref:'1'},
+    {id:10,p:'¿Qué tipo de participación resulta óptima al mostrar interés en el dominio de la actividad?',a:'Participación pasiva.',b:'Participación con ego.',c:'Participación social.',d:'Preocupación por la tarea.',ok:'D',r:'Correcta: D. Preocupación por la tarea. — Extracto: "…r al elegir tareas o metas fáciles. El tipo de participación resulta esencial, encontrando dos tipologías: la preocupación por la tarea, que resulta óptima al mostrar interés en el dominio de la actividad, frente a la pa…" (M2, p. 61)',ref:'61'},
+    {id:11,p:'¿Qué es necesario para desarrollar la conciencia emocional?',a:'Disponer de palabras para denominar las emociones.',b:'Controlar las emociones.',c:'Actuar para cambiar las emociones.',d:'Conocer las emociones propias.',ok:'A',r:'Correcta: A. Disponer de palabras para denominar las emociones. — Extracto: "…agresividad o, en el extremo opuesto, inhibición. Para desarrollar la conciencia emocional es imprescindible disponer de palabras para denominar las emociones. Esto parece obvio, pero al igual que el niño no nace sabien…" (M2, p. 7)',ref:'7'},
+    {id:12,p:'¿Cuál es la teoría de la motivación que enfatiza la capacidad de cada individuo para lograr su crecimiento según sus propias características y la posibilidad de elegir libremente su destino?',a:'Teoría de la Motivación Humana de Maslow.',b:'Teoría de la Motivación de Vroom.',c:'Teoría de la Motivación de Skinner.',d:'Teoría de la Motivación de Herzberg.',ok:'A',r:'Correcta: A. Teoría de la Motivación Humana de Maslow. — Extracto: "…otenciador sobre el que tiene incidencia la acción docente. Desde el plano educativo, se hace referencia a la Teoría de la Motivación Humana de Maslow para explicar cómo el alumnado tiende a satisfacer las necesidades co…" (M2, p. 53)',ref:'53'},
+    {id:13,p:'¿Qué es la asertividad?',a:'Expresión libre de ideas sin respetar a los demás.',b:'Inhibición y agresividad.',c:'Habilidad para expresar ideas y sentimientos propios de manera adecuada.',d:'Actitud dominante y poco empática.',ok:'C',r:'Correcta: C. Habilidad para expresar ideas y sentimientos propios de manera adecuada. — Extracto: "…ecto personal. Generalmente, todas estas características llevan al niño a tener un déficit de autoestima y de habilidades sociales, que influirá en su estado de ánimo, y por tanto afectará a distintas actividades de su v…" (M2, p. 5)',ref:'5'},
+    {id:14,p:'¿Qué aspecto es fundamental para el control de las emociones según el texto?',a:'Tolerancia a la frustración.',b:'Autoestima.',c:'Paciencia.',d:'Empatía.',ok:'A',r:'Correcta: A. Tolerancia a la frustración. — Extracto: "…la frustración Uno de los aspectos más importantes para el control de las emociones que hay que enseñar es la tolerancia a la frustración. Aprender a tolerar la frustración desde pequeños permite que los menores puedan e…" (M2, p. 16)',ref:'16'},
+    {id:15,p:'¿Qué consejo es útil para enseñar al niño a tolerar la frustración?',a:'Ceder ante sus rabietas.',b:'Darle todo hecho.',c:'Marcarle objetivos.',d:'No enseñarle a ser perseverante.',ok:'C',r:'Correcta: C. Marcarle objetivos. — Extracto: "…los padres ceden ante ellas, el pequeño aprenderá que esa es la forma más efectiva de resolver los problemas. Marcarle objetivos: hay que enseñar al niño a tolerar la frustración poniéndole objetivos realistas y razonabl…" (M2, p. 17)',ref:'17'},
+    {id:16,p:'¿Qué caracteriza al aprendizaje cooperativo según la perspectiva de la psicología conductual?',a:'El logro de metas individuales.',b:'Los refuerzos relacionados con la calidad del trabajo del grupo.',c:'La interacción mutua entre los miembros del grupo.',d:'La correlación positiva entre los objetivos individuales y grupales.',ok:'B',r:'Correcta: B. Los refuerzos relacionados con la calidad del trabajo del grupo. — Extracto: "…para acrecentar el nivel de logro de los demás. A lo largo de esta formación, se van a desarrollar contenidos relacionados con la inteligencia emocional y su importancia en la educación, el aprendizaje escolar desde la p…" (M2, p. 1)',ref:'1'},
+    {id:17,p:'¿Cuál es el componente más importante del aprendizaje cooperativo?',a:'Habilidades interpersonales.',b:'Interacción promotora.',c:'Interdependencia positiva.',d:'Responsabilidad individual.',ok:'C',r:'Correcta: C. Interdependencia positiva. — Extracto: "…omponentes del aprendizaje cooperativo ueca.euroinnova.com 2 / 3 El primer componente es el más importante la interdependencia positiva. Ésta se estructura exitosamente cuando los integrantes del grupo sienten que están…" (M2, p. 80)',ref:'80'},
+    {id:18,p:'¿En qué se basa el aprendizaje cooperativo?',a:'En la exclusión de los compañeros.',b:'En el individualismo académico.',c:'En el intercambio de información y la motivación por el aprendizaje propio y el de los demás.',d:'En la competencia entre estudiantes.',ok:'C',r:'Correcta: C. En el intercambio de información y la motivación por el aprendizaje propio y el de los demás. — Extracto: "…ante intenta mejorar su aprendizaje y resultados, pero también el de sus compañeros. Este enfoque depende del intercambio de información entre los estudiantes, los cuales están motivados tanto para lograr su propio apren…" (M2, p. 1)',ref:'1'},
+    {id:19,p:'¿En qué entorno el niño empieza a realizar comparaciones sociales y puede producirse una disminución de la autoestima?',a:'En el parque.',b:'En la biblioteca.',c:'En el hogar.',d:'En la escuela.',ok:'D',r:'Correcta: D. En la escuela. — Extracto: "…por tanto afectará a distintas actividades de su vida cotidiana, entre ellas el aprendizaje y el rendimiento en la escuela. En conclusión, el desarrollo de las habilidades sociales y de la inteligencia emocional es fund…" (M2, p. 5)',ref:'5'},
+    {id:20,p:'¿Cómo se caracteriza el estilo sobreprotector de un profesor?',a:'Evita que el niño tenga conflictos o problemas.',b:'Facilita la comunicación y el respeto del alumno.',c:'Da pautas fijas para el alumno.',d:'Facilita demasiado las tareas.',ok:'A',r:'Correcta: A. Evita que el niño tenga conflictos o problemas. — Extracto: "…muy minuciosa y siempre vigilando que se cumpla. Estos docentes constantemente están guiando y supervisando, evitando que el niño tenga conflictos o problemas. Suelen realizar continuas llamadas de atención sobre riesgo…" (M2, p. 13)',ref:'13'},
+    {id:21,p:'¿Cuál es la necesidad que se relaciona con la liberación de riesgos físicos, logro de la estabilidad y la supervivencia?',a:'Necesidades fisiológicas.',b:'Necesidades de amor y pertenencia.',c:'Necesidades de seguridad.',d:'Necesidades de estima.',ok:'C',r:'Correcta: C. Necesidades de seguridad. — Extracto: "…es desde las más básicas a las más altas: Necesidades fisiológicas. Relacionadas con el ser humano biológico. Necesidades de seguridad. Relacionadas con la liberación de riesgos físicos, logro de la estabilidad y la supe…" (M2, p. 53)',ref:'53'},
+    {id:22,p:'¿Qué se debe hacer para mantener el interés del alumno desde el inicio hasta el final de una actividad?',a:'Valorar la ayuda necesaria de cada alumno.',b:'Realizar evaluaciones comparativas.',c:'No prestar atención a la motivación del alumno.',d:'Comparar los errores individuales y grupales.',ok:'A',r:'Correcta: A. Valorar la ayuda necesaria de cada alumno. — Extracto: "…ligentes, que se caractericen por ser capaces de resaltar los aspectos positivos por encima de los negativos, valorar lo que se ha conseguido, aprendiendo de los errores; es decir, se rigen por la regla de que lo importa…" (M2, p. 1)',ref:'1'},
+    {id:23,p:'¿Cuál es el objetivo del aprendizaje cooperativo?',a:'Maximizar el aprendizaje propio.',b:'Desarrollar aprendizajes individualistas.',c:'Promover el aprendizaje pasivo.',d:'Fomentar la competencia entre estudiantes.',ok:'A',r:'Correcta: A. Maximizar el aprendizaje propio. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Social…" (M2, p. 1)',ref:'1'},
+    {id:24,p:'¿En qué fase del conflicto se produce una acción que frustra la obtención de metas o va contra los intereses de la otra parte?',a:'4ª Fase: resolución de conflictos.',b:'1ª Fase: cognición y personalización.',c:'2ª Fase: comportamiento.',d:'3ª Fase: control del conflicto.',ok:'D',r:'Correcta: D. 3ª Fase: control del conflicto. — Extracto: "…gilando que se cumpla. Estos docentes constantemente están guiando y supervisando, evitando que el niño tenga conflictos o problemas. Suelen realizar continuas llamadas de atención sobre riesgos o peligros, atemorizando…" (M2, p. 13)',ref:'13'},
+    {id:25,p:'¿Qué caracteriza a los padres permisivos según el texto?',a:'No explican las razones.',b:'Fomentan la autonomía.',c:'Controlan estrictamente.',d:'Establecen muchas reglas.',ok:'B',r:'Correcta: B. Fomentan la autonomía. — Extracto: "…figuras que representen algún tipo de autoridad. Además, pueden presentar dificultades en las habilidades de autonomía, autocuidado personal, y otras habilidades sociales. En cuanto a los profesores con estilo sobreprot…" (M2, p. 14)',ref:'14'},
+    {id:26,p:'¿Qué implica la interacción promotora en el aprendizaje cooperativo?',a:'Realización de tareas individuales.',b:'Competencia entre los integrantes del grupo.',c:'Falta de comunicación entre los estudiantes.',d:'Explicación oral de cómo resolver problemas.',ok:'D',r:'Correcta: D. Explicación oral de cómo resolver problemas. — Extracto: "…os estudiantes se involucran en el estímulo del aprendizaje de los demás. La interacción promotora incluye la explicación oral de cómo resolver problemas, la discusión sobre la naturaleza de los conceptos que se están ap…" (M2, p. 80)',ref:'80'},
+    {id:27,p:'¿Qué influencia tiene el clima familiar en el desarrollo emocional de los niños?',a:'Propicia el desarrollo adecuado del niño.',b:'Genera emociones negativas en el niño.',c:'Fomenta la ansiedad y dificultades en la adaptación social.',d:'No tiene influencia en el desarrollo emocional.',ok:'A',r:'Correcta: A. Propicia el desarrollo adecuado del niño. — Extracto: "…dido en el seno de la familia. Algunas familias proporcionan un ambiente familiar positivo y constructivo que propicia el desarrollo adecuado del niño, mientras que otras familias tienen relaciones interpersonales poco a…" (M2, p. 86)',ref:'86'},
+    {id:28,p:'¿En qué se basan las relaciones en la socialización secundaria?',a:'Componente formal.',b:'Carga afectiva.',c:'Relaciones de amistad.',d:'Relaciones familiares.',ok:'A',r:'Correcta: A. Componente formal. — Extracto: "…ormal. Socialización secundaria En el proceso de socialización secundaria, las relaciones están basadas en un componente formal, racional, y que, en general, son relaciones a las cuales la persona se integra opcionalment…" (M2, p. 48)',ref:'48'},
+    {id:29,p:'¿Por qué es fundamental la interacción con los compañeros en el aprendizaje cooperativo?',a:'Porque permite obtener beneficios en la elaboración y construcción del conocimiento.',b:'Porque contribuye a que el estudiante alcance la meta que se ha propuesto en la medida en que los compañeros de su grupo alcanzan las suyas.',c:'Porque permite que el estudiante reconozca que posee unas cualidades y habilidades superiores a las de los compañeros.',d:'Porque ayuda al estudiante a atribuir su éxito en el trabajo de clase tanto a su esfuerzo personal como al esfuerzo realizado por los compañeros del grupo.',ok:'A',r:'Correcta: A. Porque permite obtener beneficios en la elaboración y construcción del conocimiento. — Extracto: "[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KH] Procesos Emocionales, Motivacionales y Sociales en el Aprendizaje Escolar [UDI1517YQ] La intelige…" (M2, p. 6)',ref:'6'},
+    {id:30,p:'¿Cuál es el objetivo fundamental de saber controlar las emociones?',a:'Impulsos fisiológicos.',b:'Bienestar emocional.',c:'Integración cognitiva.',d:'Descontrol emocional.',ok:'B',r:'Correcta: B. Bienestar emocional. — Extracto: "…ional es el objetivo fundamental de saber controlar las emociones, es decir, el objetivo es que el niño tenga bienestar emocional. Para ello, es muy importante no olvidarnos de la concepción más integradora de la persona…" (M2, p. 15)',ref:'15'},
+  ],
+];
+let currentSim=0,currentQ=0,answers=[];
+const LABELS=['A','B','C','D'],KEYS=['a','b','c','d'];
+
+function getScores(){try{return JSON.parse(localStorage.getItem('m2_scores')||'{}');}catch{return{};}}
+function saveScore(i,pct){const s=getScores();s[i]=pct;localStorage.setItem('m2_scores',JSON.stringify(s));}
+
+function renderHome(){
+  const scores=getScores(),grid=document.getElementById('simGrid');
+  grid.innerHTML='';
+  SIMS.forEach((sim,i)=>{
+    const card=document.createElement('div');
+    card.className='sim-card'; card.setAttribute('data-idx', i+1);
+    card.onclick=()=>startQuiz(i);
+    let badge='';
+    if(scores[i]!==undefined){
+      const p=scores[i],cls=p>=70?'pass':p>=50?'partial':'fail';
+      badge=`<div class="sim-score-badge shown ${cls}">${p}% — ${p>=70?'✓ Aprobado':p>=50?'~ En progreso':'✗ A mejorar'}</div>`;
+    }
+    card.innerHTML=`
+      <div class="sim-top">
+        <div class="sim-label">Simulacro 0${i+1}</div>
+        <div class="sim-chip">M2</div>
+      </div>
+      <div class="sim-num">0${i+1}</div>
+      <div class="sim-count">${sim.length} preguntas · opción múltiple</div>
+      ${badge}`;
+    grid.appendChild(card);
+  });
+}
+
+function startQuiz(simIdx){
+  currentSim=simIdx;currentQ=0;answers=new Array(SIMS[simIdx].length).fill(null);
+  document.getElementById('home').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('quizTitle').textContent=`Simulacro 0${simIdx+1} — Módulo 2`;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const sim=SIMS[currentSim],q=sim[currentQ];
+  const correct_so_far=answers.filter(a=>a&&a.correct).length;
+  document.getElementById('progressText').textContent=`Pregunta ${currentQ+1} de ${sim.length}`;
+  document.getElementById('scoreText').textContent=`${correct_so_far} correctas`;
+  document.getElementById('progressFill').style.width=((currentQ+1)/sim.length*100).toFixed(0)+'%';
+
+  const savedAns=answers[currentQ];
+  const opts=KEYS.map((k,i)=>{
+    let cls='';
+    if(savedAns){
+      const l=LABELS[i];
+      if(l===q.ok)cls=savedAns.selected===l?'selected-correct':'show-correct';
+      else if(l===savedAns.selected)cls='selected-wrong';
+    }
+    return `<button class="opt-btn ${cls}" onclick="selectAnswer('${LABELS[i]}')" ${savedAns?'disabled':''}><div class="opt-letter">${LABELS[i]}</div><div>${q[k]}</div></button>`;
+  }).join('');
+
+  let fb='';
+  if(savedAns)fb=`<div class="feedback-box ${savedAns.correct?'correct':'wrong'}" style="display:block"><strong>${savedAns.correct?'✅ ¡Correcto!':'❌ Respuesta incorrecta'}</strong><br>${q.r}<div class="feedback-ref">${q.ref}</div></div>`;
+
+  const isLast=currentQ===sim.length-1;
+  const prevBtn=currentQ>0?`<button class="btn-secondary" onclick="goToPrev()">← Anterior</button>`:`<div></div>`;
+
+  document.getElementById('qWrap').innerHTML=`
+    <div class="q-card fade-in">
+      <div class="q-number"><span class="badge">Pregunta ${currentQ+1} de ${sim.length}</span></div>
+      <div class="q-text">${q.p}</div>
+      <div class="options">${opts}</div>${fb}
+    </div>
+    <div class="quiz-actions">
+      ${prevBtn}
+      <button class="btn-primary" onclick="goToNext()" ${!savedAns?'disabled':''}>${isLast?'🏁 Ver resultados':'Siguiente →'}</button>
+    </div>`;
+}
+
+function selectAnswer(letter){
+  if(answers[currentQ]!==null)return;
+  answers[currentQ]={selected:letter,correct:letter===SIMS[currentSim][currentQ].ok};
+  renderQuestion();
+}
+function goToNext(){
+  if(currentQ<SIMS[currentSim].length-1){currentQ++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+  else showResults();
+}
+function goToPrev(){if(currentQ>0){currentQ--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  const sim=SIMS[currentSim],total=sim.length;
+  const correct=answers.filter(a=>a&&a.correct).length;
+  const pct=Math.round(correct/total*100);
+  saveScore(currentSim,pct);
+  const cls=pct>=70?'pass':pct>=50?'partial':'fail';
+  const msg=pct>=70?'¡Excelente trabajo!':pct>=50?'Buen intento, sigue practicando':'Necesitas repasar más';
+  document.getElementById('scoreRing').className='results-score-ring '+cls;
+  document.getElementById('scorePct').className='score-pct '+cls;
+  document.getElementById('scorePct').textContent=pct+'%';
+  document.getElementById('resultsTitle').textContent=msg;
+  document.getElementById('resultsMeta').textContent=`Simulacro ${currentSim+1} · ${correct} de ${total} correctas`;
+  document.getElementById('statCorr').textContent=correct;
+  document.getElementById('statWrong').textContent=total-correct;
+  document.getElementById('statPct').textContent=pct+'%';
+
+  const list=document.getElementById('reviewList');list.innerHTML='';
+  sim.forEach((q,i)=>{
+    const ans=answers[i];if(!ans)return;
+    const div=document.createElement('div');
+    div.className='review-item '+(ans.correct?'correct':'wrong');
+    const myText=ans.correct?'':`<div class="review-item-ans">❌ Tu respuesta: <span class="my">${ans.selected}. ${q[ans.selected.toLowerCase()]}</span></div>`;
+    div.innerHTML=`<div class="review-item-q"><strong>${i+1}.</strong> ${q.p}</div>${myText}<div class="review-item-ans">${ans.correct?'✅':'✔'} Correcta: <span class="ok">${q.ok}. ${q[q.ok.toLowerCase()]}</span></div><div class="review-item-retro">${q.r} <em>${q.ref}</em></div>`;
+    list.appendChild(div);
+  });
+}
+
+function retryQuiz(){startQuiz(currentSim);}
+function goHome(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('home').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderHome();
+}
+renderHome();
+</script>
+</body>
+</html>

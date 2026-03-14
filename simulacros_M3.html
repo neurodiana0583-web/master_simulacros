@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacros M3 — Atención a la diversidad</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #f0eef8;
+    --bg2:      #ffffff;
+    --bg3:      #e6e2f4;
+    --violet:   #4c1d95;
+    --violet2:  #6d28d9;
+    --violet3:  #ede9fe;
+    --coral:    #e05c3a;
+    --coral2:   #f07858;
+    --coral3:   #fff0ec;
+    --text:     #1e1030;
+    --text2:    #4a3f6b;
+    --muted:    #9585b8;
+    --border:   #d8d0f0;
+    --green:    #059669;
+    --green2:   #d1fae5;
+    --red:      #dc2626;
+    --red2:     #fee2e2;
+    --shadow:   0 2px 20px rgba(76,29,149,.1);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* subtle grid pattern */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image: radial-gradient(circle, rgba(76,29,149,.06) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+  #home, #quiz, #results { position: relative; z-index: 1; }
+
+  /* HEADER */
+  .header {
+    background: var(--violet);
+    padding: 0 32px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 16px rgba(76,29,149,.3);
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-tag {
+    background: var(--coral); color: #fff;
+    font-weight: 800; font-size: .92rem; letter-spacing: .06em;
+    padding: 5px 16px; border-radius: 8px;
+  }
+  .header-title { font-size: 1rem; font-weight: 700; color: #fff; }
+  .header-sub { font-size: .7rem; color: rgba(255,255,255,.55); margin-top: 1px; }
+  .header-badge {
+    font-size: .72rem; color: rgba(255,255,255,.8);
+    border: 1px solid rgba(255,255,255,.25); padding: 4px 14px; border-radius: 20px;
+  }
+
+  /* HOME */
+  #home { max-width: 860px; margin: 0 auto; padding: 56px 24px; }
+
+  .home-hero {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 40px; align-items: center; margin-bottom: 56px;
+  }
+  .hero-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--violet3); color: var(--violet2);
+    font-size: .73rem; font-weight: 700; padding: 6px 16px;
+    border-radius: 20px; margin-bottom: 18px;
+    text-transform: uppercase; letter-spacing: .1em;
+    border: 1px solid rgba(109,40,217,.2);
+  }
+  .home-hero h1 {
+    font-size: 3.2rem; font-weight: 800; line-height: 1.05;
+    color: var(--violet); letter-spacing: -.02em;
+  }
+  .home-hero h1 em { color: var(--coral); font-style: normal; }
+  .home-hero p {
+    font-family: 'Spectral', serif; color: var(--text2);
+    font-size: .95rem; margin-top: 16px; line-height: 1.75;
+    max-width: 460px;
+  }
+  .hero-card {
+    width: 160px; height: 160px; border-radius: 24px;
+    background: var(--bg2); border: 2px solid var(--border);
+    box-shadow: var(--shadow);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center; gap: 4px;
+    flex-shrink: 0;
+  }
+  .hero-card .big { font-size: 3.2rem; font-weight: 800; color: var(--violet); line-height: 1; }
+  .hero-card .small { font-size: .72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+  .hero-bar { height: 4px; width: 48px; border-radius: 2px; margin-top: 8px;
+    background: linear-gradient(90deg, var(--violet2), var(--coral)); }
+
+  .sim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 14px; }
+  .sim-card {
+    background: var(--bg2); border: 2px solid var(--border);
+    border-radius: 18px; padding: 26px 22px;
+    cursor: pointer; transition: all .2s ease; box-shadow: var(--shadow);
+    position: relative;
+  }
+  .sim-card:hover { border-color: var(--violet2); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(76,29,149,.18); }
+  .sim-card-accent {
+    position: absolute; top: 0; right: 0;
+    width: 60px; height: 60px; overflow: hidden; border-radius: 0 18px 0 0;
+  }
+  .sim-card-accent::before {
+    content: '';
+    position: absolute; top: -30px; right: -30px;
+    width: 60px; height: 60px; border-radius: 50%;
+    background: var(--violet3); transition: background .2s;
+  }
+  .sim-card:hover .sim-card-accent::before { background: var(--coral3); }
+  .sim-index {
+    font-size: .72rem; font-weight: 700; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .12em; margin-bottom: 8px;
+  }
+  .sim-num {
+    font-size: 2.6rem; font-weight: 800; color: var(--violet);
+    line-height: 1; margin-bottom: 8px;
+  }
+  .sim-divider { width: 32px; height: 3px; border-radius: 2px; background: var(--coral); margin-bottom: 10px; }
+  .sim-count { font-size: .76rem; color: var(--muted); font-weight: 500; }
+  .sim-score-badge { display: none; margin-top: 10px; font-size: .74rem; font-weight: 700; padding: 4px 12px; border-radius: 8px; width: fit-content; }
+  .sim-score-badge.shown { display: inline-block; }
+  .sim-score-badge.pass { background: var(--green2); color: var(--green); border: 1px solid rgba(5,150,105,.25); }
+  .sim-score-badge.fail { background: var(--red2); color: var(--red); border: 1px solid rgba(220,38,38,.25); }
+  .sim-score-badge.partial { background: var(--coral3); color: var(--coral); border: 1px solid rgba(224,92,58,.25); }
+
+  /* QUIZ */
+  #quiz { display: none; max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .quiz-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .btn-back {
+    background: var(--bg2); border: 2px solid var(--border); color: var(--text2);
+    padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: .82rem;
+    transition: .18s; font-family: 'Outfit', sans-serif; font-weight: 600;
+    box-shadow: var(--shadow);
+  }
+  .btn-back:hover { border-color: var(--violet2); color: var(--violet2); }
+  .quiz-title { font-size: 1.15rem; font-weight: 800; color: var(--violet); flex: 1; }
+
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+  .progress-bar { height: 7px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--violet2), var(--coral)); border-radius: 4px; transition: width .4s ease; }
+
+  .q-card {
+    background: var(--bg2); border: 2px solid var(--border);
+    border-radius: 20px; padding: 34px 30px; margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .q-number {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: .7rem; font-weight: 800; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--coral); margin-bottom: 16px;
+  }
+  .q-number .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--coral); }
+  .q-text { font-family: 'Spectral', serif; font-size: 1.07rem; line-height: 1.75; color: var(--text); margin-bottom: 28px; }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--bg); border: 2px solid var(--border);
+    border-radius: 12px; padding: 14px 18px; cursor: pointer;
+    text-align: left; color: var(--text2);
+    font-family: 'Outfit', sans-serif; font-size: .92rem; line-height: 1.55; font-weight: 400;
+    transition: all .16s ease;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--violet2); background: var(--violet3); color: var(--violet); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    min-width: 28px; height: 28px; border-radius: 8px;
+    background: var(--border); color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .74rem; font-weight: 800;
+    flex-shrink: 0; margin-top: 1px; transition: .16s;
+  }
+  .opt-btn.selected-correct { border-color: var(--green); background: var(--green2); color: #065f46; }
+  .opt-btn.selected-correct .opt-letter { background: var(--green); color: #fff; }
+  .opt-btn.selected-wrong { border-color: var(--red); background: var(--red2); color: #7f1d1d; }
+  .opt-btn.selected-wrong .opt-letter { background: var(--red); color: #fff; }
+  .opt-btn.show-correct { border-color: var(--green); background: var(--green2); opacity: .75; }
+  .opt-btn.show-correct .opt-letter { background: var(--green); color: #fff; }
+
+  .feedback-box {
+    display: none; margin-top: 16px; padding: 16px 20px;
+    border-radius: 12px; font-size: .88rem; line-height: 1.65;
+    animation: fadeUp .28s ease; font-family: 'Spectral', serif;
+  }
+  .feedback-box.correct { background: var(--green2); border: 2px solid rgba(5,150,105,.3); color: #065f46; }
+  .feedback-box.wrong { background: var(--red2); border: 2px solid rgba(220,38,38,.3); color: #7f1d1d; }
+  .feedback-ref { font-size: .78rem; margin-top: 6px; opacity: .65; font-style: italic; }
+
+  .quiz-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .btn-primary {
+    background: var(--violet); color: #fff; border: none;
+    padding: 13px 30px; border-radius: 12px; cursor: pointer;
+    font-size: .9rem; font-weight: 700; transition: .18s;
+    font-family: 'Outfit', sans-serif; letter-spacing: .02em;
+    box-shadow: 0 4px 18px rgba(76,29,149,.35);
+  }
+  .btn-primary:hover { background: var(--violet2); }
+  .btn-primary:disabled { opacity: .35; cursor: default; box-shadow: none; }
+  .btn-secondary {
+    background: var(--bg2); border: 2px solid var(--coral); color: var(--coral);
+    padding: 12px 22px; border-radius: 12px; cursor: pointer;
+    font-size: .88rem; font-weight: 700; transition: .18s;
+    font-family: 'Outfit', sans-serif;
+    box-shadow: var(--shadow);
+  }
+  .btn-secondary:hover { background: var(--coral3); }
+
+  /* RESULTS */
+  #results { display: none; max-width: 700px; margin: 0 auto; padding: 52px 24px 80px; }
+  .results-header { text-align: center; margin-bottom: 44px; }
+  .results-score-ring {
+    width: 140px; height: 140px; border-radius: 50%;
+    margin: 0 auto 24px; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; box-shadow: var(--shadow);
+  }
+  .results-score-ring.pass { background: var(--green2); border: 3px solid var(--green); }
+  .results-score-ring.fail { background: var(--red2); border: 3px solid var(--red); }
+  .results-score-ring.partial { background: var(--coral3); border: 3px solid var(--coral); }
+  .score-pct { font-size: 2.8rem; font-weight: 800; line-height: 1; }
+  .score-pct.pass { color: var(--green); }
+  .score-pct.fail { color: var(--red); }
+  .score-pct.partial { color: var(--coral); }
+  .score-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); margin-top: 4px; font-weight: 600; }
+  .results-title { font-size: 2rem; font-weight: 800; color: var(--violet); margin-bottom: 8px; }
+  .results-meta { font-size: .88rem; color: var(--muted); }
+
+  .results-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 32px 0; }
+  .stat-box {
+    background: var(--bg2); border: 2px solid var(--border);
+    border-radius: 16px; padding: 20px; text-align: center; box-shadow: var(--shadow);
+  }
+  .stat-val { font-size: 2.4rem; font-weight: 800; }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-val.violet { color: var(--violet2); }
+  .stat-lbl { font-size: .7rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
+
+  .review-section { margin-top: 36px; }
+  .review-title { font-size: 1.15rem; font-weight: 800; color: var(--violet); margin-bottom: 16px; }
+  .review-item {
+    background: var(--bg2); border: 2px solid var(--border);
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 10px;
+    border-left: 4px solid transparent; font-size: .87rem; line-height: 1.6;
+    box-shadow: var(--shadow);
+  }
+  .review-item.correct { border-left-color: var(--green); }
+  .review-item.wrong { border-left-color: var(--red); }
+  .review-item-q { color: var(--text); margin-bottom: 6px; font-weight: 500; font-family: 'Spectral', serif; }
+  .review-item-ans { font-size: .81rem; margin-top: 4px; color: var(--text2); }
+  .review-item-ans .my { color: var(--red); font-weight: 700; }
+  .review-item-ans .ok { color: var(--green); font-weight: 700; }
+  .review-item-retro { font-size: .78rem; color: var(--muted); margin-top: 5px; font-style: italic; font-family: 'Spectral', serif; }
+  .results-actions { display: flex; gap: 14px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
+  .fade-in { animation: fadeUp .3s ease; }
+  @media(max-width:600px) {
+    .home-hero { grid-template-columns: 1fr; }
+    .hero-card { display: none; }
+    .home-hero h1 { font-size: 2.4rem; }
+    .q-card { padding: 22px 16px; }
+    .results-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-tag">M3</div>
+    <div>
+      <div class="header-title">Simulacros</div>
+      <div class="header-sub">Atención a la diversidad</div>
+    </div>
+  </div>
+  <div class="header-badge">5 × 30 preguntas</div>
+</div>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-hero">
+    <div class="hero-text">
+      <div class="hero-pill">📗 Módulo 3 · Banco de preguntas</div>
+      <h1>Banco de<br><em>Simulacros</em></h1>
+      <p>Selecciona un simulacro para comenzar tu práctica. Cada uno contiene 30 preguntas de opción múltiple con retroalimentación inmediata.</p>
+    </div>
+    <div class="hero-card">
+      <div class="big">M3</div>
+      <div class="small">5 simulacros</div>
+      <div class="hero-bar"></div>
+    </div>
+  </div>
+  <div class="sim-grid" id="simGrid"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-nav">
+    <button class="btn-back" onclick="goHome()">← Inicio</button>
+    <div class="quiz-title" id="quizTitle"></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-meta"><span id="progressText"></span><span id="scoreText"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div id="qWrap"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="results-header">
+    <div class="results-score-ring" id="scoreRing">
+      <div class="score-pct" id="scorePct"></div>
+      <div class="score-label">puntuación</div>
+    </div>
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-meta" id="resultsMeta"></div>
+  </div>
+  <div class="results-stats">
+    <div class="stat-box"><div class="stat-val green" id="statCorr">0</div><div class="stat-lbl">Correctas</div></div>
+    <div class="stat-box"><div class="stat-val red" id="statWrong">0</div><div class="stat-lbl">Incorrectas</div></div>
+    <div class="stat-box"><div class="stat-val violet" id="statPct">0%</div><div class="stat-lbl">Porcentaje</div></div>
+  </div>
+  <div class="review-section">
+    <div class="review-title">📋 Revisión detallada</div>
+    <div id="reviewList"></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-secondary" onclick="retryQuiz()">🔁 Repetir simulacro</button>
+    <button class="btn-primary" onclick="goHome()">← Volver al inicio</button>
+  </div>
+</div>
+
+<script>
+const SIMS = [
+  [
+    {id:68,p:'¿Cuál es una de las características del lenguaje en niños autistas?',a:'Uso de pronombres de forma correcta.',b:'Comprensión gestual avanzada.',c:'Desarrollo adecuado del lenguaje.',d:'Comunicaciónintencionallimitada.',ok:'D',r:'Correcta: D. Comunicaciónintencionallimitada. Extracto: uado del lenguaje. La comunicación intencional, que se comienza a desarrollar en torno a los 8 meses, se ve muy limitada en autistas. Otras características como la falta de sonrisa social, mirada a las personas, gestos y vocalizaciones comunicativas se hace... (M3, p. 64)',ref:'(M3, p. 64)'},
+    {id:34,p:'¿Cuál es una de las fuentes de influencia cultural en el aprendizaje de un niño?',a:'Los videojuegos.',b:'La música.',c:'El deporte.',d:'Laescuela.',ok:'D',r:'Correcta: D. Laescuela. Extracto: esquema de conocimiento previo para comprensiones futuras y determina su postura ante los diferentes aprendizajes. Se pueden identificar 4 fuentes de influencia cultural: 1. La familia: El bagaje cultural ha sido reconocido como un factor decisivo que deter... (M3, p. 33)',ref:'(M3, p. 33)'},
+    {id:143,p:'¿Cuál es la diferencia principal entre el refuerzo educativo y el apoyo especializado?',a:'El lugar donde se realiza.',b:'Los destinatarios.',c:'La metodología.',d:'El momento en el que se realiza.',ok:'B',r:'Correcta: B. Los destinatarios. Extracto: revio y, en su caso, de un dictamen de escolarización, mientras que el refuerzo no. Según destinatarios: Además de la metodología, pasa con los destinatarios, que también son diferentes, ya que el refuerzo educativo suelen ser alumnos ordinarios y, en algun... (M3, p. 115)',ref:'(M3, p. 115)'},
+    {id:18,p:'¿Cuál es la diferencia entre educación especial y necesidades educativas especiales?',a:'La educación especial se desarrolla de manera transversal en los distintos niveles educativos.',b:'La educación especial no se concibe como la coordinación y conjunción de los diferentes elementos del sistema educativo.',c:'LaeducaciónespecialproveeserviciosyrecursosparaaseguraraprendizajesdecalidadaalumnosconNEE.',d:'La educación especial se considera una disciplina exclusiva para atender a los alumnos con NEE.',ok:'C',r:'Correcta: C. LaeducaciónespecialproveeserviciosyrecursosparaaseguraraprendizajesdecalidadaalumnosconNEE. Extracto: uedan dar respuesta a las necesidades que puedan presentar algunos alumnos de forma transitoria o permanente. Por tanto, podemos establecer diferencias entre educación especial y NEE que presentamos en el siguiente cuadro: Diferencias entre educación especi... (M3, p. 15)',ref:'(M3, p. 15)'},
+    {id:6,p:'¿Qué se entiende por atención a la diversidad en el ámbito educativo?',a:'Promoción de la igualdad.',b:'Fomento de la competencia.',c:'Exclusión de estudiantes.',d:'Uniformidad en el aprendizaje.',ok:'A',r:'Correcta: A. Promoción de la igualdad. Extracto: [AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15182J] Atención a la Diversidad. 10. El plan de aten... (M3, p. 128)',ref:'(M3, p. 128)'},
+    {id:15,p:'¿Qué significa NEE en el contexto educativo?',a:'NecesidadesEducativasEspeciales.',b:'Normativa Educativa Esencial.',c:'Nuevas Estrategias Educativas.',d:'Nivel de Educación Escolar.',ok:'A',r:'Correcta: A. NecesidadesEducativasEspeciales. Extracto: cretos del proceso de educativo y a través de pequeñas modificaciones. Con esta medida se trata de que no haya que adoptar medidas de mayor significación curricular. (P. Blasco). En definitiva, consiste en utilizar los recursos necesarios para que el alumno... (M3, p. 114)',ref:'(M3, p. 114)'},
+    {id:121,p:'¿Cuál es el pronóstico de intervención en la pérdida poslocutiva?',a:'Depende del grado de pérdida.',b:'Negativo.',c:'Positivo.',d:'Incierto.',ok:'C',r:'Correcta: C. Positivo. Extracto: la pérdida tienen lugar cuando el niño ha desarrollado, aunque sea mínimamente, las habilidades básicas de comunicación oral y lenguaje. El pronóstico de intervención es más positivo que en la anterior. Las causas de las pérdidas auditivas pueden ser múltip... (M3, p. 92)',ref:'(M3, p. 92)'},
+    {id:114,p:'¿Qué medida se recomienda para aprovechar el resto visual de los alumnos con déficit visual?',a:'Eliminación de contrastes figura-fondo.',b:'Reducción de la luminosidad.',c:'Programas de entrenamiento de resto visual.',d:'Uso exclusivo de material visual.',ok:'C',r:'Correcta: C. Programas de entrenamiento de resto visual. Extracto: las necesidades de los alumnos y alumnas con déficit visuales van encaminadas a la importancia de aprovechar todo su resto visual mediante: Programas de entrenamiento de resto visual. Completar la información visual con material manipulativo. ueca.euroinnov... (M3, p. 89)',ref:'(M3, p. 89)'},
+    {id:137,p:'¿Qué característica principal tienen las materias optativas como medida de atención a la diversidad?',a:'Alcanzar los objetivos de la etapa por vías diferentes.',b:'Ampliar las materias básicas en caso de una segunda lengua extranjera.',c:'Desarrollar algunas capacidades desde otra perspectiva.',d:'Realizar actividades de elección de estudios posteriores.',ok:'C',r:'Correcta: C. Desarrollar algunas capacidades desde otra perspectiva. Extracto: lista en estos temas, reflexione, planifique y tome decisiones sobre qué medidas de atención a la diversidad son las más adecuadas para las características de su centro, así como decisiones sobre su organización, temporalización, recursos y materiales, etc.... (M3, p. 128)',ref:'(M3, p. 128)'},
+    {id:79,p:'¿Qué aspecto es importante tener en cuenta al trabajar dentro del aula con alumnos autistas?',a:'No explicitar normas sociales.',b:'Respetar su sensibilidad sensorial.',c:'No planificar rutinas.',d:'Crear actividades novedosas.',ok:'B',r:'Correcta: B. Respetar su sensibilidad sensorial. Extracto: a, hay un cuestionario para los profesores. Resumimos los aspectos a tener en cuenta al trabajar dentro del aula con estos alumnos: Debemos respetar su sensibilidad sensorial, especialmente a determinados sonidos que pueden hacerle sentirse incómodo o alter... (M3, p. 70)',ref:'(M3, p. 70)'},
+    {id:47,p:'¿Cuál es el dilema planteado en el contexto de la enseñanza en relación a la educación de personas con discapacidad intelectual?',a:'Dar una educación en unión de todos los alumnos.',b:'Dividirlaeducaciónparadarleacadagrupolaeducaciónquenecesitan.',c:'Rechazar a los alumnos con discapacidad intelectual.',d:'Separar a las personas con problemas intelectuales del resto de su clase.',ok:'B',r:'Correcta: B. Dividirlaeducaciónparadarleacadagrupolaeducaciónquenecesitan. Extracto: cidad intelectual que supuso un cambio radical del paradigma tradicional, aportó una concepción basada en la interacción de la persona y el contexto, alejándose de la concepción de discapacidad intelectual como un rasgo del individuo (Verdugo, 1994). Esto c... (M3, p. 51)',ref:'(M3, p. 51)'},
+    {id:148,p:'¿En qué consisten las adaptaciones curriculares no significativas?',a:'Modificación de la estructura del currículo.',b:'Modificación de elementos de acceso al currículo.',c:'Modificación de los objetivos del currículo.',d:'Modificación de la evaluación del currículo.',ok:'B',r:'Correcta: B. Modificación de elementos de acceso al currículo. Extracto: 0 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15182G] Atención a la Diversidad. 8. Adaptaciones curriculares individualizadas NO SIGNIFICATIVAS: Consiste en la modificación de algunos elementos de acc... (M3, p. 122)',ref:'(M3, p. 122)'},
+    {id:74,p:'¿Qué tipo de técnicas son recursos muy adecuados para organizar las dinámicas de las aulas?',a:'Técnicas de encadenamiento hacia atrás.',b:'Técnicas de interrupción de respuesta.',c:'Técnicas de espera estructurada.',d:' Técnicas de incitación y modelado.',ok:'D',r:'Correcta: D.  Técnicas de incitación y modelado. Extracto: námicas de las aulas. Concretamente, las técnicas como el aprendizaje sin error, la espera estructurada, el encadenamiento hacia atrás, las técnicas de incitación y modelado, la interrupción de respuesta y el uso de recursos de varias modalidades de percepc... (M3, p. 67)',ref:'(M3, p. 67)'},
+    {id:65,p:'¿Quiénes describieron tres patrones distintos de relación social en niños autistas?',a:'Rutter y Tinbergen.',b:'WingyGould.',c:'Loovas y Rutter.',d:'Kanner y Bleuler.',ok:'B',r:'Correcta: B. WingyGould. Extracto: ficit es más acusado en los primeros años de vida ya que en la edad adulta se ha observado variabilidad en estas alteraciones. Wing y Gould describieron tres patrones distintos de relación social: aislado, que evita la interacción de forma activa; pasivo, q... (M3, p. 63)',ref:'(M3, p. 63)'},
+    {id:29,p:'¿Cuál es la diferencia principal entre sujetos impulsivos y sujetos reflexivos en cuanto a tiempos de procesamiento?',a:'Procesamientomáslentoymenoserrores.',b:'Procesamiento más rápido y más errores.',c:'Procesamiento más rápido y menos errores.',d:'Procesamiento más lento y más errores.',ok:'A',r:'Correcta: A. Procesamientomáslentoymenoserrores. Extracto: DI15181B] Diversidad y Atención en el Aula. 6. Tiempos deprocesamiento Diversidad y Atención en el Aula. 6. Tiempos deprocesamiento Podemos diferenciar entre sujetos: Impulsivos, su procesamiento es más rápido, cometen más errores, no miden las consecuencia... (M3, p. 27)',ref:'(M3, p. 27)'},
+    {id:12,p:'Según la normativa actual en atención a la diversidad, ¿en qué tipo de centros se realizaría la escolarización de alumnos con necesidades educativas especiales?',a:'Centros bilingües.',b:'Centros especiales.',c:'Centrosordinarios.',d:'Centros internacionales.',ok:'C',r:'Correcta: C. Centrosordinarios. Extracto: Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI151811] Necesidades Educativas Especiales y Atención a la Diversidad. 3.... (M3, p. 10)',ref:'(M3, p. 10)'},
+    {id:54,p:'¿Cuál es una de las medidas normativas para atender la diversidad en el síndrome de Down?',a:'Intervención temprana.',b:'Tecnologías de apoyo.',c:'Adaptacióncurricular.',d:'Apoyo psicológico.',ok:'C',r:'Correcta: C. Adaptacióncurricular. Extracto: Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI151827] Atención a la Diversidad. 1. Medidas de atención a la div... (M3, p. 101)',ref:'(M3, p. 101)'},
+    {id:32,p:'¿Qué es la autoestima según el texto?',a:'Seguridadenunomismo.',b:'Percepción de los demás.',c:'Éxito académico.',d:'Confianza en los demás.',ok:'A',r:'Correcta: A. Seguridadenunomismo. Extracto: ..) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15181D] Diversidad y Atención en el Aula. 8. Autoestima Diversidad y Atención en el Aula. 8. Autoestima La autoestima se define como la percepción que tenemos de ... (M3, p. 30)',ref:'(M3, p. 30)'},
+    {id:84,p:'¿Cuál es el objetivo del desarrollo del PAD en relación a la mejora del rendimiento académico del alumnado con TDAH?',a:'Mejorar el rendimiento del alumnado con TDAH.',b:'Incrementar la autonomía del profesorado.',c:'Aumentar la capacidad de toma de decisiones del profesorado.',d:'Correlacionar las acciones del profesorado con los resultados.',ok:'A',r:'Correcta: A. Mejorar el rendimiento del alumnado con TDAH. Extracto: sis de necesidades. En relación a las medidas ordinarias, los tutores se ocuparán de seleccionar las estrategias que mejor se adecuen a los objetivos de su curso, ciclo o etapa. Sobre las medidas específicas intervendrán el orientador, el profesor técnico d... (M3, p. 73)',ref:'(M3, p. 73)'},
+    {id:117,p:'¿Qué materiales complementarios pueden necesitar los alumnos con deficiencia visual para acceder al aprendizaje escolar?',a:'Instrumentos musicales.',b:'Material de laboratorio.',c:'Libros adaptados.',d:'Computadoras portátiles.',ok:'C',r:'Correcta: C. Libros adaptados. Extracto: o cuenta con los materiales complementarios que necesita para acceder al aprendizaje escolar, como pueden ser maquetas de diferentes temas, libros adaptados, ábacos, mapas en relieve, etc. Otro aspecto importante a tener en cuenta, es el alumno ciego o con ... (M3, p. 90)',ref:'(M3, p. 90)'},
+    {id:11,p:'Según la Ley Orgánica 2/2006, de 3 de mayo, de Educación, ¿cuál es uno de los principios fundamentales destacados para la educación?',a:'Exclusión de la diversidad.',b:'Competencia entre alumnos.',c:'Igualdad de oportunidades.',d:'Favorecer la discriminación.',ok:'C',r:'Correcta: C. Igualdad de oportunidades. Extracto: tivo. Estas medidas tienen como objetivo garantizar que todos los estudiantes, independientemente de sus características personales, tengan igualdad de oportunidades y puedan acceder a una educación de calidad. En cuanto a las medidas normativas, se refiere... (M3, p. 1)',ref:'(M3, p. 1)'},
+    {id:23,p:'¿Qué teoría señala que existen 7 aptitudes primarias de inteligencia?',a:'Teoría de Binet.',b:'Teoría de la inteligencia general.',c:'Teoría de Howe.',d:'TeoríamultifactorialdeThurstone.',ok:'D',r:'Correcta: D. TeoríamultifactorialdeThurstone. Extracto: d y Atención en el Aula. 2. Inteligencia y aptitudes A la hora, de definir la inteligencia no existe un claro consenso entre las diferentes teorías de los grandes autores. Pero sí debemos destacar que se trata de un concepto peligroso, especialmente, al tra... (M3, p. 21)',ref:'(M3, p. 21)'},
+    {id:139,p:'¿Qué son las medidas extraordinarias de atención a la diversidad?',a:'Medidas para el profesorado.',b:'Medidas para todos los alumnos.',c:'Medidas para un alumno en concreto.',d:'Medidas para el centro educativo.',ok:'C',r:'Correcta: C. Medidas para un alumno en concreto. Extracto: Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI151829] Atención a la Diversidad. 3. Medidas extraordinarias de a... (M3, p. 110)',ref:'(M3, p. 110)'},
+    {id:96,p:'¿Cuál es una característica del Trastorno Desintegrativo Infantil según el DSM IV TR?',a:'Aparición exclusiva en niñas.',b:'Pérdida de implicación social en el inicio del trastorno.',c:'Desarrollo aparentemente normal durante los primeros 2 años posteriores al nacimiento.',d:'Desarrollo del lenguaje expresivo y receptivo gravemente afectado.',ok:'D',r:'Correcta: D. Desarrollo del lenguaje expresivo y receptivo gravemente afectado. Extracto: (aunque con frecuencia la interacción social se desarrolla posteriormente). mala coordinación de la marcha o de los movimientos del tronco. desarrollo del lenguaje expresivo y receptivo gravemente afectado, con retraso psicomotor grave. Se trata de un trast... (M3, p. 79)',ref:'(M3, p. 79)'},
+    {id:5,p:'¿Qué aspectos teóricos se presentarán a lo largo del bloque del curso sobre atención a la diversidad?',a:'Explorar las necesidades educativas especiales.',b:'Analizar la normativa.',c:'Revisar la intervención educativa.',d:'Abordar la diversidad.',ok:'A',r:'Correcta: A. Explorar las necesidades educativas especiales. Extracto: a la diversidad son las más adecuadas para las características de su centro, así como decisiones sobre su organización, temporalización, recursos y materiales, etc., que tendrán que poner en marcha. Finalmente, el plan de atención a la diversidad debe conta... (M3, p. 128)',ref:'(M3, p. 128)'},
+    {id:101,p:'¿Cuál es una de las características que NO cumple el trastorno descrito en el texto?',a:'Interacción social adecuada.',b:'Retraso del desarrollo cognoscitivo.',c:'Retraso general del lenguaje.',d:'Cumplir los criterios de esquizofrenia.',ok:'A',r:'Correcta: A. Interacción social adecuada. Extracto: mo y Otros Trastornos. 9. Definición(...) NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 9. Definición y características El término autismo fue usado por primera vez por Bleuler haciendo referencia a un trastorno del pensa... (M3, p. 63)',ref:'(M3, p. 63)'},
+    {id:36,p:'¿Qué características psicológicas, sociales e intelectuales engloba una persona superdotada?',a:'Inventar, crear o descubrir.',b:'Ninguna de las anteriores.',c:'Buenos resultados académicos.',d:'Relacionesíntimasentrelascosas.',ok:'D',r:'Correcta: D. Relacionesíntimasentrelascosas. Extracto: inherente a la condición humana, esto es, todos los individuos somos diferentes los unos de los otros, estas diferencias comprenden, desde características observables, como lo pueden ser los rasgos físicos y biológicos, hasta características no observables,... (M3, p. 5)',ref:'(M3, p. 5)'},
+    {id:103,p:'¿Qué engloba el autismo atípico?',a:'Casos que cumplen todos los criterios.',b:'Casos que cumplen los criterios de trastorno autista.',c:'Casos con edad de inicio posterior.',d:'Casos con sintomatología atípica.',ok:'D',r:'Correcta: D. Casos con sintomatología atípica. Extracto: tención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15181Y] NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 9. Definición(...) NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros ... (M3, p. 63)',ref:'(M3, p. 63)'},
+    {id:45,p:'¿Cuál es una forma de enriquecimiento para el alumnado con sobredotación?',a:'Adaptacióncurricular.',b:'Misma metodología para todos.',c:'No realizar cambios.',d:'Actividades repetitivas.',ok:'A',r:'Correcta: A. Adaptacióncurricular. Extracto: desarrollo social y relaciones con sus iguales. Además, para una adecuada intervención es necesario: Ofrecer a los profesores una adecuada formación sobre las características de los alumnos superdotados. Ofrecer los recursos, materiales e instrumentos espec... (M3, p. 48)',ref:'(M3, p. 48)'},
+    {id:10,p:'¿Qué aspecto influye en el carácter habitual o extraordinario de las actuaciones pedagógicas para atender las necesidades individuales de los alumnos?',a:'El origen de las diferencias de los alumnos.',b:'El tipo de respuesta educativa ofrecida.',c:'Los recursos y características de cada centro.',d:'Las oportunidades educativas que se brinden.',ok:'B',r:'Correcta: B. El tipo de respuesta educativa ofrecida. Extracto: n, desde características observables, como lo pueden ser los rasgos físicos y biológicos, hasta características no observables, como lo son aspectos personales, emocionales, psicológicos, sociales… Es importante ser conscientes de la existencia de las difer... (M3, p. 5)',ref:'(M3, p. 5)'},
+  ],
+  [
+    {id:113,p:'¿Cuáles son algunos signos en el comportamiento que pueden indicar deficiencia visual?',a:'Echar la cabeza hacia atrás al mirar hacia objetos distantes.',b:'Tener el material muy lejos al leer o escribir.',c:'Guiños frecuentes.',d:'Mover la cabeza en lugar de los ojos.',ok:'D',r:'Correcta: D. Mover la cabeza en lugar de los ojos. Extracto: un ojo. Fatiga inusual al terminar una tarea visual o deterioro de la lectura en períodos prolongados. Uso del dedo o rotulador como guía. Mover la cabeza en lugar de los ojos. Choque con objetos. Fotofobia, es decir, deslumbramiento en interiores y/o exter... (M3, p. 88)',ref:'(M3, p. 88)'},
+    {id:88,p:'¿Qué aspectos se evalúan en el proceso de evaluación del Plan de Atención a la Diversidad?',a:'Resultados deportivos.',b:'Actuaciones previas, medidas establecidas, coordinación, actuaciones familiares, actuaciones del cuerpo docente, alumnado, utilidad de las estrategias.',c:'Participación en actividades extracurriculares.',d:'Ninguna de las anteriores.',ok:'B',r:'Correcta: B. Actuaciones previas, medidas establecidas, coordinación, actuaciones familiares, actuaciones del cuerpo docente, alumnado, utilidad de las estrategias. Extracto: éd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15182J] Atención a la Diversidad. 10. El plan de atención a la diversidad Atención a la Diversidad. 10. El plan de atención a la diversidad El plan de atenció... (M3, p. 128)',ref:'(M3, p. 128)'},
+    {id:135,p:'¿Cuál es una característica de la función tutorial como medida ordinaria de atención a la diversidad?',a:'Ayuda al proceso educativo de algunos alumnos.',b:'Se dirige solo a los alumnos con mayores problemas.',c:'Incluye todas las dimensiones de la personalidad del individuo.',d:'No forma parte de la actividad educativa personalizada.',ok:'C',r:'Correcta: C. Incluye todas las dimensiones de la personalidad del individuo. Extracto: dividualización del aprendizaje de determinados alumnos con mayores dificultades, son una respuesta educativa más ajustada y adecuada a las características y necesidades de esos alumnos. Esta medidas abordan las actuaciones de atención individual que se tom... (M3, p. 110)',ref:'(M3, p. 110)'},
+    {id:63,p:'¿Cuál es la modalidad más adecuada para escolarizar a los alumnos con síndrome de Down en Educación Infantil y Primaria?',a:'Internado en instituciones especializadas.',b:'Educación a distancia.',c:'Integraciónencentrosordinariosconapoyos.',d:'Educación especial exclusiva.',ok:'C',r:'Correcta: C. Integraciónencentrosordinariosconapoyos. Extracto: u capacidad de atención y concentración es baja. Poseen una buena capacidad de imitación, que facilita el aprendizaje de conductas sociales adecuadas, y aprenden viendo a sus compañeros. Presentan una gran tenacidad ante la tarea. No tienen iniciativa para ... (M3, p. 60)',ref:'(M3, p. 60)'},
+    {id:33,p:'¿Qué tipo de motivación se basa en el interés personal del niño por aprender y conocer nuevos aspectos del mundo que les rodea?',a:'Motivación cognitiva.',b:'Motivación social.',c:'Motivaciónintrínseca.',d:'Motivación extrínseca.',ok:'C',r:'Correcta: C. Motivaciónintrínseca. Extracto: las conductas que presentan hacia el aprendizaje, que pueden ser de atención, aburrimiento, distracción, etc. Podemos distinguir diferentes tipos de motivación en nuestros alumnos: Motivación intrínseca, basada en el interés personal del niño por aprender y... (M3, p. 31)',ref:'(M3, p. 31)'},
+    {id:81,p:'¿Cuál es la finalidad educativa perseguida en las aulas de apoyo para el alumnado con TEA?',a:'Desarrollar habilidades para el juego interactivo.',b:'Promover la exclusión del alumnado con TEA.',c:'Fomentar la competencia entre los alumnos.',d:'Enseñar estrategias para el desarrollo del juego interactivo.',ok:'D',r:'Correcta: D. Enseñar estrategias para el desarrollo del juego interactivo. Extracto: 2013, el TDAH (Trastorno por déficit de atención e hiperactividad) queda reconocido en la LOMCE (Ley orgánica para la mejora de la calidad educativa) como necesidad específica de apoyo educativo (NEAE) y no como NEE, aunque se incluye en este apartado para ... (M3, p. 72)',ref:'(M3, p. 72)'},
+    {id:52,p:'¿Qué pauta se sugiere para trabajar las conductas que se quieren eliminar en estos alumnos?',a:'Eliminar todas las conductas de una vez.',b:'Trabajar las conductas rápidamente.',c:'Priorizaraquellasconductasquequeramoseliminar.',d:'No trabajar las conductas.',ok:'C',r:'Correcta: C. Priorizaraquellasconductasquequeramoseliminar. Extracto: y Curriculares [UDI15181S] NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 4. Implicacio(...) siguientes pautas generales: Antes de aplicar cualquier medida de adaptación a las necesidades del alumno debemos de conocer ésta... (M3, p. 55)',ref:'(M3, p. 55)'},
+    {id:13,p:'¿Cuál es el marco orientador y de referencia necesaria para garantizar una educación inclusiva y de calidad a las personas con discapacidad?',a:'LOMCE.',b:'ConvenciónInternacionalsobrelosDerechosdelasPersonasconDiscapacidad.',c:'L.E.A.',d:'Estrategia Europea para un crecimiento inteligente.',ok:'B',r:'Correcta: B. ConvenciónInternacionalsobrelosDerechosdelasPersonasconDiscapacidad. Extracto: girse también a las personas con discapacidad, a quienes se les habrá de garantizar una educación y formación inclusivas y de calidad en el marco de la iniciativa “Juventud en movimiento", planteada por la propia Estrategia Europea para un crecimiento intel... (M3, p. 9)',ref:'(M3, p. 9)'},
+    {id:146,p:'¿Cuál es el objetivo principal de las adaptaciones curriculares individualizadas?',a:'Eliminar la diversidad en el currículo.',b:'Dar respuesta a la diversidad desde el currículo ordinario.',c:'Modificar el currículo ordinario para cada alumno.',d:'Crear un nuevo currículo para cada alumno.',ok:'B',r:'Correcta: B. Dar respuesta a la diversidad desde el currículo ordinario. Extracto: alizadas son estrategias que permiten dar respuesta a las necesidades de aprendizaje de cada alumno en particular. Su objetivo principal es dar respuesta a la diversidad desde el currículo ordinario mediante un aprendizaje lo más individualizado posible. (J... (M3, p. 119)',ref:'(M3, p. 119)'},
+    {id:92,p:'¿Qué medida es importante para ayudar a los alumnos con TDAH a realizar tareas escolares?',a:'Aumentar el esfuerzo atencional de forma progresiva.',b:'Utilizar auriculares con música relajante.',c:'No prestar atención a posibles distracciones.',d:'Imponer un alto nivel de atención desde el principio.',ok:'B',r:'Correcta: B. Utilizar auriculares con música relajante. Extracto: asegurar su comprensión. Uno de los métodos para eliminar determinados estímulos que pueden distraer al alumno mientras realiza la tarea es utilizar auriculares con música relajante. Para el trabajo en el aula es fundamental conseguir ir aumentado de forma ... (M3, p. 77)',ref:'(M3, p. 77)'},
+    {id:104,p:'¿Cuál es una modalidad de escolarización para atender a alumnos con discapacidad intelectual?',a:'Escolarización en un grupo de educación física.',b:'Escolarización en un aula de educación especial.',c:'Escolarización en un grupo ordinario a tiempo completo.',d:'Escolarización en un grupo ordinario con apoyos en periodos variables.',ok:'B',r:'Correcta: B. Escolarización en un aula de educación especial. Extracto: as para el desarrollo de las habilidades cognitivas básicas. Programas de estimulación de lenguaje, de las habilidades sensoriales, etc. 3. Escolarización en un aula de educación especial. Consiste en la atención educativa en un centro ordinario en un aula ... (M3, p. 83)',ref:'(M3, p. 83)'},
+    {id:106,p:'¿Cuál es una de las medidas de atención a la diversidad para alumnos con necesidades educativas especiales?',a:'Realización de Adaptaciones Curriculares Individualizadas.',b:'Participación en actividades extracurriculares.',c:'Aplicación de exámenes estandarizados.',d:'Escolarización en un centro específico.',ok:'D',r:'Correcta: D. Escolarización en un centro específico. Extracto: mo y Otros Trastornos. 14. Respuesta(...) tiempos comunes de la comunidad escolar de forma que se facilite su participación en la misma. 4. Escolarización en un centro específico. Está indicado para aquellos casos en los que no es posible un nivel de integr... (M3, p. 84)',ref:'(M3, p. 84)'},
+    {id:119,p:'¿En qué consiste la hipoacusia conductiva?',a:'Lesión en el oído externo o medio.',b:'Pérdida que impide desarrollo adaptativo a través de la oralidad.',c:'Afecta la calidad y cantidad de la audición.',d:'Lesión en el oído interno.',ok:'A',r:'Correcta: A. Lesión en el oído externo o medio. Extracto: cidad auditiva. 2.1. Definición y clasificación En primer lugar, al hablar de deficiencia auditiva debemos diferenciar entre dos conceptos: Hipoacusia: se refiere a una pérdida parcial de la recepción auditiva, existiendo remanentes auditivos que pueden ser... (M3, p. 91)',ref:'(M3, p. 91)'},
+    {id:80,p:'¿Qué se recomienda para mejorar la comprensión de los alumnos autistas?',a:'Utilizar materiales y apoyo visual.',b:'No explicitar las normas sociales.',c:'Enfatizar el desarrollo de la comunicación.',d:'No organizar el entorno.',ok:'A',r:'Correcta: A. Utilizar materiales y apoyo visual. Extracto: alumno para que no le cree un estado de ansiedad y alteración. Explicitar las normas sociales y cómo debe relacionarse con sus compañeros. Utilizar materiales y apoyo visual para mejorar la comprensión de los alumnos. Enfatizar el desarrollo de la comunicac... (M3, p. 70)',ref:'(M3, p. 70)'},
+    {id:57,p:'¿Cuáles son algunas de las características físicas del síndrome de Down?',a:'Cabeza grande y nariz pequeña.',b:'Cabezapequeñaylenguagrande.',c:'Ojos grandes y boca pequeña.',d:'Manos grandes y orejas pequeñas.',ok:'B',r:'Correcta: B. Cabezapequeñaylenguagrande. Extracto: mo y Otros Trastornos. 6. Definición(...) NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 6. Definición y características ¿Qué es el síndrome de Down? ¿Qué otras características y peculiaridades lleva asociadas? A estas pre... (M3, p. 57)',ref:'(M3, p. 57)'},
+    {id:39,p:'¿Cuál es un instrumento que puede ayudar a los profesores en la identificación temprana de alumnos con sobredotación?',a:'Entrevista a los padres.',b:'Observación en el aula.',c:'Cuestionariodelaconsejeríaandaluza.',d:'Pruebas de coeficiente intelectual.',ok:'C',r:'Correcta: C. Cuestionariodelaconsejeríaandaluza. Extracto: n temprana de los alumnos con sobredotación, nos referimos a los indicadores definidos por Benito (1994) que mostramos a continuación: Otro instrumento que puede ayudar a los profesores en la identificación temprana de estos alumnos ueca.euroinnova.com 1 / 4 (M3, p. 41)',ref:'(M3, p. 41)'},
+    {id:98,p:'¿Cuáles son las áreas en las que se puede presentar una pérdida clínicamente significativa de habilidades previamente adquiridas en el trastorno de Asperger?',a:'Habilidades motoras y juego.',b:'Control intestinal y habilidades motoras.',c:'Lenguaje expresivo y habilidades sociales.',d:'Habilidades sociales y control vesical.',ok:'C',r:'Correcta: C. Lenguaje expresivo y habilidades sociales. Extracto: o. B. Pérdida clínicamente significativa de habilidades previamente adquiridas (antes de los 10 años) en por lo menos dos de las siguientes áreas: Lenguaje expresivo o receptivo Habilidades sociales o comportamiento adaptativo control intestinal o vesical J... (M3, p. 80)',ref:'(M3, p. 80)'},
+    {id:112,p:'¿Qué necesitan los alumnos con ceguera y déficit visual en el ámbito educativo?',a:'Un método diferente de acceder al mundo que les rodea.',b:'Reconocer puntos clave que les informen de dónde se encuentran.',c:'Aprender a utilizar el bastón para moverse con seguridad.',d:'Potenciar el sentido del olfato.',ok:'A',r:'Correcta: A. Un método diferente de acceder al mundo que les rodea. Extracto: al. 1. Deficiencia visual determinadas por su falta de visión y los problemas asociados a la misma. Los alumnos y alumnas ciegos necesitan: Un método diferente de acceder al mundo que les rodea, esto es, los profesores deben potenciar el resto de los sentid... (M3, p. 89)',ref:'(M3, p. 89)'},
+    {id:8,p:'¿Qué significa atender a la diversidad en el ámbito educativo?',a:'Adaptar la enseñanza a las necesidades individuales.',b:'Discriminar a los alumnos por sus diferencias.',c:'Separar a los alumnos según sus características.',d:'Ignorar las diferencias entre los alumnos.',ok:'A',r:'Correcta: A. Adaptar la enseñanza a las necesidades individuales. Extracto: ebemos aprender a ver el valor positivo y enriquecedor de las diferencias que nos definen a cada cual como una persona única e irrepetible. Atender a la diversidad hace referencia a atender a cada persona de acuerdo a sus características y necesidades indiv... (M3, p. 5)',ref:'(M3, p. 5)'},
+    {id:99,p:'¿Cuáles son las características que deben manifestarse para diagnosticar el trastorno de Asperger?',a:'Alteración del lenguaje hablado y ausencia de juego realista variado.',b:'Incapacidad para desarrollar relaciones con compañeros y retraso en el lenguaje hablado.',c:'Ausencia de reciprocidad social o emocional y estereotipias motoras.',d:'Alteración cualitativa de la interacción social y patrones de comportamiento repetitivos.',ok:'D',r:'Correcta: D. Alteración cualitativa de la interacción social y patrones de comportamiento repetitivos. Extracto: mo y Otros Trastornos. 9. Definición(...) NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 9. Definición y características El término autismo fue usado por primera vez por Bleuler haciendo referencia a un trastorno del pensa... (M3, p. 63)',ref:'(M3, p. 63)'},
+    {id:61,p:'¿Cuál es una de las implicaciones educativas del síndrome de Down según el texto?',a:'Alta capacidad de atención y concentración.',b:'Baja capacidad de imitación.',c:'Necesidaddetiemposderespuestaamplios.',d:'Iniciativa para participar y intervenir.',ok:'C',r:'Correcta: C. Necesidaddetiemposderespuestaamplios. Extracto: e DOWN, Autismo y Otros Trastornos. 7. Implicacio(...) NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 7. Implicaciones educativas Cuando tratamos el tema de alumnos con síndrome de Down debemos destacar la gran heterogenei... (M3, p. 60)',ref:'(M3, p. 60)'},
+    {id:105,p:'¿En qué consiste la estrategia de adaptación en la atención a la diversidad?',a:'Adaptar a los alumnos a un único nivel curricular.',b:'Aplicar las mismas estrategias para todos los alumnos.',c:'Eliminar cualquier tipo de adaptación curricular.',d:'Adaptar progresivamente la respuesta educativa a las necesidades particulares de los alumnos.',ok:'D',r:'Correcta: D. Adaptar progresivamente la respuesta educativa a las necesidades particulares de los alumnos. Extracto: [AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI151811] Necesidades Educativas Especiales y Atención ... (M3, p. 10)',ref:'(M3, p. 10)'},
+    {id:118,p:'¿Cuál es la diferencia entre hipoacusia y sordera?',a:'Lesión en oído externo vs. lesión en oído interno.',b:'Mejor pronóstico vs. pronóstico severo a grave.',c:'Pérdida parcial vs. ausencia total.',d:'Potencialmente funcional vs. pérdida que impide desarrollo adaptativo.',ok:'C',r:'Correcta: C. Pérdida parcial vs. ausencia total. Extracto: sticas definitorias de la discapacidad auditiva. 2.1. Definición y clasificación En primer lugar, al hablar de deficiencia auditiva debemos diferenciar entre dos conceptos: Hipoacusia: se refiere a una pérdida parcial de la recepción auditiva, existiendo re... (M3, p. 91)',ref:'(M3, p. 91)'},
+    {id:70,p:'¿Qué se aconseja en cuanto a las adaptaciones en el aula para personas con TEA?',a:'Queseeviteelaislamientoconrespectoasugrupo.',b:'Que haya varios profesionales con poca coordinación.',c:'Que se excluyan a los iguales y figuras adultas significativas.',d:'Que se restrinja el ambiente de aprendizaje.',ok:'A',r:'Correcta: A. Queseeviteelaislamientoconrespectoasugrupo. Extracto: ntes de cambio evolutivo, capacitándolos para que puedan jugar un papel de coterapeutas. En cuanto a las adaptaciones en el aula: Lo que se aconseja es que haya varios profesionales (especialistas, maestros, auxiliares…), entre los que debe existir una gran... (M3, p. 65)',ref:'(M3, p. 65)'},
+    {id:35,p:'¿Cuál es el principal método de evaluación que debe utilizar un profesor para conocer las debilidades y potencialidades de sus alumnos?',a:'Entrevistas individuales.',b:'Pruebas estandarizadas.',c:'Exámenes escritos.',d:'Observacióndelosalumnos.',ok:'D',r:'Correcta: D. Observacióndelosalumnos. Extracto: atados anteriormente, en todos y cada uno de nuestros alumnos. Pero todo dependerá de si utilizamos los métodos adecuados de evaluación. El principal método de evaluación que debe utilizar un profesor es la observación de sus alumnos para reconocer en él su... (M3, p. 34)',ref:'(M3, p. 34)'},
+    {id:129,p:'¿Cuál es una de las dimensiones que el alumno con discapacidad auditiva debe desarrollar?',a:'Capacidad gustativa.',b:'Capacidad visual.',c:'Capacidad fonoarticulatoria.',d:'Capacidad olfativa.',ok:'C',r:'Correcta: C. Capacidad fonoarticulatoria. Extracto: con las que se encuentran los alumnos con déficit auditivo, tenemos: Desarrollo del lenguaje oral y escrito. El alumno debe desarrollar su capacidad fonoarticulatoria en la medida de lo posible. Así como adquirir la lectura y escritura para poder ser autóno... (M3, p. 98)',ref:'(M3, p. 98)'},
+    {id:107,p:'¿Qué es la ceguera legal según López Justicia?',a:'Deficiencia en el funcionamiento visual.',b:'Ausencia total de visión.',c:'Percepción de luz sin proyección.',d:'Déficit visual que impide el trabajo.',ok:'D',r:'Correcta: D. Déficit visual que impide el trabajo. Extracto: ausencia total de visión. Al hablar de deficiencia visual debemos de diferenciar, según López Justicia, para ser precisos, tres términos: - Ceguera real: se utilizar para aludir a personas que carecen totalmente de visión, o bien que tienen percepción de lu... (M3, p. 85)',ref:'(M3, p. 85)'},
+    {id:49,p:'¿En qué se diferencia la discapacidad intelectual de la demencia?',a:'Deterioro generalizado.',b:'Pérdida de funcionamiento previo.',c:'Malfuncionamientodesdeelinicio.',d:'Alteración circunscrita a un área específica.',ok:'C',r:'Correcta: C. Malfuncionamientodesdeelinicio. Extracto: stornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15181Q] NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 2. Definición(...) NEE:(Discapacidad Int... (M3, p. 51)',ref:'(M3, p. 51)'},
+    {id:90,p:'¿Cuáles son algunas de las mejoras que se pueden conseguir con la puesta en marcha de medidas para atender a alumnos con TDAH?',a:'Aumento de la agresividad.',b:'Disminución de la autoestima.',c:'Reducción de la nota media.',d:'Potenciación de las relaciones familiares.',ok:'D',r:'Correcta: D. Potenciación de las relaciones familiares. Extracto: ón común de calidad para todos y en la igualdad de oportunidades. Este tipo de medidas tienen un carácter organizativo y metodológico y son puestas en marcha para garantizar una atención de carácter más individualizado. Las medidas específicas son aquellas ... (M3, p. 72)',ref:'(M3, p. 72)'},
+    {id:72,p:'¿Qué tipo de materiales son recomendados para estimular la percepción y las sensaciones en niños con necesidades educativas especiales?',a:'Materialesdeestimulaciónbasal.',b:'Materiales de cálculo.',c:'Materiales de lectura.',d:'Materiales de escritura.',ok:'A',r:'Correcta: A. Materialesdeestimulaciónbasal. Extracto: y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI151813] Necesidades Educativas Especiales y Atención a la Diversidad. 5.ConceptoN.E.E. Necesidades Educativas Especiales y At... (M3, p. 13)',ref:'(M3, p. 13)'},
+  ],
+  [
+    {id:122,p:'¿Qué aspecto puede indicar la presencia de dificultades auditivas en un alumno?',a:'Se queja de picor en los oídos.',b:'Tiene un vocabulario rico.',c:'Participa activamente en actividades lúdicas colectivas.',d:'Se distrae con facilidad.',ok:'A',r:'Correcta: A. Se queja de picor en los oídos. Extracto: uidado las relaciones que estos alumnos desarrollen con sus compañeros y fomentar la integración con alumnos sin deficiencias auditivas. Un aspecto decisivo en el desarrollo de los alumnos con deficiencia auditiva es la familia, el hecho de que la familia p... (M3, p. 94)',ref:'(M3, p. 94)'},
+    {id:50,p:'¿Cómo se diferencia la discapacidad intelectual de los trastornos del aprendizaje?',a:'Alteraciones cualitativas en la interacción social.',b:'Deteriorogeneralizado.',c:'Problemas para la adaptación al entorno.',d:'Alteración circunscrita a un área específica.',ok:'B',r:'Correcta: B. Deteriorogeneralizado. Extracto: stornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15181Q] NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 2. Definición(...) NEE:(Discapacidad Int... (M3, p. 51)',ref:'(M3, p. 51)'},
+    {id:149,p:'¿Qué elementos pueden ser modificados en una adaptación curricular individualizada?',a:'Metodología, temporalización y organización de espacios.',b:'Criterios de promoción y titulación, organización de apoyos educativos y seguimiento de progresos.',c:'Datos relevantes del Informe de evaluación psicopedagógica, áreas o materias adaptadas y criterios de evaluación.',d:'Objetivos, contenidos y criterios de evaluación.',ok:'D',r:'Correcta: D. Objetivos, contenidos y criterios de evaluación. Extracto: nza-aprendizaje y evaluación con el fin de atender a la diversidad sin modificar los elementos prescriptivos del currículum como lo son los objetivos, contenidos y criterios de evaluación. Estas medidas presentan las siguientes características: Son preventi... (M3, p. 102)',ref:'(M3, p. 102)'},
+    {id:150,p:'¿En qué consisten las adaptaciones curriculares individualizadas?',a:'Ampliación de contenidos.',b:'Reducción de un año de permanencia en educación secundaria.',c:'Eliminación de barreras arquitectónicas.',d:'Ayudas técnicas y tecnológicas.',ok:'A',r:'Correcta: A. Ampliación de contenidos. Extracto: ficación en los esquemas de conocimiento individuales. El aprendizaje significativo debe suponer una intensa actividad por parte del alumno consistente en establecer relaciones seguras entre el nuevo contenido y los esquemas de conocimiento ya existentes. L... (M3, p. 119)',ref:'(M3, p. 119)'},
+    {id:110,p:'¿Cuáles son algunas de las características asociadas a la deficiencia visual a nivel motor?',a:'Retraso en el desarrollo de la motricidad fina.',b:'Facilidad para establecer la propia situación personal en relación con el espacio.',c:'Conductas autoestimulantes como balanceo corporal.',d:'Mayor capacidad de generación discursiva.',ok:'A',r:'Correcta: A. Retraso en el desarrollo de la motricidad fina. Extracto: nes o características más frecuentes asociadas al déficit visual y ceguera. A nivel motor: Retraso al empezar a caminar (no suelen gatear). Retraso en el desarrollo de la motricidad fina. Presencia de estereotipias (gestos faciales, posturas…) Ausencia o es... (M3, p. 86)',ref:'(M3, p. 86)'},
+    {id:2,p:'¿Cuál es una medida ordinaria de atención a la diversidad en el ámbito educativo?',a:'El refuerzo educativo.',b:'La repetición de curso.',c:'La educación compensatoria.',d:'Adaptaciones curriculares individualizadas.',ok:'A',r:'Correcta: A. El refuerzo educativo. Extracto: n insuficientes. Entre las medidas extraordinarias de atención a la diversidad, analizaremos: Las diferentes modalidades de escolarización. El refuerzo educativo. La repetición de curso. La educación compensatoria. Adaptaciones curriculares individualizadas... (M3, p. 110)',ref:'(M3, p. 110)'},
+    {id:130,p:'¿Cuáles son algunas de las respuestas educativas para alumnos con déficit sensorial?',a:'Escolarización en centros específicos de ciegos o sordos.',b:'Escolarización en centros específicos no especializados en déficit sensoriales.',c:'Realización de Adaptaciones Curriculares Generales.',d:'Escolarización en centros ordinarios sin recursos adaptados.',ok:'A',r:'Correcta: A. Escolarización en centros específicos de ciegos o sordos. Extracto: ficit sensorial, podemos destacar: 1. Una escolarización adecuada a las necesidades de los alumnos con déficit sensorial, que puede ser: La escolarización en centros específicos de ciegos o sordos según corresponda, estos centros imparten las enseñanzas cor... (M3, p. 100)',ref:'(M3, p. 100)'},
+    {id:60,p:'¿Cuáles son algunas de las características lingüísticas de las personas con síndrome de Down?',a:'Faltadehabilidadescomunicativas.',b:'Desarrollo rápido.',c:'Gran vocabulario.',d:'Comprensión avanzada.',ok:'A',r:'Correcta: A. Faltadehabilidadescomunicativas. Extracto: mo y Otros Trastornos. 6. Definición(...) NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 6. Definición y características ¿Qué es el síndrome de Down? ¿Qué otras características y peculiaridades lleva asociadas? A estas pre... (M3, p. 57)',ref:'(M3, p. 57)'},
+    {id:93,p:'¿Qué riesgo aumenta si un alumno con TDAH también tiene baja capacidad intelectual?',a:'Riesgo de problemas de atención.',b:'Riesgo de rechazo social.',c:'Riesgo de fracaso escolar.',d:'Riesgo de retraso curricular.',ok:'D',r:'Correcta: D. Riesgo de retraso curricular. Extracto: más, como tantas otras, que existe y es parte de nuestra sociedad. La AAMR (Asociación Americana sobre discapacidad intelectual) en 2002 mantiene los tres criterios para designar la discapacidad intelectual como: Limitaciones significativas en el funcionami... (M3, p. 51)',ref:'(M3, p. 51)'},
+    {id:82,p:'¿En qué consisten las medidas específicas dentro del Plan de Atención a la Diversidad?',a:'Son medidas que se aplican cuando las medidas generales no han tenido éxito.',b:'Son medidas para alumnado con discapacidad intelectual.',c:'Son medidas para garantizar una atención individualizada a todo el alumnado.',d:'Son medidas organizativas y metodológicas para todo el alumnado.',ok:'A',r:'Correcta: A. Son medidas que se aplican cuando las medidas generales no han tenido éxito. Extracto: Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15182J] Atención a la Diversidad. 10. El plan de atención a la di... (M3, p. 128)',ref:'(M3, p. 128)'},
+    {id:144,p:'¿Cuándo se aplica la repetición de curso como medida extraordinaria de atención a la diversidad?',a:'Cuando un alumno no ha superado un número determinado de materias.',b:'Cuando un alumno tiene dificultades de adaptación.',c:'Cuando un alumno necesita un reforzamiento curricular.',d:'Cuando un alumno necesita un cambio de escuela.',ok:'A',r:'Correcta: A. Cuando un alumno no ha superado un número determinado de materias. Extracto: do los resultados esperados. La decisión de que un alumno o alumna repita o no es tomada por el equipo docente en la reunión de evaluación, cuando un alumno no ha superado un número determinado de materias. Dicha decisión debe de ir acompañado de una serie ... (M3, p. 117)',ref:'(M3, p. 117)'},
+    {id:37,p:'¿Cuál es una característica del alumnado con sobredotación según Genovard y Taylor?',a:'Eficacia en cualquier contexto.',b:'Interrelacionanlasinformaciones.',c:'Resultados excepcionales sistemáticos.',d:'Curiosidad por el \'por qué\'',ok:'B',r:'Correcta: B. Interrelacionanlasinformaciones. Extracto: s importantes: la motivación y el comportamiento de los alumnos superdotados. Para este autor, los alumnos se definen por tres conjuntos de características: Capacidad intelectual superior a la media: con la evidencia de una alta productividad: rendimiento e... (M3, p. 37)',ref:'(M3, p. 37)'},
+    {id:125,p:'¿Cuál es la principal necesidad educativa de los alumnos con déficit auditivo?',a:'Optimizar la audición con prótesis.',b:'Utilizar la lengua de signos.',c:'Desarrollar la lectura labial.',d:'Comprender a su interlocutor.',ok:'B',r:'Correcta: B. Utilizar la lengua de signos. Extracto: rece muchas posibilidades dentro del aula al profesor para optimizar los procesos de enseñanza aprendizaje. 2.4. Necesidades educativas Las principales necesidades educativas con las que se encuentran los alumnos con déficit auditivo, son: a) Necesidad de u... (M3, p. 95)',ref:'(M3, p. 95)'},
+    {id:28,p:'¿Qué tipo de sujetos utilizan una información más global hacia el aprendizaje y el desarrollo de la comprensión?',a:'Ambos.',b:'Serialistas.',c:'Ninguno.',d:'Holistas.',ok:'D',r:'Correcta: D. Holistas. Extracto: samiento estratégico de la información Diversidad y Atención en el Aula. 5. Procesamiento estratégico de la información Nos encontramos con sujetos holistas y los serialistas: Los holistas utilizan una información más global hacia el aprendizaje y el desarr... (M3, p. 26)',ref:'(M3, p. 26)'},
+    {id:53,p:'¿Qué trastorno se relaciona con el síndrome de Down?',a:'Autismo.',b:'Trastorno del lenguaje.',c:'TDAH.',d:'Dislexia.',ok:'A',r:'Correcta: A. Autismo. Extracto: [AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15181Z] NEE:(Discap (M3, p. 68)',ref:'(M3, p. 68)'},
+    {id:31,p:'¿Qué prueba diagnóstica se ha elaborado para conocer los estilos de aprendizaje de los alumnos?',a:'HACAE.',b:'EACHA.',c:'CEADA.',d:'CHAEA.',ok:'D',r:'Correcta: D. CHAEA. Extracto: e Aprendizaje de su alumnado para poder favorecer el proceso de enseñanza - aprendizaje. C. Alonso, D. Gallego y P. Honey han elaborado una prueba diagnóstica: CHAEA (Cuestionario Honey - Alonso de Estilos de Aprendizaje). Para conocer el estilo de aprendiz... (M3, p. 29)',ref:'(M3, p. 29)'},
+    {id:109,p:'¿Qué es el campo visual?',a:'El área de espacio físico que somos capaces de ver cuando el cuerpo, la cabeza y los ojos están fijos en un punto.',b:'La habilidad para distinguir colores.',c:'La agudeza visual.',d:'La capacidad de ver objetos en movimiento.',ok:'A',r:'Correcta: A. El área de espacio físico que somos capaces de ver cuando el cuerpo, la cabeza y los ojos están fijos en un punto. Extracto: pués de tratamiento y /o corrección óptica, permite al afectado mantener una agudeza visual comprendida entre 6/8 y percepción de luz, o un campo visual menos de 10 grados, pero que puede usar la visión para la planificación o ejecución de la tarea”. La def... (M3, p. 85)',ref:'(M3, p. 85)'},
+    {id:73,p:'¿Qué tipo de ayudas son las más idóneas para las personas con TEA?',a:' Ayudas visuales.',b:'Ayudas emocionales.',c:'Ayudas verbales.',d:'Ayudas físicas.',ok:'A',r:'Correcta: A.  Ayudas visuales. Extracto: secuencias, referencias de color) y verbales (instrucciones más sencillas, explicaciones, ánimos y refuerzo, instigación). En general, las ayudas visuales son las más idóneas para las personas con TEA ya que proporcionan información estable, predecible, y c... (M3, p. 67)',ref:'(M3, p. 67)'},
+    {id:71,p:'¿Cuáles son las áreas prioritarias que se deben desarrollar en las actividades para niños con necesidades educativas especiales?',a:'Deportes y recreación.',b:'Arte y música.',c:'Matemáticas y ciencias.',d:'Hábitos,comunicación,autonomíaysocialización.',ok:'D',r:'Correcta: D. Hábitos,comunicación,autonomíaysocialización. Extracto: na actividad en la forma y dentro del marco que se considera normal para un ser humano (serán excesos o insuficiencias en la realización de actividades rutinarias). Minusvalía: situación desventajosa para una persona, consecuencia social de una deficiencia ... (M3, p. 13)',ref:'(M3, p. 13)'},
+    {id:75,p:'¿Cuál es la principal característica que diferencia la esquizofrenia infantil del autismo?',a:'Historia familiar de psicosis.',b:'Alteraciones del pensamiento.',c:'Respuesta a tratamientos.',d:'Inicio temprano.',ok:'C',r:'Correcta: C. Respuesta a tratamientos. Extracto: mparte ciertas características esenciales con otras alteraciones infantiles de las que es necesario diferenciar: Esquizofrenia infantil: la principal característica de diferencia este trastorno del autismo es que su inicio es más tardío, después de los 5 añ... (M3, p. 68)',ref:'(M3, p. 68)'},
+    {id:140,p:'¿Cuál es la modalidad de escolarización en la que se atiende al alumnado que puede seguir el desarrollo del currículo ordinario con ayudas técnicas necesarias o con aplicación de medidas de adaptación curricular o de refuerzo educativo?',a:'Grupo ordinario con asistencia al aula de apoyo en periodos variables.',b:'Modalidad de escolarización más adecuada según las necesidades.',c:'Unidades o centros de educación especial.',d:'Grupo ordinario a tiempo completo.',ok:'D',r:'Correcta: D. Grupo ordinario a tiempo completo. Extracto: ión e integración de los alumnos: Respecto a las Modalidades de escolarización: nos encontramos con las siguientes: 1. Escolarización en un grupo ordinario a tiempo completo. Esta modalidad supone su integración total en un grupo ordinario, lo que implica u... (M3, p. 83)',ref:'(M3, p. 83)'},
+    {id:141,p:'¿En qué modalidad de escolarización se atiende al alumnado cuyas necesidades educativas especiales y grado de desfase curricular requieren un currículo adaptado significativamente?',a:'Alumnado en centros específicos.',b:'No se menciona en el texto.',c:'Aula ordinaria.',d:'Aula de educación especial.',ok:'D',r:'Correcta: D. Aula de educación especial. Extracto: de las habilidades cognitivas básicas. Programas de estimulación de lenguaje, de las habilidades sensoriales, etc. 3. Escolarización en un aula de educación especial. Consiste en la atención educativa en un centro ordinario en un aula específica de educació... (M3, p. 83)',ref:'(M3, p. 83)'},
+    {id:131,p:'¿Qué son las medidas de atención a la diversidad en un centro educativo?',a:'Actuaciones para mejorar la infraestructura.',b:'Acciones para promover la igualdad de género.',c:'Actividades extracurriculares.',d:'Actuaciones para atender a la diversidad del alumnado.',ok:'D',r:'Correcta: D. Actuaciones para atender a la diversidad del alumnado. Extracto: Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI151827] Atención a la Diversidad. 1. Medidas de atención a la div... (M3, p. 101)',ref:'(M3, p. 101)'},
+    {id:62,p:'¿Qué tipo de información comprenden mejor las personas con síndrome de Down según el texto?',a:'Información táctil.',b:'Información auditiva.',c:'Información olfativa.',d:'Informaciónvisual.',ok:'D',r:'Correcta: D. Informaciónvisual. Extracto: dificultades de aprendizaje pueden ser compensadas en el sistema educativo. Los alumnos con este síndrome reciben, procesan y organizan la información con dificultad y lentitud por lo que debemos darles tiempos de respuesta amplios, pero con paciencia y per... (M3, p. 60)',ref:'(M3, p. 60)'},
+    {id:86,p:'¿Cuál es el punto más importante del Programa de Atención a la Diversidad para el TDAH?',a:'Evaluación de resultados.',b:'Puesta en práctica.',c:'Selección de medidas.',d:'Análisis de necesidades.',ok:'C',r:'Correcta: C. Selección de medidas. Extracto: a la diversidad que se estructuran en un centro, tanto, ordinarias como extraordinarias. (J. Cabrerizo y J. Rubio). Para su elaboración es importante conocer las necesidades educativas específicas del alumnado del centro, y que el profesorado, coordinado po... (M3, p. 128)',ref:'(M3, p. 128)'},
+    {id:85,p:'¿Quiénes intervienen en el establecimiento de medidas generales en el PAD?',a:'Profesor técnico.',b:'Orientador.',c:'Tutores.',d:'Equipo directivo.',ok:'D',r:'Correcta: D. Equipo directivo. Extracto: onan con los resultados. 5.1.1. Características metodológicas del PAD Recursos personales En el PAD intervienen numerosos profesionales. El equipo directivo será el encargado de establecer las medidas generales que mejor puedan adaptarse a las característic... (M3, p. 73)',ref:'(M3, p. 73)'},
+    {id:120,p:'¿En qué momento aparece la pérdida prelocutiva en la discapacidad auditiva?',a:'Antes del nacimiento.',b:'Durante el desarrollo del lenguaje.',c:'Después de desarrollar habilidades de comunicación oral.',d:'En la adolescencia.',ok:'A',r:'Correcta: A. Antes del nacimiento. Extracto: ón y clasificación En primer lugar, al hablar de deficiencia auditiva debemos diferenciar entre dos conceptos: Hipoacusia: se refiere a una pérdida parcial de la recepción auditiva, existiendo remanentes auditivos que pueden ser optimizados. Sordera: se ref... (M3, p. 91)',ref:'(M3, p. 91)'},
+    {id:128,p:'¿Qué factor determina el uso de un método u otro para optimizar la comunicación en personas con discapacidad auditiva?',a:'Discapacidades asociadas.',b:'Grado de la pérdida.',c:'Familia.',d:'Momento de la pérdida auditiva.',ok:'C',r:'Correcta: C. Familia. Extracto: tos mediante prótesis u otros medios, pues se trata de desarrollar una capacidad oral que requiere de un mínimo de audición. Dentro de este método podemos distinguir: Lectura labial: consiste en enseñar a los alumnos a leer los labios de su interlocutor. No... (M3, p. 95)',ref:'(M3, p. 95)'},
+    {id:17,p:'¿Qué se destaca en el texto acerca de las NEE?',a:'No requieren una evaluación psicopedagógica profunda.',b:'Son exclusivamente atribuibles a la minusvalía del sujeto.',c:'No requieren seguimiento ni evaluación para modificar las actuaciones.',d:'Serelacionanconrecursosespecíficosparalaeducación.',ok:'D',r:'Correcta: D. Serelacionanconrecursosespecíficosparalaeducación. Extracto: qué medios poseemos?, etc. Pero para dar la respuesta más adecuada a estas preguntas es necesaria una evaluación de las características, contexto social, medios, personal, alumnos/as, etc., con que cuenta el centro y ajustar sus líneas de actuación a las mi... (M3, p. 103)',ref:'(M3, p. 103)'},
+    {id:97,p:'¿Cuáles son las características del Trastorno de RETT según el DSM IV TR?',a:'Pérdida de habilidades manuales intencionales entre los 5 y 30 meses de edad.',b:'Desarrollo del lenguaje expresivo y receptivo normal.',c:'Aparición de los síntomas después de los 48 meses de edad.',d:'Desarrollo prenatal y perinatal anormal.',ok:'A',r:'Correcta: A. Pérdida de habilidades manuales intencionales entre los 5 y 30 meses de edad. Extracto: M 5 no aparecen como tal sino que se integran en una categoría única, la de Trastornos del Espectro Autista. Trastorno de RETT A. Todas las características siguientes: desarrollo prenatal y perinatal aparentemente normal. desarrollo psicomotor aparentemente... (M3, p. 79)',ref:'(M3, p. 79)'},
+  ],
+  [
+    {id:3,p:'¿Cuál es una medida de atención a la diversidad en otros contextos?',a:'Apoyo escolar en hospitales.',b:'Centros educativos terapéuticos.',c:'Programas de iniciación profesional.',d:'Aulas temporales de aprendizaje de idiomas.',ok:'A',r:'Correcta: A. Apoyo escolar en hospitales. Extracto: tendrán derecho a dos convocatorias anuales cada uno de los cuatro años que pueden cursar estas enseñanzas para superar los módulos. 11.2. Apoyo escolar en hospitales También conocidas como aulas hospitalarias. Cuando el alumno se encuentra hospitalizado y ... (M3, p. 133)',ref:'(M3, p. 133)'},
+    {id:91,p:'¿Qué dificultades suelen presentar los alumnos con TDAH en cuanto al control emocional?',a:'Capacidad para esperar su turno.',b:'Motivación hacia el proceso de aprendizaje.',c:'Dificultad para controlar la intensidad de sus reacciones.',d:'Facilidad para inhibir la manifestación de sus sentimientos.',ok:'C',r:'Correcta: C. Dificultad para controlar la intensidad de sus reacciones. Extracto: [AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curricula (M3, p. 76)',ref:'(M3, p. 76)'},
+    {id:64,p:'¿Qué canal de captación de información es mejor para los alumnos con síndrome de Down?',a:'Canalvisual.',b:'Canal auditivo.',c:'Canal olfativo.',d:'Canal táctil.',ok:'A',r:'Correcta: A. Canalvisual. Extracto: dificultades de aprendizaje pueden ser compensadas en el sistema educativo. Los alumnos con este síndrome reciben, procesan y organizan la información con dificultad y lentitud por lo que debemos darles tiempos de respuesta amplios, pero con paciencia y per... (M3, p. 60)',ref:'(M3, p. 60)'},
+    {id:145,p:'¿Cuáles son las características del alumnado al que se dirige la educación compensatoria?',a:'Inmigración.',b:'Bajo rendimiento académico.',c:'Exclusión social.',d:'Desventaja sociocultural.',ok:'C',r:'Correcta: C. Exclusión social. Extracto: de un aula. Esta medida de educación compensatoria suele ir dirigida a alumnos con las siguientes características: Presentan algún tipo de exclusión social. Dos años de desfase curricular. Buen nivel de integración escolar. O bien, alumnado inmigrante que s... (M3, p. 118)',ref:'(M3, p. 118)'},
+    {id:78,p:'¿Qué característica del lenguaje diferencia la disfasia evolutiva del autismo?',a:'Retraso en la adquisición del lenguaje.',b:'Capacidad comunicativa.',c:'Complejidad de las alteraciones.',d:'Uso del lenguaje no verbal.',ok:'B',r:'Correcta: B. Capacidad comunicativa. Extracto: tismo. Sin embargo, los déficit que presentan los autistas en el lenguaje son más graves y complejos. Además, en la disfasia se conserva la capacidad comunicativa haciéndose uso del lenguaje no verbal, de las emociones y del juego simbólico cosa que el auti... (M3, p. 69)',ref:'(M3, p. 69)'},
+    {id:55,p:'¿Cuál es la prevalencia del síndrome de Down entre los recién nacidos?',a:'1 entre 800',b:'1 entre 1000',c:'1entre600ó700',d:'1 entre 500',ok:'C',r:'Correcta: C. 1entre600ó700 Extracto: índrome de Down es una alteración genética por la que las personas que lo presentan, tienen 47 cromosomas en lugar de los 46 habituales. Su prevalencia es de 1 entre 600 ó 700 recién nacidos. Respecto a su origen o etiología se han estudiado muchos factores... (M3, p. 57)',ref:'(M3, p. 57)'},
+    {id:30,p:'¿Qué estilo de aprendizaje se caracteriza por buscar la rapidez y eficacia en sus acciones y decisiones?',a:'Estilo Teórico.',b:'Estilo Reflexivo.',c:'EstiloPragmático.',d:'Estilo Activo.',ok:'C',r:'Correcta: C. EstiloPragmático. Extracto: prefieren el pensamiento concreto, tienen imágenes en la memoria más estables y tienen un punto de vista separado. Si tenemos en cuenta el estilo cognitivo de nuestros alumnos podremos ajustar nuestras enseñanzas al mismo, haciendo que esta llegue por el ca... (M3, p. 28)',ref:'(M3, p. 28)'},
+    {id:132,p:'¿Qué son las medidas ordinarias de atención a la diversidad?',a:'Modificaciones de los elementos prescriptivos del currículum.',b:'Evaluación de los alumnos/as.',c:'Métodos y técnicas de enseñanza.',d:'Estrategias de organización y modificaciones.',ok:'D',r:'Correcta: D. Estrategias de organización y modificaciones. Extracto: dinarias de atención a la diversidad Atención a la Diversidad. 2. Medidas ordinarias de atención a la diversidad Las medidas ordinarias son estrategias de organización y modificaciones llevadas a cabo por cada centro respecto a los agrupamientos del alumnad... (M3, p. 102)',ref:'(M3, p. 102)'},
+    {id:44,p:'¿Cuál es una de las medidas educativas utilizadas con los alumnos superdotados, según la \'Guía para la atención educativa a los alumnos y alumnas con sobredotación\'?',a:'Aceleración.',b:'Clases particulares.',c:'Repetición de curso.',d:'Refuerzo escolar.',ok:'A',r:'Correcta: A. Aceleración. Extracto: los alumnos superdotados, tal y como se describe en la “Guía para la atención educativa a los alumnos y alumnas con sobredotación”, son: La aceleración o flexibilización, consiste en que el alumno o alumna realice un curso más avanzado del que le correspond... (M3, p. 48)',ref:'(M3, p. 48)'},
+    {id:27,p:'Según el texto, ¿qué tipo de estilo de aprendizaje predomina en un alumno con memoria visual y pensamiento espacial?',a:'Auditivo.',b:'Cinético.',c:'Visual.',d:'Táctil.',ok:'C',r:'Correcta: C. Visual. Extracto: inferencias sobre dicha información. Los rasgos analizados hasta ahora sirven como indicadores del estilo de aprendizaje del alumnado, que según P. Honey y A. Mumford (1986) se pueden distinguir cuatro Estilos de Aprendizaje: Estilo Activo. Son personas abi... (M3, p. 28)',ref:'(M3, p. 28)'},
+    {id:69,p:'Según Rivière (1998), ¿en qué se basa la intervención educativa para personas con TEA?',a:'Enlavaloracióncuidadosadelosrequisitosevolutivos.',b:'En la disminución de conductas disfuncionales.',c:'En la coordinación con otros profesionales.',d:'En el aprendizaje por ensayo y error.',ok:'A',r:'Correcta: A. Enlavaloracióncuidadosadelosrequisitosevolutivos. Extracto: s. Esta medida podrá tomarse siempre que el alumno tenga conseguidos los objetivos del curso que se pretende “saltar”. Es una medida que se basa, fundamentalmente, en la competencia curricular pero ha de tener en cuenta, a la vez, si es adecuada también res... (M3, p. 48)',ref:'(M3, p. 48)'},
+    {id:40,p:'¿Cuál es una de las pruebas utilizadas para evaluar el Cociente Intelectual (CI) en niños de 2,5 a 12,5 años?',a:'K-ABC.',b:'EFAI.',c:'BAS-II.',d:'WISC-IV.',ok:'A',r:'Correcta: A. K-ABC. Extracto: n del Cociente Intelectual NO es suficiente para determinar la superdotación, ya que interfieren muchos otros factores, se destacan ciertas pruebas la evaluar el C.I. como forma de ampliar la determinación del alumnado con superdotación: K-ABC: Batería Eval... (M3, p. 43)',ref:'(M3, p. 43)'},
+    {id:9,p:'¿Qué abarca el concepto de atención a la diversidad?',a:'Alumnado con altas capacidades.',b:'Diferencias individuales.',c:'Alumnado extranjero.',d:'Todos los anteriores.',ok:'D',r:'Correcta: D. Todos los anteriores. Extracto: [AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15182J] Atención a la Diversidad. 10. El plan de aten... (M3, p. 128)',ref:'(M3, p. 128)'},
+    {id:42,p:'¿Cuáles son algunas de las dificultades que pueden presentar los alumnos superdotados en el contexto escolar?',a:'Falta de creatividad.',b:'Faltadehábitosdetrabajointelectual.',c:'Falta de motivación hacia las tareas escolares.',d:'Falta de curiosidad e impaciencia.',ok:'B',r:'Correcta: B. Faltadehábitosdetrabajointelectual. Extracto: [AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curricula (M3, p. 94)',ref:'(M3, p. 94)'},
+    {id:41,p:'¿Para qué edad es aplicable la evaluación del potencial de aprendizaje a través de la prueba EPA-2?',a:'A partir de 3 años.',b:'A partir de 7 años.',c:'A partir de 10 años.',d:'Apartirde5años.',ok:'D',r:'Correcta: D. Apartirde5años. Extracto: ncapacidad intelectual: los factores afectivo-relacionales, las deficiencias perceptivas, las dificultades motrices o posturales, la precariedad de los recursos u oportunidades, la ausencia de entrenamiento, la falta de apoyo y motivación o los planteamient... (M3, p. 150)',ref:'(M3, p. 150)'},
+    {id:138,p:'¿Cuál es el objetivo de la optatividad u opcionalidad en la atención a la diversidad?',a:'Contribuir a la consecución de los objetivos generales de etapa.',b:'Limitar las diferencias de los alumnos.',c:'Fomentar la competencia entre los alumnos.',d:'Promover la homogeneidad en el aula.',ok:'A',r:'Correcta: A. Contribuir a la consecución de los objetivos generales de etapa. Extracto: que orienten la elección de estudios posteriores y el paso a la vida activa. En definitiva, el objetivo de la optatividad u opcionalidad es contribuir a la consecución de los objetivos generales de etapa, mostrándose como un espacio para atender las diferen... (M3, p. 108)',ref:'(M3, p. 108)'},
+    {id:95,p:'¿Qué tipo de instrucciones son más adecuadas para el alumno con TDAH?',a:'Claras y sencillas.',b:'Complejas y detalladas.',c:'Rápidas y exigentes.',d:'Breves y ambiguas.',ok:'A',r:'Correcta: A. Claras y sencillas. Extracto: nseguir ir aumentado de forma progresiva el esfuerzo atencional del menor y no imponer un trabajo prolongado. Las instrucciones deberán ser claras y sencillas. Cuando una tarea tenga cierta complejidad será más adecuado segmentar la tarea en distintas fases... (M3, p. 77)',ref:'(M3, p. 77)'},
+    {id:94,p:'¿Qué medida es más adecuada para evitar la frustración del alumno y el abandono de la actividad?',a:'Medir el nivel de dificultad de las actividades.',b:'Establecer distintos objetivos.',c:'Segmentar la tarea en distintas fases.',d:'Evitar periodos de espera entre la transición de las actividades.',ok:'A',r:'Correcta: A. Medir el nivel de dificultad de las actividades. Extracto: ativas y Curriculares [UDI151821] NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 12. TDAH Será necesario medir el nivel de dificultad de las actividades para evitar la frustración del alumno y el abandono de la actividad. ... (M3, p. 78)',ref:'(M3, p. 78)'},
+    {id:147,p:'¿En qué consisten las adaptaciones curriculares individualizadas?',a:'Tener en cuenta las características intelectuales, personales, potencialidades, déficit, etc.',b:'Adaptar la programación de aula a un alumno concreto.',c:'Partir del conocimiento previo del alumno.',d:'Realizar una evaluación psicopedagógica y curricular detallada.',ok:'B',r:'Correcta: B. Adaptar la programación de aula a un alumno concreto. Extracto: nsación educativa. Alumnado con altas capacidades intelectuales. En definitiva, las adaptaciones curriculares individualizadas consisten en adaptar la programación de aula a un alumno concreto, tras haber realizado una evaluación psicopedagógica y curricula... (M3, p. 120)',ref:'(M3, p. 120)'},
+    {id:56,p:'¿Qué factor se ha asociado al origen o etiología del síndrome de Down?',a:'Enfermedades infantiles.',b:'Factoresgenéticos.',c:'Edad del padre.',d:'Factores ambientales.',ok:'B',r:'Correcta: B. Factoresgenéticos. Extracto: lugar de los 46 habituales. Su prevalencia es de 1 entre 600 ó 700 recién nacidos. Respecto a su origen o etiología se han estudiado muchos factores, sin embargo, ninguno de ellos aporta una explicación definitiva, como: Factores genéticos. Edad de la madre... (M3, p. 57)',ref:'(M3, p. 57)'},
+    {id:22,p:'¿Qué factores hacen diferentes a unos alumnos de otros, especialmente ante la enseñanza y aprendizaje?',a:'Autoestima y autoconcepto.',b:'Estilos de aprendizaje.',c:'Inteligenciayaptitudes.',d:'Intereses y motivaciones.',ok:'C',r:'Correcta: C. Inteligenciayaptitudes. Extracto: quiera cada individuo. Dentro del aula nos encontramos alumnos muy diferentes entre sí, estas diferencias vienen determinadas por múltiples factores, que como docentes, debemos tener en cuenta para poder ajustar nuestra enseñanza a cada uno de ellos. En los... (M3, p. 20)',ref:'(M3, p. 20)'},
+    {id:1,p:'¿Cuál es una medida extraordinaria de atención a la diversidad en el ámbito educativo?',a:'La función tutorial.',b:'Proyecto curricular de etapa.',c:'El proyecto educativo del centro.',d:'La repetición de curso.',ok:'D',r:'Correcta: D. La repetición de curso. Extracto: las medidas extraordinarias de atención a la diversidad, analizaremos: Las diferentes modalidades de escolarización. El refuerzo educativo. La repetición de curso. La educación compensatoria. Adaptaciones curriculares individualizadas. Programas de diversif... (M3, p. 110)',ref:'(M3, p. 110)'},
+    {id:123,p:'¿Qué comportamiento puede indicar que un alumno tiene dificultades para escuchar?',a:'Se acerca mucho a su interlocutor para hablar.',b:'Se sienta en la última fila de la clase.',c:'Tiene un vocabulario pobre.',d:'Participa activamente en actividades que impliquen comunicación.',ok:'A',r:'Correcta: A. Se acerca mucho a su interlocutor para hablar. Extracto: la, estructurarla y elaborarla adecuadamente. Dificultades para desarrollar la lectura y la escritura. A nivel socioafectivo, estos alumnos pueden mostrarse inseguros, desconfiados, con baja autoestima, tener dificultades para manejar adecuadamente sus emoc... (M3, p. 94)',ref:'(M3, p. 94)'},
+    {id:136,p:'¿Qué elementos componen la programación de aula en la atención a la diversidad?',a:'Contenidos, actividades, evaluación, secuencia.',b:'Presentación, objetivos, metodología, secuencia.',c:'Objetivos, contenidos, metodología, actividades.',d:'Metodología, secuencia, evaluación, presentación.',ok:'C',r:'Correcta: C. Objetivos, contenidos, metodología, actividades. Extracto: amento de área ha establecido en sus programaciones didácticas para cada ciclo o curso. Las programaciones de aula son la concreción de los objetivos, contenidos, metodología, actividades, etc., a un grupo de alumnos y alumnas concreto. Principales contenid... (M3, p. 106)',ref:'(M3, p. 106)'},
+    {id:134,p:'¿Qué hace referencia la pregunta \'¿Qué hay que enseñar\' en el contexto del texto?',a:'A los objetivos generales de las diferentes etapas.',b:'A la temporalización de los contenidos.',c:'A la organización del centro educativo.',d:'A la selección de los profesores.',ok:'A',r:'Correcta: A. A los objetivos generales de las diferentes etapas. Extracto: ige dicha enseñanza. Los componentes principales del proyecto curricular de etapa, son: ¿QUÉ HAY QUE ENSEÑAR? Esta pregunta hace referencia a los objetivos generales de las diferentes etapas. Estos objetivos sin alejarse, por supuesto, del diseño curricular... (M3, p. 105)',ref:'(M3, p. 105)'},
+    {id:126,p:'¿En qué consiste el método bimodal para la discapacidad auditiva?',a:'Combinar el habla con la lengua de signos.',b:'Combinar la lengua de signos con el braille.',c:'Combinar el habla con el braille.',d:'Combinar la lectura labial con el braille.',ok:'A',r:'Correcta: A. Combinar el habla con la lengua de signos. Extracto: se trata de desarrollar una capacidad oral que requiere de un mínimo de audición. Dentro de este método podemos distinguir: Lectura labial: consiste en enseñar a los alumnos a leer los labios de su interlocutor. Normalmente, se utiliza como método complemen... (M3, p. 95)',ref:'(M3, p. 95)'},
+    {id:20,p:'¿Qué establece la LOE en su Título 2 Capítulo 1 en relación a las necesidades específicas de apoyo educativo (NEAE)?',a:'Situación de vulnerabilidad socioeducativa.',b:'Retraso madurativo.',c:'Trastornosdeldesarrollodellenguajeylacomunicación.',d:'Necesidades educativas especiales.',ok:'C',r:'Correcta: C. Trastornosdeldesarrollodellenguajeylacomunicación. Extracto: s [UDI151814] Necesidades Educativas Especiales y Atención a la Diversidad. 6. N.E.E. y normativa abierto y flexible. Además, debe permitir establecer distintos niveles de adaptación curricular. SECTORIZACIÓN Se basa en que es imprescindible acercar los ser... (M3, p. 18)',ref:'(M3, p. 18)'},
+    {id:38,p:'¿Cuáles son los criterios o indicadores que nos ayudan en la identificación temprana de los alumnos con sobredotación, según Benito (1994)?',a:'IndicadoresdefinidosporBenito.',b:'Rasgos, características y necesidades diferentes.',c:'Heterogeneidad y diversidad.',d:'Ninguna de las anteriores.',ok:'A',r:'Correcta: A. IndicadoresdefinidosporBenito. Extracto: cada uno de estos alumnos tendrá rasgos, características y necesidades diferentes a los demás. Sin embargo, podemos establecer una serie de criterios o indicadores que nos ayuden en la identificación temprana de los alumnos con sobredotación, nos referimos ... (M3, p. 41)',ref:'(M3, p. 41)'},
+    {id:51,p:'¿Qué aspecto es importante conocer antes de aplicar cualquier medida de adaptación a las necesidades del alumno?',a:'El progreso del alumno.',b:'Las conductas del alumno.',c:'El tratamiento farmacológico del alumno.',d:'Lascaracterísticasdelalumno.',ok:'D',r:'Correcta: D. Lascaracterísticasdelalumno. Extracto: es decir, a un alumno o alumna específico. Las adaptaciones curriculares individualizadas responden a una toma de decisiones sobre aquellos aspectos implicados en el aprendizaje del alumno y cómo ajustarlos al mismo. Pero este proceso de toma de decisiones ... (M3, p. 119)',ref:'(M3, p. 119)'},
+    {id:102,p:'¿En qué casos se utiliza la categoría diagnóstica de Trastorno Generalizado del Desarrollo No Especificado?',a:'Cuando se cumplen los criterios diagnósticos del trastorno del desarrollo específico.',b:'Cuando hay sintomatología atípica.',c:'Cuando hay alteración grave y generalizada del desarrollo.',d:'Cuando hay comportamiento, intereses y actividades estereotipadas.',ok:'D',r:'Correcta: D. Cuando hay comportamiento, intereses y actividades estereotipadas. Extracto: una alteración grave y generalizada del desarrollo, de la interacción social recíproca o de las habilidades de la comunicación no verbal, o cuando hay comportamiento, intereses y actividades estereotipadas, pero no se cumplen los criterios diagnósticos del ... (M3, p. 82)',ref:'(M3, p. 82)'},
+  ],
+  [
+    {id:124,p:'¿Cuáles son las principales dificultades de los alumnos con deficiencias auditivas?',a:'Dificultades en matemáticas.',b:'Dificultades en educación física.',c:'Problemas en el desarrollo del lenguaje.',d:'Problemas de visión.',ok:'C',r:'Correcta: C. Problemas en el desarrollo del lenguaje. Extracto: gual al de un niño con audición normal, tan sólo, que será más lento. Esta lentitud viene determinada por el grado de pérdida auditiva. Las principales dificultades de los alumnos con dificultades auditivas se van a producir en el área del lenguaje, entre l... (M3, p. 94)',ref:'(M3, p. 94)'},
+    {id:108,p:'¿Cómo define la OMS la baja visión?',a:'Percepción de luz sin proyección.',b:'Ausencia total de visión.',c:'Capacidad de percibir formas y orientaciones.',d:'Deficiencia en el funcionamiento visual.',ok:'C',r:'Correcta: C. Capacidad de percibir formas y orientaciones. Extracto: la visión para la planificación o ejecución de la tarea”. La deficiencia visual se define en función de dos parámetros: La Agudeza visual, capacidad de percibir formas y orientaciones de las mismas a una distancia determinada. El Campo visual, área de espac... (M3, p. 85)',ref:'(M3, p. 85)'},
+    {id:133,p:'¿Qué es el proyecto curricular de etapa?',a:'Documento elaborado por un solo profesor.',b:'Coordinación inter-etapas, inter-ciclos, inter-áreas.',c:'Conjunto de decisiones sobre el currículo.',d:'Respuesta educativa de un centro a un determinado alumno.',ok:'C',r:'Correcta: C. Conjunto de decisiones sobre el currículo. Extracto: d social. Cada centro cuenta con unas características, alumnado, expectativas, etc. diferentes, que son las que se reflejan en su PEC. 2.2. Proyecto curricular de etapa Cuando hablamos del proyecto curricular de etapa nos referimos al segundo nivel de concr... (M3, p. 104)',ref:'(M3, p. 104)'},
+    {id:46,p:'¿Cuál es la principal temática que aborda la unidad sobre discapacidad intelectual?',a:'Síndrome de Asperger.',b:'Problemas de conducta.',c:'Trastornos del lenguaje.',d:'Discapacidadintelectual.',ok:'D',r:'Correcta: D. Discapacidadintelectual. Extracto: del término “retraso mental” al de “discapacidad intelectual”, ante el debate de qué termino es más correcto, Alonso (2003) plantea que, la principal razón para sugerir un cambio en la terminología procede del carácter peyorativo del significado de retraso ... (M3, p. 51)',ref:'(M3, p. 51)'},
+    {id:76,p:'¿Cuál es la característica diferencial entre el trastorno desintegrativo infantil y el autismo?',a:'Periodo prodrómico.',b:'Pérdida de habilidades.',c:'Regresión profunda.',d:'Desarrollo cognitivo.',ok:'A',r:'Correcta: A. Periodo prodrómico. Extracto: regresión profunda y desintegración conductual tras 3 o 4 años de desarrollo normal. Lo que lo diferencia del autismo es la presencia de un periodo prodrómico en el que se da irritabilidad, inquietud, ansiedad e hiperactividad y la pérdida de otras habilida... (M3, p. 68)',ref:'(M3, p. 68)'},
+    {id:58,p:'¿Cuáles son algunas de las características cognitivas del síndrome de Down?',a:'Dificultades en la memoria a largo plazo.',b:'Rapidez en el procesamiento de la información.',c:'Potencialdeaprendizajeelevado.',d:'Eficiencia en la resolución de problemas verbales.',ok:'C',r:'Correcta: C. Potencialdeaprendizajeelevado. Extracto: mo y Otros Trastornos. 6. Definición(...) NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 6. Definición y características ¿Qué es el síndrome de Down? ¿Qué otras características y peculiaridades lleva asociadas? A estas pre... (M3, p. 57)',ref:'(M3, p. 57)'},
+    {id:7,p:'¿En qué consisten las medidas normativas de la atención a la diversidad?',a:'Crear centros educativos exclusivos.',b:'Establecer un único modelo educativo.',c:'Asignar recursos específicos.',d:'Garantizar igualdad de oportunidades.',ok:'C',r:'Correcta: C. Asignar recursos específicos. Extracto: Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15182J] Atención a la Diversidad. 10. El plan de atención a la di... (M3, p. 128)',ref:'(M3, p. 128)'},
+    {id:77,p:'¿Cuál es la principal diferencia entre la disfasia evolutiva y el autismo?',a:'Complejidad de las alteraciones.',b:'Uso del lenguaje no verbal.',c:'Capacidad comunicativa.',d:'Retraso en el lenguaje.',ok:'C',r:'Correcta: C. Capacidad comunicativa. Extracto: tismo. Sin embargo, los déficit que presentan los autistas en el lenguaje son más graves y complejos. Además, en la disfasia se conserva la capacidad comunicativa haciéndose uso del lenguaje no verbal, de las emociones y del juego simbólico cosa que el auti... (M3, p. 69)',ref:'(M3, p. 69)'},
+    {id:16,p:'¿Qué concepto está estrechamente vinculado con el concepto de atención a la diversidad?',a:'Discapacidad.',b:'Necesidadeseducativasespeciales.',c:'Deficiencia.',d:'Minusvalía.',ok:'B',r:'Correcta: B. Necesidadeseducativasespeciales. Extracto: [AFO028VTC] Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15182J] Atención a la Diversidad. 10. El plan de aten... (M3, p. 128)',ref:'(M3, p. 128)'},
+    {id:83,p:'¿Qué es el Plan de Atención a la Diversidad (PAD) en el contexto educativo?',a:'Conjunto de medidas específicas para el alumnado con NEE.',b:'Conjunto de medidas generales para todo el alumnado.',c:'Conjunto de medidas para alumnado con discapacidad intelectual.',d:'Conjunto de decisiones educativas consensuadas por la comunidad educativa.',ok:'D',r:'Correcta: D. Conjunto de decisiones educativas consensuadas por la comunidad educativa. Extracto: storno. 12.1. El plan de atención a la diversidad como herramienta educativa El Plan de Atención a la Diversidad (PAD) es entendido como un conjunto de decisiones educativas consensuadas por la comunidad educativa y que tienen como principal objetivo produc... (M3, p. 72)',ref:'(M3, p. 72)'},
+    {id:14,p:'¿Qué establece la normativa actual en atención a la diversidad?',a:'Recursos y apoyos para educación primaria.',b:'Medidas de detección temprana de NEE.',c:'Pautaordinariadelaaccióneducativa.',d:'Aplicación a alumnos con problemas de aprendizaje.',ok:'C',r:'Correcta: C. Pautaordinariadelaaccióneducativa. Extracto: mismo modo, hace referencia a la importancia de la detección precoz de las dificultades de aprendizaje y que las medidas de intervención se establecerán en el momento que dichas dificultades sean detectadas. Comparte con la LOE la definición de alumnos con ... (M3, p. 10)',ref:'(M3, p. 10)'},
+    {id:66,p:'Según el texto, ¿cuál es la característica más conocida que presentan los niños autistas?',a:'Ausencia de contacto ocular.',b:'Alteraciones en el lenguaje.',c:'Alteracionesenlaconductasocial.',d:'Déficit intelectual.',ok:'C',r:'Correcta: C. Alteracionesenlaconductasocial. Extracto: uado del lenguaje. La comunicación intencional, que se comienza a desarrollar en torno a los 8 meses, se ve muy limitada en autistas. Otras características como la falta de sonrisa social, mirada a las personas, gestos y vocalizaciones comunicativas se hace... (M3, p. 64)',ref:'(M3, p. 64)'},
+    {id:43,p:'¿Qué es el síndrome de disincronía que se da entre los alumnos superdotados?',a:'Desfaseentrelamadurezintelectualyladelrestodeniñosdesugrupodeedad.',b:'Desfase entre la inteligencia precoz y la maduración afectiva.',c:'Aislamiento social o restricción del grupo de amigos.',d:'Liderazgo en el grupo de amigos.',ok:'A',r:'Correcta: A. Desfaseentrelamadurezintelectualyladelrestodeniñosdesugrupodeedad. Extracto: humano. Entre los factores que pueden incidir en el fracaso escolar, social y personal del alumno está lo que Terrassier (1994) denominó el síndrome de disincronía que se da entre los alumnos superdotados, este síndrome consiste en un “desfase entre el desa... (M3, p. 46)',ref:'(M3, p. 46)'},
+    {id:25,p:'Según el texto, ¿cómo debe ser la utilización del término inteligencia en el ámbito educativo?',a:'Como un concepto estático.',b:'Como un modo de clasificar a los alumnos.',c:'Como una etiqueta limitante.',d:'Concuidadoyevitandoetiquetaralosalumnos.',ok:'D',r:'Correcta: D. Concuidadoyevitandoetiquetaralosalumnos. Extracto: ia, “inteligencias múltiples” en la que destaca que existen diferentes formas de conductas inteligentes y que están influenciadas por el contexto social, éstas vienen determinadas por la interacción de variables hereditarias y ambientales, pero no determina... (M3, p. 22)',ref:'(M3, p. 22)'},
+    {id:26,p:'¿Qué se entiende por estilo cognitivo en el contexto del aprendizaje?',a:'Conjuntos de rasgos estables intelectuales.',b:'Formasdepercibiryprocesarlainformación.',c:'Habilidades cognitivas y metacognitivas.',d:'Patrones específicos inconscientes y automáticos.',ok:'B',r:'Correcta: B. Formasdepercibiryprocesarlainformación. Extracto: ..) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI151817] Diversidad y Atención en el Aula. 3. Estilos de aprendizaje Diversidad y Atención en el Aula. 3. Estilos de aprendizaje No existe un acuerdo al definir el... (M3, p. 24)',ref:'(M3, p. 24)'},
+    {id:89,p:'¿Cuáles son algunas de las medidas de atención a la diversidad que se mencionan en el texto?',a:'Refuerzo curricular.',b:'Actividades deportivas.',c:'Clases magistrales.',d:'Talleres de aprendizaje.',ok:'A',r:'Correcta: A. Refuerzo curricular. Extracto: ativas, Organizativas y Curriculares [UDI151821] NEE:(Discapacidad Intelectual, PCI, Síndrome de DOWN, Autismo y Otros Trastornos. 12. TDAH Refuerzo curricular. Apoyo en el grupo ordinario. Agrupación flexible y desdoblamiento de grupos. Inclusión de las te... (M3, p. 75)',ref:'(M3, p. 75)'},
+    {id:116,p:'¿Qué medidas deben tomar los docentes para integrar a un alumno con deficiencia visual en el aula?',a:'Fomentar trabajos en grupo.',b:'Realizar exámenes adaptados.',c:'Eximirlo de tareas.',d:'No proporcionar materiales complementarios.',ok:'A',r:'Correcta: A. Fomentar trabajos en grupo. Extracto: Master Oficial Universitario en Dificultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI151824] Dificultades del Procesamiento Sensorial. 1. Deficiencia ... (M3, p. 85)',ref:'(M3, p. 85)'},
+    {id:4,p:'¿Qué se incluye en el material complementario?',a:'Material Complementario.',b:'Bibliografía.',c:'Actividad Práctica.',d:'Unidad Didáctica.',ok:'A',r:'Correcta: A. Material Complementario. Extracto: y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI150W0T] Material Complementario Material Complementario El Plan de Atención a la Diversidad en los centros escolares. Estruct... (M3, p. 137)',ref:'(M3, p. 137)'},
+    {id:19,p:'¿Cuál es uno de los principios fundamentales en los que se basa la integración escolar de alumnos con NEE?',a:'Normalización.',b:'Exclusión.',c:'Segregación.',d:'Diversificación.',ok:'A',r:'Correcta: A. Normalización. Extracto: er en común y en el mismo centro educativo niños que poseen o no algún tipo de necesidad especial. Esta integración escolar se basa en tres principios fundamentales: NORMALIZACIÓN Este principio parte del concepto de que la vida de las personas discapacitad... (M3, p. 17)',ref:'(M3, p. 17)'},
+    {id:21,p:'Según la LOMLOE, ¿qué son las NEAE?',a:'Necesidadeseducativasespecíficas.',b:'Nuevas estrategias de aprendizaje.',c:'Normativas educativas especiales.',d:'Niveles de educación especial.',ok:'A',r:'Correcta: A. Necesidadeseducativasespecíficas. Extracto: las medidas generales no han tenido el éxito esperado. Se aplican con el alumnado con necesidades específicas de apoyo educativo (ACNEAE). Según el Decreto 359/2009 el ACNEAE es el alumnado con necesidades educativas especiales que se ha incorporado de form... (M3, p. 72)',ref:'(M3, p. 72)'},
+    {id:67,p:'¿Qué tipo de conducta repetitiva es característica en niños autistas?',a:'Participación en actividades grupales.',b:'Juegos imaginativos.',c:'Adaptación a cambios ambientales.',d:'Conductaautoestimuladora.',ok:'D',r:'Correcta: D. Conductaautoestimuladora. Extracto: eneralizados del desarrollo y, en particular, las personas con autismo son diferentes entre sí, encontrando diferentes sintomatologías y subtipos. Por tanto, igual que se puede afirmar que es difícil encontrar un ser humano igual a otro, ueca.euroinnova.com... (M3, p. 64)',ref:'(M3, p. 64)'},
+    {id:87,p:'¿Qué tipo de metodología se considera una medida ordinaria dentro del Programa de Atención a la Diversidad?',a:'Aprendizaje por proyectos.',b:'Aprendizaje autónomo.',c:'Aprendizaje cooperativo.',d:'Contrato pedagógico.',ok:'C',r:'Correcta: C. Aprendizaje cooperativo. Extracto: avorezcan actitudes de respeto, participación, colaboración y tolerancia. Los grupos de pequeño tamaño (pocos miembros) funcionan mejor. El aprendizaje cooperativo y enseñanza tutorada son recursos muy adecuados para organizar las dinámicas de las aulas. Co... (M3, p. 67)',ref:'(M3, p. 67)'},
+    {id:111,p:'¿Cuáles son algunas manifestaciones socioafectivas asociadas a la deficiencia visual?',a:'Introversión, pasividad y egocentrismo.',b:'Autoimagen alterada, ritmos rápidos de maduración.',c:'Trastornos de atención e hiperactividad.',d:'Extroversión, actividad y egocentrismo.',ok:'A',r:'Correcta: A. Introversión, pasividad y egocentrismo. Extracto: 1. Deficiencia visual Mayor capacidad de generación discursiva. Presencia de ecolalias. Ausencia de gestos verbales. A nivel socioafectivo: Introversión, pasividad y egocentrismo. Autoimagen alterada. Ritmos más lentos de maduración y desarrollo. Suelen ser... (M3, p. 87)',ref:'(M3, p. 87)'},
+    {id:48,p:'Según la Declaración y el Marco de Acción de Salamanca para las Necesidades Educativas Especiales, ¿qué establece en relación a las escuelas regulares?',a:'Deben educar solo a los niños con condiciones físicas.',b:'Debenacogeratodoslosniñosyniñas,independientementedesuscondiciones.',c:'Deben separar a los niños con discapacidad intelectual en aulas específicas.',d:'Deben rechazar a los niños con condiciones físicas, intelectuales, sociales, emocionales y lingüísticas.',ok:'B',r:'Correcta: B. Debenacogeratodoslosniñosyniñas,independientementedesuscondiciones. Extracto: as exigencias de un currículo concreto (A. Fernández): Son muchos los términos que se identifican con NEE. y que es importante diferenciar. Según la organización mundial de la salud (OMS 1983) debemos distinguir entre: Deficiencia: toda pérdida anormalidad,... (M3, p. 13)',ref:'(M3, p. 13)'},
+    {id:142,p:'¿Qué es el refuerzo educativo?',a:'Actividades que sustituyen la educación ordinaria.',b:'Actividades que enriquecen la educación ordinaria.',c:'Actividades que modifican la educación ordinaria.',d:'Actividades que complementan la educación ordinaria.',ok:'D',r:'Correcta: D. Actividades que complementan la educación ordinaria. Extracto: réd(...) [MOD0249KM] Atención a la Diversidad: Medidas Normativas, Organizativas y Curriculares [UDI15182C] Atención a la Diversidad. 5. El refuerzo educativo Atención a la Diversidad. 5. El refuerzo educativo Se trata de una respuesta educativa que desde s... (M3, p. 114)',ref:'(M3, p. 114)'},
+    {id:115,p:'¿Qué método de lectoescritura es recomendado para alumnos con deficiencia visual?',a:'Método táctil.',b:'Método auditivo.',c:'Método visual.',d:'Método tradicional.',ok:'A',r:'Correcta: A. Método táctil. Extracto: ta de visión. Sin embargo, fueron muchos los que lucharon por acabar con estas ideas y fue partir de los años 50 cuando la situación de los alumnos con problemas de visión empezó a cambiar dentro de las escuelas donde se apostaba por la integración e inclus... (M3, p. 85)',ref:'(M3, p. 85)'},
+    {id:127,p:'¿En qué consiste la dactilología como medio de comunicación para personas con discapacidad auditiva?',a:'Uso de gestos como medio de comunicación.',b:'Alfabeto gestual complementario de la lengua de signos.',c:'Lengua formal con reglas y gramática.',d:'Uso de señas manuales.',ok:'B',r:'Correcta: B. Alfabeto gestual complementario de la lengua de signos. Extracto: se trata de desarrollar una capacidad oral que requiere de un mínimo de audición. Dentro de este método podemos distinguir: Lectura labial: consiste en enseñar a los alumnos a leer los labios de su interlocutor. Normalmente, se utiliza como método complemen... (M3, p. 95)',ref:'(M3, p. 95)'},
+    {id:59,p:'¿Qué problemas de salud son comunes en personas con síndrome de Down?',a:'Problemas musculares.',b:'Problemascardiacos.',c:'Problemas de visión.',d:'Problemas de audición.',ok:'B',r:'Correcta: B. Problemascardiacos. Extracto: los siguientes apartados. Síndrome de Down En primer lugar debemos saber que, el síndrome de Down es una alteración genética por la que las personas que lo presentan, tienen 47 cromosomas en lugar de los 46 habituales. Su prevalencia es de 1 entre 600 ó 700... (M3, p. 57)',ref:'(M3, p. 57)'},
+    {id:100,p:'¿Cuál es uno de los patrones de comportamiento característicos de los trastornos recogidos en el DSM?',a:'Uso de frases comunicativas a los 3 años.',b:'Adhesión flexible a rutinas.',c:'Interacción social adecuada.',d:'Preocupación por el horario de los trenes.',ok:'D',r:'Correcta: D. Preocupación por el horario de los trenes. Extracto: con otras personas (p. ej., no mostrar, traer o enseñar a otras personas objetos de interés) Ausencia de reciprocidad social o emocional B. Patrones de comportamiento, intereses y actividades restrictivos, repetitivos y estereotipados, manifestados al menos... (M3, p. 81)',ref:'(M3, p. 81)'},
+    {id:24,p:'¿Cuál es una de las inteligencias definidas por Gardner?',a:'Inteligencia social.',b:'Inteligenciavisual.',c:'Inteligencia física.',d:'Inteligencia emocional.',ok:'B',r:'Correcta: B. Inteligenciavisual. Extracto: a la concepción de que la inteligencia estática, viene determinada por la herencia. También, Gadner enuncia una teoría de la inteligencia, “inteligencias múltiples” en la que destaca que existen diferentes formas de conductas inteligentes y que están influe... (M3, p. 22)',ref:'(M3, p. 22)'},
+  ],
+];
+let currentSim=0,currentQ=0,answers=[];
+const LABELS=['A','B','C','D'],KEYS=['a','b','c','d'];
+
+function getScores(){try{return JSON.parse(localStorage.getItem('m3_scores')||'{}');}catch{return{};}}
+function saveScore(i,pct){const s=getScores();s[i]=pct;localStorage.setItem('m3_scores',JSON.stringify(s));}
+
+function renderHome(){
+  const scores=getScores(),grid=document.getElementById('simGrid');
+  grid.innerHTML='';
+  SIMS.forEach((sim,i)=>{
+    const card=document.createElement('div');
+    card.className='sim-card';card.onclick=()=>startQuiz(i);
+    let badge='';
+    if(scores[i]!==undefined){
+      const p=scores[i],cls=p>=70?'pass':p>=50?'partial':'fail';
+      badge=`<div class="sim-score-badge shown ${cls}">${p}% — ${p>=70?'✓ Aprobado':p>=50?'~ En progreso':'✗ A mejorar'}</div>`;
+    }
+    card.innerHTML=`
+      <div class="sim-card-accent"></div>
+      <div class="sim-index">Simulacro</div>
+      <div class="sim-num">0${i+1}</div>
+      <div class="sim-divider"></div>
+      <div class="sim-count">${sim.length} preguntas · opción múltiple</div>
+      ${badge}`;
+    grid.appendChild(card);
+  });
+}
+
+function startQuiz(simIdx){
+  currentSim=simIdx;currentQ=0;answers=new Array(SIMS[simIdx].length).fill(null);
+  document.getElementById('home').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('quizTitle').textContent=`Simulacro 0${simIdx+1} · Módulo 3`;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const sim=SIMS[currentSim],q=sim[currentQ];
+  const correct_so_far=answers.filter(a=>a&&a.correct).length;
+  document.getElementById('progressText').textContent=`Pregunta ${currentQ+1} de ${sim.length}`;
+  document.getElementById('scoreText').textContent=`${correct_so_far} correctas`;
+  document.getElementById('progressFill').style.width=((currentQ+1)/sim.length*100).toFixed(0)+'%';
+
+  const savedAns=answers[currentQ];
+  const opts=KEYS.map((k,i)=>{
+    let cls='';
+    if(savedAns){
+      const l=LABELS[i];
+      if(l===q.ok)cls=savedAns.selected===l?'selected-correct':'show-correct';
+      else if(l===savedAns.selected)cls='selected-wrong';
+    }
+    return `<button class="opt-btn ${cls}" onclick="selectAnswer('${LABELS[i]}')" ${savedAns?'disabled':''}><div class="opt-letter">${LABELS[i]}</div><div>${q[k]}</div></button>`;
+  }).join('');
+
+  let fb='';
+  if(savedAns)fb=`<div class="feedback-box ${savedAns.correct?'correct':'wrong'}" style="display:block"><strong>${savedAns.correct?'✅ ¡Correcto!':'❌ Respuesta incorrecta'}</strong><br>${q.r}<div class="feedback-ref">${q.ref}</div></div>`;
+
+  const isLast=currentQ===sim.length-1;
+  const prevBtn=currentQ>0?`<button class="btn-secondary" onclick="goToPrev()">← Anterior</button>`:`<div></div>`;
+
+  document.getElementById('qWrap').innerHTML=`
+    <div class="q-card fade-in">
+      <div class="q-number"><span class="dot"></span>Pregunta ${currentQ+1}</div>
+      <div class="q-text">${q.p}</div>
+      <div class="options">${opts}</div>${fb}
+    </div>
+    <div class="quiz-actions">
+      ${prevBtn}
+      <button class="btn-primary" onclick="goToNext()" ${!savedAns?'disabled':''}>${isLast?'🏁 Ver resultados':'Siguiente →'}</button>
+    </div>`;
+}
+
+function selectAnswer(letter){
+  if(answers[currentQ]!==null)return;
+  answers[currentQ]={selected:letter,correct:letter===SIMS[currentSim][currentQ].ok};
+  renderQuestion();
+}
+function goToNext(){
+  if(currentQ<SIMS[currentSim].length-1){currentQ++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+  else showResults();
+}
+function goToPrev(){if(currentQ>0){currentQ--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  const sim=SIMS[currentSim],total=sim.length;
+  const correct=answers.filter(a=>a&&a.correct).length;
+  const pct=Math.round(correct/total*100);
+  saveScore(currentSim,pct);
+  const cls=pct>=70?'pass':pct>=50?'partial':'fail';
+  const msg=pct>=70?'¡Excelente trabajo!':pct>=50?'Buen intento, sigue practicando':'Necesitas repasar más';
+  document.getElementById('scoreRing').className='results-score-ring '+cls;
+  document.getElementById('scorePct').className='score-pct '+cls;
+  document.getElementById('scorePct').textContent=pct+'%';
+  document.getElementById('resultsTitle').textContent=msg;
+  document.getElementById('resultsMeta').textContent=`Simulacro ${currentSim+1} · ${correct} de ${total} correctas`;
+  document.getElementById('statCorr').textContent=correct;
+  document.getElementById('statWrong').textContent=total-correct;
+  document.getElementById('statPct').textContent=pct+'%';
+
+  const list=document.getElementById('reviewList');list.innerHTML='';
+  sim.forEach((q,i)=>{
+    const ans=answers[i];if(!ans)return;
+    const div=document.createElement('div');
+    div.className='review-item '+(ans.correct?'correct':'wrong');
+    const myText=ans.correct?'':`<div class="review-item-ans">❌ Tu respuesta: <span class="my">${ans.selected}. ${q[ans.selected.toLowerCase()]}</span></div>`;
+    div.innerHTML=`<div class="review-item-q"><strong>${i+1}.</strong> ${q.p}</div>${myText}<div class="review-item-ans">${ans.correct?'✅':'✔'} Correcta: <span class="ok">${q.ok}. ${q[q.ok.toLowerCase()]}</span></div><div class="review-item-retro">${q.r} <em>${q.ref}</em></div>`;
+    list.appendChild(div);
+  });
+}
+
+function retryQuiz(){startQuiz(currentSim);}
+function goHome(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('home').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderHome();
+}
+renderHome();
+</script>
+</body>
+</html>

@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacros M1 — Neurocognición del aprendizaje</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #f6f9ff;
+    --bg2:       #ffffff;
+    --bg3:       #edf2ff;
+    --sky:       #1565c0;
+    --sky2:      #1976d2;
+    --sky3:      #e3eeff;
+    --lime:      #5a7a00;
+    --lime2:     #7aaa00;
+    --lime3:     #eef7d0;
+    --text:      #0a0f1e;
+    --text2:     #3a4460;
+    --muted:     #8090b8;
+    --border:    #dce4f5;
+    --green:     #1a7a50;
+    --green2:    #d6f5e6;
+    --red:       #c0321c;
+    --red2:      #fde8e4;
+    --shadow:    0 2px 20px rgba(21,101,192,.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Space Grotesk', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* soft blue mesh background */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse at 10% 20%, rgba(21,101,192,.06) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(90,122,0,.05) 0%, transparent 50%);
+  }
+  #home, #quiz, #results { position: relative; z-index: 1; }
+
+  /* HEADER */
+  .header {
+    background: var(--bg2);
+    border-bottom: 2px solid var(--border);
+    padding: 0 32px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 1px 12px rgba(21,101,192,.08);
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-tag {
+    background: var(--sky); color: #fff;
+    font-weight: 700; font-size: .9rem; letter-spacing: .06em;
+    padding: 5px 16px; border-radius: 8px;
+  }
+  .header-title { font-size: 1rem; font-weight: 700; color: var(--text); }
+  .header-sub { font-size: .7rem; color: var(--muted); margin-top: 1px; }
+  .header-badge {
+    font-size: .72rem; color: var(--sky2); font-weight: 600;
+    border: 1.5px solid var(--border); padding: 4px 14px; border-radius: 20px;
+    background: var(--sky3);
+  }
+
+  /* HOME */
+  #home { max-width: 860px; margin: 0 auto; padding: 60px 24px; }
+
+  .home-hero { margin-bottom: 60px; }
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 10px;
+    font-size: .72rem; font-weight: 700; letter-spacing: .16em;
+    text-transform: uppercase; color: var(--sky2); margin-bottom: 20px;
+  }
+  .hero-eyebrow .line { width: 40px; height: 2px; background: linear-gradient(90deg, var(--sky2), var(--lime2)); border-radius: 2px; }
+  .home-hero h1 {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 3.6rem; line-height: 1.08; color: var(--text); font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  .home-hero h1 .word-bank { color: var(--sky); }
+  .home-hero h1 .word-sim { color: var(--lime); font-style: italic; }
+  .hero-sub {
+    color: var(--text2); font-size: .95rem; margin-top: 20px;
+    line-height: 1.75; max-width: 520px; font-weight: 400;
+  }
+  .hero-pills { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+  .hero-pill {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--bg2); border: 1.5px solid var(--border);
+    padding: 7px 16px; border-radius: 20px; font-size: .78rem; font-weight: 600;
+    color: var(--text2); box-shadow: var(--shadow);
+  }
+  .hero-pill .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .hero-pill .dot.sky { background: var(--sky2); }
+  .hero-pill .dot.lime { background: var(--lime2); }
+
+  .sim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px,1fr)); gap: 16px; }
+  .sim-card {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 28px 24px;
+    cursor: pointer; transition: all .2s ease;
+    box-shadow: var(--shadow); position: relative; overflow: hidden;
+  }
+  .sim-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--sky), var(--lime2));
+    transform: scaleX(0); transform-origin: left; transition: transform .22s ease;
+  }
+  .sim-card:hover { border-color: var(--sky2); transform: translateY(-4px); box-shadow: 0 12px 36px rgba(21,101,192,.14); }
+  .sim-card:hover::before { transform: scaleX(1); }
+  .sim-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+  .sim-num {
+    font-family: 'Libre Baskerville', serif;
+    font-size: 3rem; font-weight: 700; line-height: 1; color: var(--sky);
+  }
+  .sim-badge-m {
+    background: var(--lime3); color: var(--lime);
+    font-size: .68rem; font-weight: 700; padding: 4px 10px;
+    border-radius: 6px; border: 1px solid rgba(90,122,0,.2);
+    letter-spacing: .08em; text-transform: uppercase; margin-top: 6px;
+  }
+  .sim-title { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+  .sim-count { font-size: .76rem; color: var(--muted); font-weight: 500; }
+  .sim-score-badge { display: none; margin-top: 12px; font-size: .74rem; font-weight: 700; padding: 5px 12px; border-radius: 8px; width: fit-content; }
+  .sim-score-badge.shown { display: inline-block; }
+  .sim-score-badge.pass { background: var(--green2); color: var(--green); border: 1px solid rgba(26,122,80,.25); }
+  .sim-score-badge.fail { background: var(--red2); color: var(--red); border: 1px solid rgba(192,50,28,.25); }
+  .sim-score-badge.partial { background: var(--lime3); color: var(--lime); border: 1px solid rgba(90,122,0,.25); }
+
+  /* QUIZ */
+  #quiz { display: none; max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .quiz-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .btn-back {
+    background: var(--bg2); border: 1.5px solid var(--border); color: var(--text2);
+    padding: 8px 16px; border-radius: 10px; cursor: pointer; font-size: .82rem;
+    transition: .18s; font-family: 'Space Grotesk', sans-serif; font-weight: 600;
+    box-shadow: var(--shadow);
+  }
+  .btn-back:hover { border-color: var(--sky2); color: var(--sky); }
+  .quiz-title { font-family: 'Libre Baskerville', serif; font-size: 1.2rem; color: var(--sky); font-weight: 700; flex: 1; }
+
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--sky2), var(--lime2)); border-radius: 4px; transition: width .4s ease; }
+
+  .q-card {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 36px 32px; margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .q-number {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--sky3); color: var(--sky);
+    font-size: .7rem; font-weight: 700; padding: 4px 14px;
+    border-radius: 20px; text-transform: uppercase; letter-spacing: .12em;
+    margin-bottom: 18px; border: 1px solid rgba(21,101,192,.15);
+  }
+  .q-text { font-family: 'Libre Baskerville', serif; font-size: 1.1rem; line-height: 1.75; color: var(--text); margin-bottom: 28px; }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--bg); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 14px 18px; cursor: pointer;
+    text-align: left; color: var(--text2);
+    font-family: 'Space Grotesk', sans-serif; font-size: .92rem; line-height: 1.55; font-weight: 400;
+    transition: all .16s ease;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--sky2); background: var(--sky3); color: var(--sky); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    min-width: 28px; height: 28px; border-radius: 8px;
+    background: var(--border); color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .74rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; transition: .16s;
+  }
+  .opt-btn.selected-correct { border-color: var(--green); background: var(--green2); color: #0f4a30; }
+  .opt-btn.selected-correct .opt-letter { background: var(--green); color: #fff; }
+  .opt-btn.selected-wrong { border-color: var(--red); background: var(--red2); color: #7a1a0a; }
+  .opt-btn.selected-wrong .opt-letter { background: var(--red); color: #fff; }
+  .opt-btn.show-correct { border-color: var(--green); background: var(--green2); opacity: .72; }
+  .opt-btn.show-correct .opt-letter { background: var(--green); color: #fff; }
+
+  .feedback-box {
+    display: none; margin-top: 16px; padding: 16px 20px;
+    border-radius: 12px; font-size: .88rem; line-height: 1.65;
+    animation: fadeUp .28s ease; font-family: 'Libre Baskerville', serif;
+  }
+  .feedback-box.correct { background: var(--green2); border: 1.5px solid rgba(26,122,80,.3); color: #0f4a30; }
+  .feedback-box.wrong { background: var(--red2); border: 1.5px solid rgba(192,50,28,.3); color: #7a1a0a; }
+  .feedback-ref { font-size: .8rem; margin-top: 6px; opacity: .65; font-style: italic; }
+
+  .quiz-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .btn-primary {
+    background: var(--sky); color: #fff; border: none;
+    padding: 13px 30px; border-radius: 12px; cursor: pointer;
+    font-size: .9rem; font-weight: 700; transition: .18s;
+    font-family: 'Space Grotesk', sans-serif; letter-spacing: .02em;
+    box-shadow: 0 4px 18px rgba(21,101,192,.3);
+  }
+  .btn-primary:hover { background: var(--sky2); }
+  .btn-primary:disabled { opacity: .3; cursor: default; box-shadow: none; }
+  .btn-secondary {
+    background: var(--bg2); border: 1.5px solid var(--lime2); color: var(--lime);
+    padding: 12px 22px; border-radius: 12px; cursor: pointer;
+    font-size: .88rem; font-weight: 700; transition: .18s;
+    font-family: 'Space Grotesk', sans-serif; box-shadow: var(--shadow);
+  }
+  .btn-secondary:hover { background: var(--lime3); }
+
+  /* RESULTS */
+  #results { display: none; max-width: 700px; margin: 0 auto; padding: 52px 24px 80px; }
+  .results-header { text-align: center; margin-bottom: 44px; }
+  .results-score-ring {
+    width: 140px; height: 140px; border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    box-shadow: var(--shadow);
+  }
+  .results-score-ring.pass { background: var(--green2); border: 3px solid var(--green); }
+  .results-score-ring.fail { background: var(--red2); border: 3px solid var(--red); }
+  .results-score-ring.partial { background: var(--lime3); border: 3px solid var(--lime2); }
+  .score-pct { font-family: 'Libre Baskerville', serif; font-size: 3rem; font-weight: 700; line-height: 1; }
+  .score-pct.pass { color: var(--green); }
+  .score-pct.fail { color: var(--red); }
+  .score-pct.partial { color: var(--lime); }
+  .score-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); margin-top: 4px; font-weight: 600; }
+  .results-title { font-family: 'Libre Baskerville', serif; font-size: 2rem; color: var(--sky); margin-bottom: 8px; font-weight: 700; }
+  .results-meta { font-size: .88rem; color: var(--muted); }
+
+  .results-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 32px 0; }
+  .stat-box { background: var(--bg2); border: 1.5px solid var(--border); border-radius: 16px; padding: 20px; text-align: center; box-shadow: var(--shadow); }
+  .stat-val { font-family: 'Libre Baskerville', serif; font-size: 2.6rem; font-weight: 700; line-height: 1; }
+  .stat-val.green { color: var(--green); }
+  .stat-val.red { color: var(--red); }
+  .stat-val.sky { color: var(--sky); }
+  .stat-lbl { font-size: .7rem; color: var(--muted); margin-top: 6px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
+
+  .review-section { margin-top: 36px; }
+  .review-title { font-family: 'Libre Baskerville', serif; font-size: 1.3rem; color: var(--sky); margin-bottom: 16px; font-weight: 700; }
+  .review-item {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 12px; padding: 16px 20px; margin-bottom: 10px;
+    border-left: 4px solid transparent; font-size: .87rem; line-height: 1.6; box-shadow: var(--shadow);
+  }
+  .review-item.correct { border-left-color: var(--green); }
+  .review-item.wrong { border-left-color: var(--red); }
+  .review-item-q { color: var(--text); margin-bottom: 6px; font-weight: 500; font-family: 'Libre Baskerville', serif; font-size: .95rem; }
+  .review-item-ans { font-size: .81rem; margin-top: 4px; color: var(--text2); }
+  .review-item-ans .my { color: var(--red); font-weight: 700; }
+  .review-item-ans .ok { color: var(--green); font-weight: 700; }
+  .review-item-retro { font-size: .78rem; color: var(--muted); margin-top: 5px; font-style: italic; font-family: 'Libre Baskerville', serif; }
+  .results-actions { display: flex; gap: 14px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
+  .fade-in { animation: fadeUp .3s ease; }
+  @media(max-width:600px) {
+    .home-hero h1 { font-size: 2.6rem; }
+    .q-card { padding: 22px 16px; }
+    .results-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-tag">M1</div>
+    <div>
+      <div class="header-title">Simulacros</div>
+      <div class="header-sub">Neurocognición del aprendizaje</div>
+    </div>
+  </div>
+  <div class="header-badge">5 × 30 preguntas</div>
+</div>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-hero">
+    <div class="hero-eyebrow">
+      <div class="line"></div>
+      Módulo 1 · Banco de preguntas
+    </div>
+    <h1>
+      <span class="word-bank">Banco</span> de<br>
+      <span class="word-sim">Simulacros</span>
+    </h1>
+    <p class="hero-sub">Selecciona un simulacro para comenzar tu práctica. Cada uno contiene 30 preguntas de opción múltiple con retroalimentación inmediata.</p>
+    <div class="hero-pills">
+      <div class="hero-pill"><span class="dot sky"></span>5 simulacros disponibles</div>
+      <div class="hero-pill"><span class="dot lime"></span>150 preguntas en total</div>
+      <div class="hero-pill"><span class="dot sky"></span>Retroalimentación inmediata</div>
+    </div>
+  </div>
+  <div class="sim-grid" id="simGrid"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-nav">
+    <button class="btn-back" onclick="goHome()">← Inicio</button>
+    <div class="quiz-title" id="quizTitle"></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-meta"><span id="progressText"></span><span id="scoreText"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div id="qWrap"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="results-header">
+    <div class="results-score-ring" id="scoreRing">
+      <div class="score-pct" id="scorePct"></div>
+      <div class="score-label">puntuación</div>
+    </div>
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-meta" id="resultsMeta"></div>
+  </div>
+  <div class="results-stats">
+    <div class="stat-box"><div class="stat-val green" id="statCorr">0</div><div class="stat-lbl">Correctas</div></div>
+    <div class="stat-box"><div class="stat-val red" id="statWrong">0</div><div class="stat-lbl">Incorrectas</div></div>
+    <div class="stat-box"><div class="stat-val sky" id="statPct">0%</div><div class="stat-lbl">Porcentaje</div></div>
+  </div>
+  <div class="review-section">
+    <div class="review-title">📋 Revisión detallada</div>
+    <div id="reviewList"></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-secondary" onclick="retryQuiz()">🔁 Repetir simulacro</button>
+    <button class="btn-primary" onclick="goHome()">← Volver al inicio</button>
+  </div>
+</div>
+
+<script>
+const SIMS = [
+  [
+    {id:117,p:'Según el texto, ¿cuáles son las redes funcionales de la atención?',a:'Redes de detección visual.',b:'Memoria, Atención y Motivación.',c:'Redes atencionales primarias y secundarias.',d:'Redes de orientación visual.',ok:'C',r:'Correcta: C. Redes atencionales primarias y secundarias. Ej.: [UDI151K8R] Memoria, Atención y Motivación. 6. Redes funcionales de la atención ueca.euroinnova.com (M1, p. 104)',ref:'(M1, p. 104)'},
+    {id:102,p:'¿Cuál es la función de la atención en el procesamiento de la información?',a:'Consumir recursos atencionales.',b:'Evitar la saturación del sistema cognitivo.',c:'Desbordar la capacidad limitada del sistema cognitivo.',d:'Procesar automáticamente la información.',ok:'B',r:'Correcta: B. Evitar la saturación del sistema cognitivo. Ej.: el procesamiento automático consume pocos recursos atencionales, mientras que los procesos controlados sí consumen recursos atencionales, así, la función de filtro permitiría conceder la (M1, p. 96)',ref:'(M1, p. 96)'},
+    {id:132,p:'Según la tesis de Broca, ¿qué determina el predominio funcional de un lado del cuerpo?',a:'Supremacía de un hemisferio cerebral sobre el otro.',b:'Reacción global del cuerpo.',c:'Movimientos bilaterales.',d:'Educación.',ok:'A',r:'Correcta: A. Supremacía de un hemisferio cerebral sobre el otro. Ej.: educación, sino por la supremacía de un hemisferio cerebral sobre el otro. Así pues, el hemisferio izquierdo dirigirá la parte derecha del cuerpo y el hemisferio derecho la parte izquierda del cuerpo." (M1, p. 119)',ref:'(M1, p. 119)'},
+    {id:149,p:'Según el texto, ¿cuál es uno de los objetivos de la intervención en neuropsicología de la educación?',a:'Eliminar la consciencia del estudiante.',b:'Aumentar la ansiedad en los estudiantes.',c:'Incrementar la motivación de los estudiantes.',d:'Fomentar la distracción en los estudiantes.',ok:'C',r:'Correcta: C. Incrementar la motivación de los estudiantes. Ej.: [UDI151K8W] Intervención en neuropsicología de la educación. 2. Perspectivas psicológicas e intervención ueca.euroinnova.com (M1, p. 135)',ref:'(M1, p. 135)'},
+    {id:63,p:'¿En qué etapa del proceso de aprendizaje se toma consciencia de la necesidad que ha surgido y a la que se debe hacer frente?',a:'Etapa de incompetencia inconsciente.',b:'Etapa de incompetencia consciente.',c:'Etapa de competencia inconsciente.',d:'Etapa de competencia consciente.',ok:'B',r:'Correcta: B. Etapa de incompetencia consciente. Ej.: En nuestro ejemplo, el proceso de aprendizaje  de la incompetencia consciente se inicia cuando somos desafiados a jugar a los dardos y aceptamos el desafío. Hasta este momento no éramos (M1, p. 77)',ref:'(M1, p. 77)'},
+    {id:129,p:'¿Qué proceso es analizado por la prueba de análisis cualitativo de errores en la medida?',a:'Procesos léxicos.',b:'Identificación de letras.',c:'Procesos gramaticales.',d:'Procesos semánticos.',ok:'A',r:'Correcta: A. Procesos léxicos. Ej.: cualitativo de los errores en la medida, que permite hacer inferencias acerca del subproceso afectado y de las variables que pueden modificarlo. (M1, p. 116)',ref:'(M1, p. 116)'},
+    {id:53,p:'¿Qué permite discriminar entre estímulos relevantes e irrelevantes en el proceso de aprendizaje?',a:'La mielina.',b:'La motivación.',c:'La atención.',d:'La emoción.',ok:'C',r:'Correcta: C. La atención. Ej.: relevantes e irrelevantes. La corteza cerebral  es la encargada de establecer las pautas necesarias para aprender cosas (M1, p. 69)',ref:'(M1, p. 69)'},
+    {id:141,p:'¿Qué se considera alumnado con necesidad específica de apoyo educativo?',a:'Por dificultades específicas de aprendizaje.',b:'Por presentar necesidades educativas especiales.',c:'Por haberse incorporado tarde al sistema educativo.',d:'Por altas capacidades intelectuales.',ok:'D',r:'Correcta: D. Por altas capacidades intelectuales. Ej.: Alumnado con necesidad específica de apoyo educativo La Ley Orgánica 3/2020, de 29 de diciembre, por la que se modifica la Ley Orgánica 2/2006, de 3 de (M1, p. 128)',ref:'(M1, p. 128)'},
+    {id:6,p:'¿Cuáles son los elementos constitutivos del tejido nervioso?',a:'Neuronas y células gliales.',b:'Sistema nervioso central y periférico.',c:'Cuerpos neuronales y neuropilo.',d:'Axones y vainas.',ok:'A',r:'Correcta: A. Neuronas y células gliales. Ej.: Relaciona los elementos de la columna Derecha con la columna Izquierda Sistema parasimpático. 1 (M1, p. 11)',ref:'(M1, p. 11)'},
+    {id:1,p:'¿Qué campos interdisciplinarios explora la neurocognición del aprendizaje?',a:'Matemáticas y Química.',b:'Psicología y Física.',c:'Neurociencia y Biología.',d:'Neurociencia y Psicología Cognitiva.',ok:'D',r:'Correcta: D. Neurociencia y Psicología Cognitiva. Ej.: [MOD024BCZ] Neurocognición del Aprendizaje [UDI1519ZJ] Presentación (M1, p. 1)',ref:'(M1, p. 1)'},
+    {id:90,p:'¿Qué relación existe entre el aprendizaje y la memoria?',a:'La memoria es un proceso independiente del aprendizaje.',b:'El aprendizaje y la memoria son fenómenos interdependientes.',c:'El aprendizaje es un proceso independiente de la memoria.',d:'El aprendizaje y la memoria no están relacionados.',ok:'B',r:'Correcta: B. El aprendizaje y la memoria son fenómenos interdependientes. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 102)',ref:'(M1, p. 102)'},
+    {id:116,p:'¿Cuál es una de las funciones de la red posterior en la atención visual?',a:'Enfoque de la atención.',b:'Regulación deliberada.',c:'Iniciación de respuesta.',d:'Reconocimiento de objetos.',ok:'A',r:'Correcta: A. Enfoque de la atención. Ej.: inicialmente dos redes neuronales: la red posterior y la red anterior. La red posterior estaría implicada en la orientación visual y la atención focalizada, e incluiría el córtex parietal posterior, el (M1, p. 104)',ref:'(M1, p. 104)'},
+    {id:146,p:'¿Cuál es el enfoque que subraya la importancia de los procesos de la cognición implícitos en los aprendizajes escolares?',a:'Conductismo.',b:'Psicología cognitiva.',c:'Psicología de la Gestalt.',d:'Psicología de Campo.',ok:'B',r:'Correcta: B. Psicología cognitiva. Ej.: tiene el estudio de los procesos de la cognición implícitos en los aprendizajes escolares, así como el papel activo del alumno en la construcción de su propio aprendizaje. (M1, p. 133)',ref:'(M1, p. 133)'},
+    {id:92,p:'¿Qué procesos dinámicos pueden encuadrarse bajo el término \'memoria\'?',a:'Recuerdos con el paso del tiempo.',b:'Uso y mantenimiento transitorio de información.',c:'Interpretación de frases en función del contexto.',d:'Realización de cálculos mentales.',ok:'B',r:'Correcta: B. Uso y mantenimiento transitorio de información. Ej.: mantenimiento transitorio de información, como cuando se realizan cálculos mentales mientras se mantiene el recuerdo de una cifra a anterior o se interpreta una frase en función del contexto de una (M1, p. 91)',ref:'(M1, p. 91)'},
+    {id:75,p:'Según el texto, ¿cómo se ve afectado el aprendizaje complejo por las amenazas?',a:'Se inhibe.',b:'No tiene efecto.',c:'Depende del tipo de amenaza.',d:'Se incrementa.',ok:'A',r:'Correcta: A. Se inhibe. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 82)',ref:'(M1, p. 82)'},
+    {id:19,p:'¿Cuál es la función principal de las células satélite en el sistema nervioso?',a:'Formar los ganglios raquídeos.',b:'Regular el microambiente alrededor de las neuronas.',c:'Producir mielina.',d:'Transmitir impulsos nerviosos.',ok:'B',r:'Correcta: B. Regular el microambiente alrededor de las neuronas. Ej.: astrocitos, ya que contribuyen a regular el microambiente alrededor de las neuronas y dan sostén. Son un tipo de células gliales que se encuentran en el sistema nervioso periférico (SNP). Su nombre (M1, p. 28)',ref:'(M1, p. 28)'},
+    {id:86,p:'¿Qué proceso de la memoria consiste en la transformación de los estímulos en una representación mental?',a:'Almacenamiento.',b:'Organización.',c:'Recuperación.',d:'Codificación.',ok:'D',r:'Correcta: D. Codificación. Ej.: Los seres humanos llevan a cabo procesos de construcción y renovación  de las representaciones del mundo a partir de tres procesos cognitivos fundamentales: la percepción, el aprendizaje y la (M1, p. 89)',ref:'(M1, p. 89)'},
+    {id:47,p:'¿Cuál es el objetivo de la neuropsicología en relación con la educación?',a:'Analizar problemas de aprendizaje.',b:'Estudiar la memoria y la atención.',c:'Resolver dificultades psicológicas.',d:'Diagnosticar problemas cerebrales.',ok:'A',r:'Correcta: A. Analizar problemas de aprendizaje. Ej.: [UDI151K8D] Neuropsicología y Educación. 1. Neuropsicología y educación: neuropsicoeducación o neurodidáctica ueca.euroinnova.com (M1, p. 64)',ref:'(M1, p. 64)'},
+    {id:4,p:'¿Cuál es la disciplina médica encargada de estudiar y tratar las enfermedades que afectan al sistema nervioso?',a:'Psicología.',b:'Neurociencias.',c:'Psiquiatría.',d:'Neurología.',ok:'D',r:'Correcta: D. Neurología. Ej.: meninges… las enfermedades que más prevalencia tiene en la población y por tanto son las más estudiadas por los profesionales de las neurociencias son: (M1, p. 6)',ref:'(M1, p. 6)'},
+    {id:140,p:'¿A quién va dirigida la atención educativa según el texto?',a:'A los profesores.',b:'A los padres.',c:'A todo el alumnado.',d:'A los directivos.',ok:'C',r:'Correcta: C. A todo el alumnado. Ej.: [UDI151K8V] Intervención en neuropsicología de la educación. 1. Intervención educativa ueca.euroinnova.com (M1, p. 128)',ref:'(M1, p. 128)'},
+    {id:78,p:'¿Por qué las pruebas tradicionales ofrecen pocas probabilidades de una real evaluación del aprendizaje?',a:'Porque se basan en la resolución de problemas.',b:'Porque son subjetivas.',c:'Porque dependen de la apreciación objetiva.',d:'Porque se refieren a un único asunto o una parte del mismo.',ok:'D',r:'Correcta: D. Porque se refieren a un único asunto o una parte del mismo. Ej.: problemas, ofrecen pocas probabilidades de real evaluación de lo que el alumno aprende realmente, ya que se refieren, por regla general, a un único asunto o una parte del mismo. Esas pruebas, por (M1, p. 85)',ref:'(M1, p. 85)'},
+    {id:103,p:'¿Cómo se define la atención en el contexto de la psicología cognitiva?',a:'Función activa del individuo.',b:'Adaptación al medio.',c:'Capacidad de concentrarse.',d:'Estado de la consciencia.',ok:'A',r:'Correcta: A. Función activa del individuo. Ej.: Esta definición, aunque muy simple, se podría enmarcar en el paradigma de la psicología cognitiva  pero históricamente ha tenido distintos significados: desde el estructuralismo se entendía (M1, p. 96)',ref:'(M1, p. 96)'},
+    {id:58,p:'¿Qué implica el aprendizaje según el texto?',a:'Cambios neuronales.',b:'Consecuencias de drogas.',c:'Maduración.',d:'Crecimiento.',ok:'A',r:'Correcta: A. Cambios neuronales. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 46)',ref:'(M1, p. 46)'},
+    {id:66,p:'Según el texto, ¿cuál es el rol del hipocampo en el cerebro?',a:'Pensamiento.',b:'Memoria.',c:'Emociones.',d:'Movimiento.',ok:'B',r:'Correcta: B. Memoria. Ej.: cerebro también incluye estructuras subcorticales como el hipotálamo, el hipocampo y el cerebelo, que desempeñan roles clave en el control de las emociones, la formación de recuerdos y la (M1, p. 9)',ref:'(M1, p. 9)'},
+    {id:67,p:'¿Qué disciplinas han contribuido a la síntesis de principios para el aprendizaje?',a:'Botánica.',b:'Astronomía.',c:'Neurociencias.',d:'Física cuántica.',ok:'C',r:'Correcta: C. Neurociencias. Ej.: Estas disciplinas incluyen campos como las neurociencias , la psicología cognitiva , la teoría del estrés  y la creatividad . Constituyen principios, que si se analizan con detenimiento tendrán como (M1, p. 78)',ref:'(M1, p. 78)'},
+    {id:115,p:'¿Qué es la atención dividida?',a:'Seleccionar información relevante.',b:'Compartir la capacidad entre tareas.',c:'Mantener el estado de selectividad atencional.',d:'Realizar más de una tarea a la vez.',ok:'D',r:'Correcta: D. Realizar más de una tarea a la vez. Ej.: [UDI151K8R] Memoria, Atención y Motivación. 6. Redes funcionales de la atención ueca.euroinnova.com (M1, p. 104)',ref:'(M1, p. 104)'},
+    {id:88,p:'¿Qué es el aprendizaje?',a:'Un proceso de adquisición de conocimientos.',b:'Un proceso de olvido.',c:'Un proceso de desaprendizaje.',d:'Un proceso de almacenamiento de información.',ok:'A',r:'Correcta: A. Un proceso de adquisición de conocimientos. Ej.: escritura, así como los conocimientos básicos sobre matemáticas y ciencias, requieren de atender, comparar, diferenciar y buscar semejanzas para lograr asociar e integrar las nuevas ideas con las ya (M1, p. 60)',ref:'(M1, p. 60)'},
+    {id:84,p:'¿Qué permite la memoria según el texto?',a:'Registrar, codificar, consolidar, almacenar y recuperar información.',b:'Modificar la conducta.',c:'Realizar sinapsis neuronales.',d:'Adaptarse al entorno.',ok:'A',r:'Correcta: A. Registrar, codificar, consolidar, almacenar y recuperar información. Ej.: elementos de información mientras se integran entre sí. Memoria es la retención en el tiempo de la información aprendida. Esta retención depende de (M1, p. 88)',ref:'(M1, p. 88)'},
+    {id:69,p:'Según el texto, ¿cuál es el propósito principal del cerebro?',a:'Construcción de modelos de la realidad.',b:'Desarrollo del lenguaje.',c:'Supervivencia.',d:'Escuchar hablar a los demás.',ok:'C',r:'Correcta: C. Supervivencia. Ej.: La búsqueda de significados es innata. Esta búsqueda está orientada a la supervivencia y puede cambiar con el desarrollo (“Quien soy”, “adónde voy”), y según Restak (1995) el propósito principal (M1, p. 79)',ref:'(M1, p. 79)'},
+    {id:48,p:'¿Qué es la neuropsicoeducación o neurodidáctica?',a:'Disfunción del sistema nervioso.',b:'Evaluación de funciones cognitivas.',c:'Trastornos del aprendizaje.',d:'Manifestación de problemas en conductas de autorregulación e interacción social.',ok:'B',r:'Correcta: B. Evaluación de funciones cognitivas. Ej.: [UDI151K8D] Neuropsicología y Educación. 1. Neuropsicología y educación: neuropsicoeducación o neurodidáctica ueca.euroinnova.com (M1, p. 65)',ref:'(M1, p. 65)'},
+  ],
+  [
+    {id:70,p:'Según el principio 5 del aprendizaje basado en el cerebro, ¿qué rol juegan las emociones en el aprendizaje?',a:'Son independientes de la cognición.',b:'No tienen importancia.',c:'Solo afectan al pensamiento de orden superior.',d:'Son fundamentales para la configuración.',ok:'D',r:'Correcta: D. Son fundamentales para la configuración. Ej.: comprensiones reconfiguran las configuraciones automáticas. 4.5. Principio 5 (M1, p. 79)',ref:'(M1, p. 79)'},
+    {id:28,p:'¿Cuál es el órgano receptor del gusto?',a:'Oído.',b:'Nariz.',c:'Boca.',d:'Ojo.',ok:'C',r:'Correcta: C. Boca. Ej.: El órgano receptor del gusto es la boca . Sus órganos son los siguientes: papilas gustativas, lengua y paladar. (M1, p. 42)',ref:'(M1, p. 42)'},
+    {id:31,p:'¿Qué es la neuroplasticidad?',a:'Capacidad de las células nerviosas para cambiar de forma.',b:'Capacidad del cerebro para procesar información.',c:'Capacidad de regeneración de las células del sistema nervioso.',d:'Capacidad del sistema nervioso para adaptarse a las modificaciones del entorno.',ok:'D',r:'Correcta: D. Capacidad del sistema nervioso para adaptarse a las modificaciones del entorno. Ej.: El concepto de neuroplasticidad hace referencia a la capacidad del sistema nervioso para adaptarse a las distintas modificaciones del entorno. Es la capacidad de las células nerviosas para cambiar sus (M1, p. 45)',ref:'(M1, p. 45)'},
+    {id:38,p:'¿Cuál es una característica de la Memoria a Corto Plazo (MCP)?',a:'Puede guardar más de siete ítems a la vez.',b:'La información se guarda de forma inconsciente.',c:'La duración temporal de la información es breve.',d:'Almacena información de forma permanente.',ok:'C',r:'Correcta: C. La duración temporal de la información es breve. Ej.: persona. Las principales características de la MCP son las siguientes: La información se codifica, sobre todo, de forma visual y acústica. (M1, p. 52)',ref:'(M1, p. 52)'},
+    {id:40,p:'¿Qué es la orientación personal?',a:'Conocer la estación del año.',b:'Conocer diferentes hechos y situaciones.',c:'Conocer el día y la hora.',d:'Conocer datos sobre la propia identidad.',ok:'D',r:'Correcta: D. Conocer datos sobre la propia identidad. Ej.: 8 / 15Orientación La orientación es la capacidad que permite que una persona pueda ser consciente de la situación y (M1, p. 55)',ref:'(M1, p. 55)'},
+    {id:110,p:'¿Qué efecto tiene la recepción de información previa sobre la reacción ante un evento?',a:'Disminuye el tiempo de reacción.',b:'Genera confusión en la reacción.',c:'Aumenta el tiempo de reacción.',d:'No tiene efecto en el tiempo de reacción.',ok:'A',r:'Correcta: A. Disminuye el tiempo de reacción. Ej.: información seleccionada. En función del tipo de actividad pero también de otras variables como la dificultad de la actividad, la edad o el nivel intelectual del individuo, etc., el tiempo de atención (M1, p. 99)',ref:'(M1, p. 99)'},
+    {id:9,p:'¿Qué sistema se encarga del control visceral y se divide en rama simpática y parasimpática?',a:'Sistema nervioso periférico.',b:'Sistema parasimpático.',c:'Sistema nervioso autónomo.',d:'Sistema nervioso somático.',ok:'C',r:'Correcta: C. Sistema nervioso autónomo. Ej.: sanguíneos etc. Este se divide a su vez en dos ramas, la rama simpática y la parasimpática. (M1, p. 10)',ref:'(M1, p. 10)'},
+    {id:80,p:'¿En qué consiste la evaluación constante del aprendizaje?',a:'En preocuparse por la marcha positiva o negativa de las realizaciones docentes.',b:'En evaluar solo el comportamiento del alumno.',c:'En adoptar recursos para rectificarse sobre la marcha.',d:'En comparar informes y conocimientos.',ok:'A',r:'Correcta: A. En preocuparse por la marcha positiva o negativa de las realizaciones docentes. Ej.: de sus realizaciones docentes con la finalidad de poder adoptar recursos que, si llega el caso, le permitan rectificarse  sobre la marcha y antes de llevar a sus alumnos al fracaso. (M1, p. 84)',ref:'(M1, p. 84)'},
+    {id:17,p:'¿Cuál es la función principal de los oligodendrocitos?',a:'Captar iones de K+',b:'Almacenar neurotransmisores.',c:'Mielinizar los axones del SNC.',d:'Tener función fagocítica.',ok:'C',r:'Correcta: C. Mielinizar los axones del SNC. Ej.: desde el encéfalo hasta la región lumbar de la columna vertebral. Su función principal es la transmisión de información entre el cerebro y el resto del cuerpo, así como la coordinación de (M1, p. 18)',ref:'(M1, p. 18)'},
+    {id:43,p:'¿Qué tipo de praxia se refiere a la capacidad de hacer movimientos o gestos básicos con una intención concreta?',a:'Visoconstructivas.',b:'Ideomotora.',c:'Faciales.',d:'Ideatorias.',ok:'B',r:'Correcta: B. Ideomotora. Ej.: Por lo que las praxias podrían entenderse como movimientos organizados que tienen un objetivo concreto. Las praxias están presentes en el día a día de todas las personas, ya que están desde el (M1, p. 57)',ref:'(M1, p. 57)'},
+    {id:94,p:'¿Qué es la memoria procedimental?',a:'Memoria semántica.',b:'Memoria sensorial.',c:'Memoria a largo plazo.',d:'Secuencia de recuerdos para ejecutar una acción.',ok:'D',r:'Correcta: D. Secuencia de recuerdos para ejecutar una acción. Ej.: 2.1. Memoria procedimental La memoria procedimental se refiere a la secuencia ordenada de recuerdos  que permiten (M1, p. 92)',ref:'(M1, p. 92)'},
+    {id:62,p:'¿En qué etapa del proceso de aprendizaje se consigue desarrollar nuevas habilidades hasta el punto de hacerlo correctamente?',a:'Etapa de incompetencia consciente.',b:'Etapa de incompetencia inconsciente.',c:'Etapa de competencia inconsciente.',d:'Etapa de competencia consciente.',ok:'D',r:'Correcta: D. Etapa de competencia consciente. Ej.: conseguir hacerlo correctamente. Esta parte del proceso de aprendizaje es la competencia consciente , todavía no se ha interiorizado los detalles que se deben tener en cuenta, pero si se le (M1, p. 77)',ref:'(M1, p. 77)'},
+    {id:14,p:'¿Cuál es la función principal de las neuronas en el sistema nervioso?',a:'Conducir impulsos nerviosos.',b:'Controlar actividad muscular.',c:'Pensar.',d:'Dividirse una vez alcanzada su madurez.',ok:'A',r:'Correcta: A. Conducir impulsos nerviosos. Ej.: los impulsos nerviosos de forma eficiente. En la médula espinal se encuentran diferentes vías nerviosas que llevan la información sensorial (M1, p. 18)',ref:'(M1, p. 18)'},
+    {id:44,p:'¿Cuál es el proceso por el que se inician y mantienen las respuestas?',a:'Actualización.',b:'Energización.',c:'Fijación.',d:'Monitorización.',ok:'B',r:'Correcta: B. Energización. Ej.: Energización : Proceso por el que se inician y mantienen las respuestas. Fijación : Mediante el que se establecen relaciones entre los estímulos que recibimos y las (M1, p. 59)',ref:'(M1, p. 59)'},
+    {id:68,p:'¿Qué sugiere Vygotsky acerca de la capacidad de tener diálogos internos y pensar?',a:'Dependen del desarrollo del lenguaje.',b:'Se aprenden después de experimentar diálogos externos.',c:'Son innatas.',d:'No se menciona en el texto.',ok:'B',r:'Correcta: B. Se aprenden después de experimentar diálogos externos. Ej.: se aprenden después de experimentar diálogos externos. 4.3. Principio 3 (M1, p. 79)',ref:'(M1, p. 79)'},
+    {id:12,p:'¿Qué función tiene el lóbulo frontal del cerebro?',a:'Razonamiento y planificación.',b:'Reconocimiento auditivo.',c:'Percepción del tacto.',d:'Percepción visual.',ok:'A',r:'Correcta: A. Razonamiento y planificación. Ej.: 4 / 5frontal se relaciona con la toma de decisiones y la planificación, el lóbulo parietal con la percepción sensorial y la orientación espacial, el lóbulo temporal con la audición y la memoria, (M1, p. 16)',ref:'(M1, p. 16)'},
+    {id:109,p:'¿Cuál es una de las funciones de la atención según el texto?',a:'Ignorar por completo los estímulos irrelevantes.',b:'Procesar todos los estímulos por igual.',c:'No afectar la realización de tareas simultáneas.',d:'Seleccionar los estímulos relevantes.',ok:'D',r:'Correcta: D. Seleccionar los estímulos relevantes. Ej.: que nos rodean. Este proceso implica evaluar que estímulos son más relevantes para dotarlos de prioridad y poder realizar procesamiento más profundo. (M1, p. 50)',ref:'(M1, p. 50)'},
+    {id:134,p:'¿Cuál es la fase en la que se trabaja la ambidiestría una vez determinado el tipo de lateralidad?',a:'Fase de orientación espacial.',b:'Fase de maduración.',c:'Fase de localización.',d:'Fase de fijación.',ok:'B',r:'Correcta: B. Fase de maduración. Ej.: ambidiestría, una vez que se ha determinado el tipo de lateralidad. 2.2. Tipos de la Lateralidad (M1, p. 121)',ref:'(M1, p. 121)'},
+    {id:93,p:'¿Qué aspectos pueden ser objeto de nuevas interpretaciones en relación a la memoria?',a:'Uso y mantenimiento transitorio de información.',b:'Realización de cálculos mentales.',c:'Decaimiento de los recuerdos con el paso del tiempo.',d:'Interpretación de frases en función del contexto.',ok:'C',r:'Correcta: C. Decaimiento de los recuerdos con el paso del tiempo. Ej.: informaciones relacionadas, la imposición de nuevas interpretaciones sobre informaciones pasadas, el decaimiento de los recuerdos con el paso de tiempo, etc. (M1, p. 91)',ref:'(M1, p. 91)'},
+    {id:59,p:'¿Qué es el aprendizaje según el texto?',a:'Una serie de pasos progresivos.',b:'Un proceso interno.',c:'Un resultado de la maduración.',d:'Un cambio conductual.',ok:'A',r:'Correcta: A. Una serie de pasos progresivos. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 74)',ref:'(M1, p. 74)'},
+    {id:65,p:'¿Qué caracteriza a la etapa de competencia inconsciente en el proceso de aprendizaje?',a:'Necesidad de atención a los detalles.',b:'Dificultad para alcanzar el objetivo deseado.',c:'Automatización del proceso.',d:'Memorización de los pasos.',ok:'C',r:'Correcta: C. Automatización del proceso. Ej.: 3.4. Etapa de competencia inconsciente Esta es la última etapa del proceso de aprendizaje. Una vez que se domina cómo hacer algo se (M1, p. 77)',ref:'(M1, p. 77)'},
+    {id:122,p:'¿Qué aspecto es crucial en la adquisición de la lectura?',a:'Memoria a corto plazo.',b:'Capacidad auditiva.',c:'Coordinación motora.',d:'Funcionalidad visual.',ok:'D',r:'Correcta: D. Funcionalidad visual. Ej.: 1 / 171. Funcionalidad visual y eficacia en los procesos lectores Funcionalidad visual: (M1, p. 110)',ref:'(M1, p. 110)'},
+    {id:101,p:'¿Dónde se almacena la memoria a largo plazo?',a:'En la corteza cerebral.',b:'En la memoria procedimental.',c:'En la amígdala.',d:'En el hipocampo.',ok:'A',r:'Correcta: A. En la corteza cerebral. Ej.: desecha, como sucede en el caso de la información almacenada en la memoria de trabajo. 2.8. Memoria a largo plazo (M1, p. 95)',ref:'(M1, p. 95)'},
+    {id:2,p:'¿Por qué es fundamental el estudio de la neurocognición del aprendizaje?',a:'Para desarrollar nuevas tecnologías.',b:'Para mejorar la salud física.',c:'Para mejorar las estrategias de enseñanza y aprendizaje.',d:'Para entender la historia del cerebro humano.',ok:'C',r:'Correcta: C. Para mejorar las estrategias de enseñanza y aprendizaje. Ej.: [MOD024BCZ] Neurocognición del Aprendizaje [UDI1519ZJ] Presentación (M1, p. 1)',ref:'(M1, p. 1)'},
+    {id:139,p:'¿Cuál es el propósito de la educación inclusiva según el Ministerio de Educación y Formación Profesional del Gobierno de España?',a:'Garantizar la igualdad de oportunidades para todo el alumnado.',b:'Limitar el desarrollo del alumnado.',c:'Favorecer la exclusión de ciertos alumnos.',d:'Promover la discriminación en el sistema educativo.',ok:'A',r:'Correcta: A. Garantizar la igualdad de oportunidades para todo el alumnado. Ej.: calidad y garantizar la igualdad de oportunidades a todo el alumnado para participar en un proceso de aprendizaje permanente. (M1, p. 127)',ref:'(M1, p. 127)'},
+    {id:120,p:'¿Cuál es el mecanismo por el cual la sociedad moldea a las personas a comportarse de una determinada manera?',a:'Refuerzo de conductas.',b:'Recompensa y castigo.',c:'Activación de estímulos.',d:'Aprendizaje de normas sociales.',ok:'B',r:'Correcta: B. Recompensa y castigo. Ej.: El mecanismo por el cual la sociedad moldea a las personas  a comportarse de una determinada manera, se da de la siguiente manera: (M1, p. 108)',ref:'(M1, p. 108)'},
+    {id:23,p:'¿Cuál es la función del área motora del lenguaje de Broca?',a:'Regular la capacidad de juicio.',b:'Controlar la visión.',c:'Interpretar sonidos.',d:'Producir la formación de palabras.',ok:'D',r:'Correcta: D. Producir la formación de palabras. Ej.: procesamiento de la información auditiva y en la percepción visual compleja. Se encuentra en la parte inferior de los lóbulos temporales y está dividida en dos áreas principales: el giro temporal (M1, p. 37)',ref:'(M1, p. 37)'},
+    {id:26,p:'¿Cómo actúa el cerebro en relación a la visión cuando las cosas o el cuerpo se mueven?',a:'Produciendo una serie de imágenes secuenciales.',b:'Desenfocando la visión.',c:'Generando una sola imagen estática.',d:'Deteniendo la percepción visual.',ok:'A',r:'Correcta: A. Produciendo una serie de imágenes secuenciales. Ej.: La visión cambia a medida que las cosas o el cuerpo se mueven. El cerebro actúa produciendo una serie de imágenes cientos de veces por segundo, ubicándolas una a continuación de la otra, como (M1, p. 40)',ref:'(M1, p. 40)'},
+    {id:51,p:'Según la neurodidáctica, ¿cuál es la base fundamental para el aprendizaje?',a:'Participación activa del lector.',b:'Estimulación de diferentes áreas cerebrales.',c:'Conocer el funcionamiento del cerebro.',d:'Ampliar la visión sobre lo que es importante y necesario aprender.',ok:'C',r:'Correcta: C. Conocer el funcionamiento del cerebro. Ej.: eficientemente con estas funciones vitales para el funcionamiento del sistema nervioso. (M1, p. 20)',ref:'(M1, p. 20)'},
+    {id:133,p:'¿A partir de qué edad el niño es capaz de comprender la noción de derecha e izquierda desde el punto de vista de los otros y de los objetos?',a:'8-10 años.',b:'5-7 años.',c:'3-5 años.',d:'10-12 años.',ok:'A',r:'Correcta: A. 8-10 años. Ej.: partir de los ocho años el niño es capaz de comprenderlos desde el punto de vista de los otros y de los objetos. (M1, p. 119)',ref:'(M1, p. 119)'},
+  ],
+  [
+    {id:137,p:'¿Qué aspecto es fundamental para el aprendizaje de la lecto-escritura y el rendimiento académico en general?',a:'Vías auditivas.',b:'Función de los dos oídos.',c:'Actividad de las áreas de codificación.',d:'Organización de la lateralidad en los hemisferios.',ok:'D',r:'Correcta: D. Organización de la lateralidad en los hemisferios. Ej.: La organización de la lateralidad en los hemisferios  influye, de manera directa, en los diferentes aspectos de la maduración neurofuncional, que interviene en los procesos de adquisición y (M1, p. 124)',ref:'(M1, p. 124)'},
+    {id:106,p:'¿Qué funciones se destacan comúnmente de la atención?',a:'Memoria, percepción, motivación.',b:'Selección, vigilancia, control.',c:'Activación, inhibición, procesamiento.',d:'Reflejo, experiencia, genética.',ok:'B',r:'Correcta: B. Selección, vigilancia, control. Ej.: Es común destacar tres funciones de la atención: selección, vigilancia, y control, que a su vez permiten que el procesamiento de la información sea preciso, continuado (sostenido en el tiempo), y (M1, p. 98)',ref:'(M1, p. 98)'},
+    {id:11,p:'¿Cuál es la función principal del cerebelo?',a:'Regular la actividad del corazón.',b:'Controlar la respiración.',c:'Coordinar los movimientos.',d:'Intervenir en la digestión.',ok:'C',r:'Correcta: C. Coordinar los movimientos. Ej.: sensibilidad, inteligencia, movimientos, aprendizaje, funcionamiento de los órganos… Es el órgano más poderoso y se divide en tres partes principales: (M1, p. 8)',ref:'(M1, p. 8)'},
+    {id:99,p:'¿Qué tipo de memoria permite almacenar todos los conceptos conocidos e ir agregando elementos nuevos que se aprenderán y relacionarán con estos conceptos?',a:'Memoria episódica.',b:'Memoria semántica.',c:'Memoria de trabajo.',d:'Memoria emocional.',ok:'B',r:'Correcta: B. Memoria semántica. Ej.: agregando elementos nuevos que se aprenderán y relacionarán con estos conceptos. Las zonas cerebrales que intervienen en este caso son la corteza entorrinal y los lóbulos temporales. (M1, p. 94)',ref:'(M1, p. 94)'},
+    {id:49,p:'¿En qué se enfoca la neurodidáctica?',a:'En la recuperación de la información.',b:'En el proceso de enseñanza.',c:'En el análisis de la información.',d:'En el desarrollo del cerebro del aprendiz.',ok:'D',r:'Correcta: D. En el desarrollo del cerebro del aprendiz. Ej.: [UDI151K8D] Neuropsicología y Educación. 1. Neuropsicología y educación: neuropsicoeducación o neurodidáctica ueca.euroinnova.com (M1, p. 66)',ref:'(M1, p. 66)'},
+    {id:145,p:'Según el texto, ¿cuál es la premisa básica del conductismo en relación al aprendizaje?',a:'El aprendizaje se da por la interacción social.',b:'El aprendizaje se produce a través de la observación de modelos.',c:'El aprendizaje se basa en la comprensión de los estímulos.',d:'El aprendizaje se fundamenta en la repetición o práctica.',ok:'D',r:'Correcta: D. El aprendizaje se fundamenta en la repetición o práctica. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 132)',ref:'(M1, p. 132)'},
+    {id:41,p:'¿Qué son las habilidades visoespaciales?',a:'Capacidad de visualizar en la mente la relación con un plano físico.',b:'Procesos mentales relacionados con la ubicación.',c:'Análisis de patrones visuales para integrarlos en un conjunto.',d:'Capacidad de planificar acciones motoras.',ok:'A',r:'Correcta: A. Capacidad de visualizar en la mente la relación con un plano físico. Ej.: El desarrollo de las habilidades espaciales se encuentra íntimamente relacionado con la cognición espacial, a partir de la cual somos capaces de llegar a aprender rutas complejas y localizar lugares (M1, p. 56)',ref:'(M1, p. 56)'},
+    {id:73,p:'¿Dónde se encuentran las regiones del cerebro importantes para el sistema de memoria dinámica?',a:'En el lóbulo occipital.',b:'En el bulbo raquídeo.',c:'En el hipocampo.',d:'En el cerebelo.',ok:'C',r:'Correcta: C. En el hipocampo. Ej.: eventos momento a momento de la vida. Las regiones del cerebro importantes para este sistema funcionan en el hipocampo y los lóbulos prefrontales. Este sistema indica donde se encuentra (M1, p. 81)',ref:'(M1, p. 81)'},
+    {id:61,p:'¿Qué situación ejemplifica la etapa de incompetencia inconsciente en el proceso de aprendizaje?',a:'Participar en una partida de dardos por primera vez.',b:'Aprender a tocar un instrumento musical.',c:'Jugar al fútbol desde pequeño.',d:'Realizar una actividad que se domina completamente.',ok:'A',r:'Correcta: A. Participar en una partida de dardos por primera vez. Ej.: 3.1. Etapa de incompetencia inconsciente A la hora de empezar el proceso de aprendizaje de algo nuevo para todos, lo más habitual es (M1, p. 76)',ref:'(M1, p. 76)'},
+    {id:131,p:'¿Qué es la lateralidad en el contexto del aprendizaje?',a:'Utilización preferente de un lado del cuerpo sobre el otro.',b:'Capacidad de un lado del cuerpo sobre el otro.',c:'Distribución de funciones entre ambos hemisferios cerebrales.',d:'Predominio de una mano sobre la otra.',ok:'A',r:'Correcta: A. Utilización preferente de un lado del cuerpo sobre el otro. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 118)',ref:'(M1, p. 118)'},
+    {id:126,p:'¿Qué área cerebral se encarga de la comprensión del lenguaje hablado y escrito?',a:'Cerebelo.',b:'Área de Wernicke.',c:'Área de Broca.',d:'Corteza prefrontal.',ok:'B',r:'Correcta: B. Área de Wernicke. Ej.: Precomprensión Comprensión del texto. (M1, p. 113)',ref:'(M1, p. 113)'},
+    {id:108,p:'¿Qué tipo de atención permite mantener en el tiempo el interés por la información seleccionada?',a:'Atención sostenida.',b:'Atención dividida.',c:'Atención alternante.',d:'Atención selectiva.',ok:'A',r:'Correcta: A. Atención sostenida. Ej.: información seleccionada. En función del tipo de actividad pero también de otras variables como la dificultad de la actividad, la edad o el nivel intelectual del individuo, etc., el tiempo de atención (M1, p. 99)',ref:'(M1, p. 99)'},
+    {id:83,p:'¿Qué función tiene el olvido según el texto?',a:'Perder recuerdos importantes.',b:'Mejorar la memoria.',c:'Aumentar la autoestima.',d:'Aliviar el dolor del duelo.',ok:'D',r:'Correcta: D. Aliviar el dolor del duelo. Ej.: [UDI151K8C] Fisiología del Sistema Nervioso. 4. Funciones cognitivas ueca.euroinnova.com (M1, p. 50)',ref:'(M1, p. 50)'},
+    {id:42,p:'¿Qué son las gnosias en neuropsicología?',a:'Capacidad de reconocer estímulos aprendidos previamente.',b:'Capacidad de reconocer estímulos visuales.',c:'Capacidad de reconocer estímulos táctiles.',d:'Capacidad de reconocer estímulos olfativos.',ok:'A',r:'Correcta: A. Capacidad de reconocer estímulos aprendidos previamente. Ej.: La gnosia, en neuropsicología, es la capacidad que tenemos de reconocer estímulos que han sido aprendidos previamente. Los mecanismos de percepción y reconocimiento están asociados a los (M1, p. 56)',ref:'(M1, p. 56)'},
+    {id:127,p:'¿Cuál es la finalidad de la prueba PROLEC-R?',a:'Evaluación de los procesos matemáticos.',b:'Evaluación de los procesos de memoria.',c:'Evaluación de los procesos de escritura.',d:'Evaluación de los procesos lectores.',ok:'D',r:'Correcta: D. Evaluación de los procesos lectores. Ej.: Evaluación de los procesos lectores mediante 9 índices principales, 1Q índices secundarios y 5 índices de habilidad dentro de los estándares establecidos. (M1, p. 115)',ref:'(M1, p. 115)'},
+    {id:150,p:'¿Qué pregunta introduce el concepto de autoevaluación y capacita al niño para incrementar su autocontrol mientras cambia o corrige los planes en los que se basa su ejecución?',a:'¿Estoy haciendo un buen trabajo?',b:'¿Estoy utilizando mi plan?',c:'¿He cometido un error?',d:'¿Cómo lo he hecho?',ok:'B',r:'Correcta: B. ¿Estoy utilizando mi plan? Ej.: autoevaluación y capacita al niño para incrementar su autocontrol mientras cambia o corrige los planes en los que se basa su ejecución. (M1, p. 136)',ref:'(M1, p. 136)'},
+    {id:77,p:'¿Qué evalúan los test de verificación propiamente dicha?',a:'El estado actual del aprendizaje del alumno.',b:'Las condiciones para iniciar un nuevo aprendizaje.',c:'El trabajo realizado por el alumno en determinado periodo de aprendizaje.',d:'El estado actual del alumno en una disciplina.',ok:'C',r:'Correcta: C. El trabajo realizado por el alumno en determinado periodo de aprendizaje. Ej.: Los test de verificación propiamente dichos son los elaborados teniendo en cuenta lo que fue estudiado por el alumno bajo la dirección del profesor. Son test de verificación del trabajo realizado (M1, p. 86)',ref:'(M1, p. 86)'},
+    {id:27,p:'¿Cuál es el órgano receptor del sentido del oído?',a:'Nariz.',b:'Boca.',c:'Oreja.',d:'Ojo.',ok:'C',r:'Correcta: C. Oreja. Ej.: El órgano receptor es la oreja . Su estructura se divide en tres partes: oído externo, oído medio y oído interno. (M1, p. 41)',ref:'(M1, p. 41)'},
+    {id:107,p:'¿Qué permite la atención como mecanismo de selección?',a:'Orientar y seleccionar de forma imprecisa los aspectos del entorno.',b:'Seleccionar los estímulos más relevantes y significativos.',c:'Decidir la entrada de información irrelevante.',d:'Procesamiento perceptivo adecuado de todos los estímulos.',ok:'B',r:'Correcta: B. Seleccionar los estímulos más relevantes y significativos. Ej.: estímulos sensoriales más relevantes, por novedosos o significativos, al constituir un sistema activo que permite al sujeto decidir la entrada de determinada información. (M1, p. 98)',ref:'(M1, p. 98)'},
+    {id:20,p:'¿Cuál es la función principal de la microglía en el sistema nervioso central?',a:'Regular la temperatura.',b:'Producir neurotransmisores.',c:'Producir mielina.',d:'Fagocitar activamente.',ok:'D',r:'Correcta: D. Fagocitar activamente. Ej.: desde el encéfalo hasta la región lumbar de la columna vertebral. Su función principal es la transmisión de información entre el cerebro y el resto del cuerpo, así como la coordinación de (M1, p. 18)',ref:'(M1, p. 18)'},
+    {id:34,p:'¿Qué es la percepción en el contexto del aprendizaje?',a:'Forma en que el cerebro detecta sensaciones.',b:'Función simbólica del cerebro.',c:'Localización e identificación de estímulos.',d:'Proceso de transferencia de energía.',ok:'A',r:'Correcta: A. Forma en que el cerebro detecta sensaciones. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 48)',ref:'(M1, p. 48)'},
+    {id:57,p:'¿Qué elemento está presente en todas las definiciones de aprendizaje mencionadas en el texto?',a:'Genética.',b:'Observación.',c:'Adaptación.',d:'Cambio temporal.',ok:'C',r:'Correcta: C. Adaptación. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 59)',ref:'(M1, p. 59)'},
+    {id:97,p:'¿Qué región del cerebro parece ser la clave para recordar lo que debe realizarse en el futuro?',a:'Corteza prefrontal.',b:'Putamen.',c:'Núcleo caudado.',d:'Cerebelo.',ok:'A',r:'Correcta: A. Corteza prefrontal. Ej.: de memoria parece ocupar una pequeña zona de la corteza prefrontal. 2.3. Memoria prospectiva (M1, p. 93)',ref:'(M1, p. 93)'},
+    {id:74,p:'¿Qué hace que cada cerebro esté organizado de forma única según el texto?',a:'El número de neuronas.',b:'La cultura.',c:'Las experiencias particulares.',d:'El patrón genético.',ok:'D',r:'Correcta: D. El patrón genético. Ej.: Cada cerebro está organizado en forma única . Todo el mundo tiene el mismo conjunto de sistemas y organización cerebral, pero, sin embargo, todas las personas son distintas. Los factores que hacen (M1, p. 82)',ref:'(M1, p. 82)'},
+    {id:118,p:'¿Qué es la motivación en el contexto educativo?',a:'Impulso que conduce a una persona a realizar una acción.',b:'Factor que provoca, mantiene y dirige la conducta hacia un objetivo.',c:'Capacidad de elegir entre alternativas en una situación determinada.',d:'Búsqueda continua de mejores situaciones personales y profesionales.',ok:'B',r:'Correcta: B. Factor que provoca, mantiene y dirige la conducta hacia un objetivo. Ej.: [UDI151K8Q] Memoria, Atención y Motivación. 5. Desarrollo de la atención ueca.euroinnova.com (M1, p. 102)',ref:'(M1, p. 102)'},
+    {id:7,p:'¿Qué parte del sistema nervioso se encarga de recibir estímulos procedentes del mundo exterior?',a:'Sistema nervioso periférico.',b:'Sistema nervioso somático.',c:'Sistema nervioso autónomo.',d:'Sistema nervioso central.',ok:'D',r:'Correcta: D. Sistema nervioso central. Ej.: recibir estímulos procedentes del mundo exterior, transmitir los impulsos sensitivos a los centros de elaboración, producir los impulsos efectores y transmitir órdenes a los músculos (M1, p. 10)',ref:'(M1, p. 10)'},
+    {id:148,p:'¿Cuál es uno de los principios generales para enseñar estrategias cognitivas y metacognitivas según Pressley et al?',a:'No proporcionar prácticas guiadas a los estudiantes.',b:'Seleccionar pocas estrategias para enseñar.',c:'No explicar por qué deben ser utilizadas las estrategias.',d:'No modelar el uso de las estrategias a los estudiantes.',ok:'B',r:'Correcta: B. Seleccionar pocas estrategias para enseñar. Ej.: enseñanza a los alumnos con dificultades de aquellas estrategias cognitivas y metacognitivas que los estudiantes más competentes utilizan de forma natural, enfatiza el conocimiento de las demandas de (M1, p. 135)',ref:'(M1, p. 135)'},
+    {id:76,p:'¿Cuál es la finalidad de los test de sondeo con finalidad de diagnosis?',a:'Indicar las condiciones para iniciar un nuevo aprendizaje.',b:'Informar sobre lo que el alumno no aprendió.',c:'Informar acerca de lo que el alumno sabe.',d:'Motivar a los alumnos.',ok:'A',r:'Correcta: A. Indicar las condiciones para iniciar un nuevo aprendizaje. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 86)',ref:'(M1, p. 86)'},
+    {id:71,p:'¿Qué afirma el principio 7 del aprendizaje basado en el cerebro?',a:'El aprendizaje involucra atención focalizada y percepción periférica.',b:'La percepción periférica no es relevante para el aprendizaje.',c:'El cerebro solo atiende a una cosa a la vez.',d:'El aprendizaje no involucra atención focalizada.',ok:'A',r:'Correcta: A. El aprendizaje involucra atención focalizada y percepción periférica. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 80)',ref:'(M1, p. 80)'},
+    {id:100,p:'¿Qué es la memoria sensorio-motora?',a:'Memoria a largo plazo.',b:'Memoria de trabajo.',c:'Memoria a corto plazo.',d:'Memoria de sensaciones.',ok:'D',r:'Correcta: D. Memoria de sensaciones. Ej.: sensaciones como olores, sabores, movimientos o imágenes, que parecieran estar ocurriendo nuevamente cuando recordamos. Esto sucede cuando se observa una activación cerebral similar en (M1, p. 94)',ref:'(M1, p. 94)'},
+  ],
+  [
+    {id:111,p:'¿Cómo afecta la atención a la velocidad de respuesta a un estímulo?',a:'Disminuye la velocidad de respuesta.',b:'Genera confusión en la respuesta.',c:'No afecta la velocidad de respuesta.',d:'Aumenta la velocidad de respuesta.',ok:'D',r:'Correcta: D. Aumenta la velocidad de respuesta. Ej.: Implica la selección de unos estímulos con independencia de otros. Da respuesta a un plan previo y es un proceso. (M1, p. 50)',ref:'(M1, p. 50)'},
+    {id:46,p:'¿Qué son las habilidades metacognitivas?',a:'Determinan la cantidad y calidad del conocimiento.',b:'Controlan la dirección del conocimiento.',c:'Entrenan el cerebro.',d:'Facilitan el conocimiento.',ok:'A',r:'Correcta: A. Determinan la cantidad y calidad del conocimiento. Ej.: Por otro lado, las habilidades metacognitivas , son aquellas que determinan la cantidad y calidad del conocimiento adquirido por la persona. Se encarga de su control, dirección y posterior aplicación (M1, p. 61)',ref:'(M1, p. 61)'},
+    {id:10,p:'¿Cuál es la función principal del tronco cerebral?',a:'Conectar la médula espinal con el cerebro.',b:'Producir nervios craneales.',c:'Regular la actividad del cerebro.',d:'Elaborar actos reflejos.',ok:'D',r:'Correcta: D. Elaborar actos reflejos. Ej.: El cerebelo está dividido en tres partes principales: el vermis (ubicado en la línea media), los hemisferios cerebelosos (a cada lado del vermis) y el lóbulo floculonodular (en la parte inferior y más (M1, p. 14)',ref:'(M1, p. 14)'},
+    {id:52,p:'Según las neurociencias aplicadas a la didáctica, ¿en qué etapa del desarrollo se forman más conexiones neuronales y existe un mayor nivel de plasticidad cerebral?',a:'Adolescencia.',b:'Infancia.',c:'Edad adulta.',d:'Vejez.',ok:'B',r:'Correcta: B. Infancia. Ej.: 1.3. Principios de las Neurociencias A continuación se exponen una serie de principios de las neurociencias aplicada a la didáctica, (M1, p. 69)',ref:'(M1, p. 69)'},
+    {id:3,p:'¿Qué estudia la neurología?',a:'Los músculos.',b:'El sistema circulatorio.',c:'El sistema digestivo.',d:'El sistema nervioso central.',ok:'D',r:'Correcta: D. El sistema nervioso central. Ej.: [UDI151K83] Introducción a la Neurología. 1. Neurología: el sistema nervioso (SN) ueca.euroinnova.com (M1, p. 4)',ref:'(M1, p. 4)'},
+    {id:13,p:'¿Cuál es la función principal de la médula espinal?',a:'Regular la digestión.',b:'Transmitir impulsos nerviosos motores y sensitivos.',c:'Controlar la respiración.',d:'Producir hormonas.',ok:'B',r:'Correcta: B. Transmitir impulsos nerviosos motores y sensitivos. Ej.: recibir estímulos procedentes del mundo exterior, transmitir los impulsos sensitivos a los centros de elaboración, producir los impulsos efectores y transmitir órdenes a los músculos (M1, p. 10)',ref:'(M1, p. 10)'},
+    {id:130,p:'¿Cuál es el objetivo de la Psicología Cognitiva según el texto?',a:'Evaluar la lectura como proceso cerebral.',b:'Determinar la operación mental que determina la respuesta.',c:'Descubrir la secuencia de procesos de la información.',d:'Analizar las respuestas explícitas del sujeto.',ok:'C',r:'Correcta: C. Descubrir la secuencia de procesos de la información. Ej.: La ciencia cognitiva considera que el procesamiento de información está formado por una serie de etapas o subprocesos en las operaciones mentales que pueden actuar de manera más o menos (M1, p. 116)',ref:'(M1, p. 116)'},
+    {id:39,p:'¿Qué es la memoria implícita o procedimental?',a:'Memoria de hechos y eventos.',b:'Memoria de habilidades y destrezas.',c:'Memoria de conceptos abstractos.',d:'Memoria de nombres y fechas.',ok:'B',r:'Correcta: B. Memoria de habilidades y destrezas. Ej.: Memoria implícita o procedimental : en este tipo de memoria se guardan las habilidades y destrezas que son adquiridas, es decir, el cómo se hacen las cosas. El conocimiento se ha (M1, p. 53)',ref:'(M1, p. 53)'},
+    {id:147,p:'¿Cuál es la importancia de las estrategias de aprendizaje y destrezas metacognitivas en el proceso educativo?',a:'Para reducir los déficits subyacentes.',b:'Para entender la gran variedad de información.',c:'Para mejorar el rendimiento escolar.',d:'Para ser receptores pasivos de conocimiento.',ok:'C',r:'Correcta: C. Para mejorar el rendimiento escolar. Ej.: Por otro lado, las habilidades metacognitivas , son aquellas que determinan la cantidad y calidad del conocimiento adquirido por la persona. Se encarga de su control, dirección y posterior aplicación (M1, p. 61)',ref:'(M1, p. 61)'},
+    {id:54,p:'¿Qué condiciones son necesarias en el Sistema Nervioso Central para que se produzca el aprendizaje?',a:'Creatividad, Concentración, Imaginación.',b:'Motivación, Atención, Memoria.',c:'Rutina, Pasividad, Desgano.',d:'Estrés, Fatiga, Desinterés.',ok:'B',r:'Correcta: B. Motivación, Atención, Memoria. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 71)',ref:'(M1, p. 71)'},
+    {id:22,p:'¿Cuál es la función del área motora premotora?',a:'Ejecutar la acción del movimiento.',b:'Producir movimientos similares a los de la motora primaria.',c:'Dar movimiento a las extremidades contralaterales.',d:'Almacenar programas de actividad motora.',ok:'D',r:'Correcta: D. Almacenar programas de actividad motora. Ej.: programas de actividad motora? Área premotora. (M1, p. 161)',ref:'(M1, p. 161)'},
+    {id:56,p:'Según el texto, ¿cómo se define el aprendizaje?',a:'Cambio temporal en el comportamiento.',b:'Cambio permanente en el comportamiento.',c:'Adquisición de conocimientos genéticos.',d:'Adaptación a las demandas de la vida.',ok:'B',r:'Correcta: B. Cambio permanente en el comportamiento. Ej.: comportamiento? La memoria. (M1, p. 163)',ref:'(M1, p. 163)'},
+    {id:104,p:'¿Cómo influye la atención en la percepción?',a:'Se suele percibir lo que se atiende.',b:'Se suele percibir lo que no interesa.',c:'Inhibe la percepción.',d:'No tiene influencia en la percepción.',ok:'A',r:'Correcta: A. Se suele percibir lo que se atiende. Ej.: [UDI151K8N] Memoria, Atención y Motivación. 3. La atención ueca.euroinnova.com (M1, p. 97)',ref:'(M1, p. 97)'},
+    {id:81,p:'¿Por qué la evaluación del aprendizaje es importante en el proceso de enseñanza?',a:'Para comparar informes.',b:'Para reorientar a los alumnos.',c:'Para enriquecer la vida del docente.',d:'Para evaluar la escuela.',ok:'B',r:'Correcta: B. Para reorientar a los alumnos. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 84)',ref:'(M1, p. 84)'},
+    {id:136,p:'¿Cuál es uno de los síntomas que puede indicar un problema de lateralidad en un niño?',a:'Hiperactividad.',b:'Notas bajas no acordes al esfuerzo realizado.',c:'Falta de coordinación.',d:'Torpeza en motricidad gruesa.',ok:'C',r:'Correcta: C. Falta de coordinación. Ej.: Falta de coordinación. Fracaso escolar. (M1, p. 123)',ref:'(M1, p. 123)'},
+    {id:64,p:'¿Qué se logra al llegar a la etapa de competencia inconsciente en el aprendizaje?',a:'Memorización de los pasos de forma consciente.',b:'Necesidad de mayor atención a los detalles.',c:'Mayor dificultad para realizar la tarea.',d:'Automatización de la realización de la tarea.',ok:'D',r:'Correcta: D. Automatización de la realización de la tarea. Ej.: 3.4. Etapa de competencia inconsciente Esta es la última etapa del proceso de aprendizaje. Una vez que se domina cómo hacer algo se (M1, p. 77)',ref:'(M1, p. 77)'},
+    {id:16,p:'¿Cuáles son los dos tipos de astrocitos que pueden encontrarse?',a:'Largas y cortas.',b:'Sustancia blanca y sustancia gris.',c:'Fibrosos y protoplasmáticos.',d:'Neuronales y gliales.',ok:'C',r:'Correcta: C. Fibrosos y protoplasmáticos. Ej.: Los protoplasmáticos Se localizan en la sustancia gris. Las prolongaciones pasan también entre los cuerpos de las (M1, p. 24)',ref:'(M1, p. 24)'},
+    {id:35,p:'¿Qué se considera subjetiva, temporal y selectiva en la percepción de una persona?',a:'Necesidades.',b:'Estímulos.',c:'Memoria.',d:'Reacciones.',ok:'D',r:'Correcta: D. Reacciones. Ej.: 2 / 15Para que se produzca la percepción por medio de un estímulo sensorial es importante que esté presente la participación y la implicación de las siguientes estructuras y procesos: (M1, p. 49)',ref:'(M1, p. 49)'},
+    {id:119,p:'¿Qué influye en la conducta humana y contribuye a la integración de la personalidad del individuo?',a:'Costumbres.',b:'Normas morales.',c:'Ideologías.',d:'Leyes.',ok:'A',r:'Correcta: A. Costumbres. Ej.: personalidad. Las personas nacen con un bagaje instintivo, con un equipo orgánico; pero, la cultura va moldeando el comportamiento y creando las propias necesidades. Las normas morales, las (M1, p. 108)',ref:'(M1, p. 108)'},
+    {id:135,p:'¿Qué es la lateralidad cruzada?',a:'Predominio lateral diestro en unos miembros y zurdos en otros.',b:'Uso de la mano ambidiestra.',c:'Uso de la mano izquierda.',d:'Uso de la mano derecha.',ok:'A',r:'Correcta: A. Predominio lateral diestro en unos miembros y zurdos en otros. Ej.: ambidiestría, una vez que se ha determinado el tipo de lateralidad. 2.2. Tipos de la Lateralidad (M1, p. 121)',ref:'(M1, p. 121)'},
+    {id:30,p:'¿Cuál es el órgano sensorial de la piel?',a:'Ojo.',b:'Oído.',c:'Nariz.',d:'Piel.',ok:'D',r:'Correcta: D. Piel. Ej.: Su órgano sensorial es la piel . La mayoría de las sensaciones son percibidas por medio de los corpúsculos, que son receptores que (M1, p. 44)',ref:'(M1, p. 44)'},
+    {id:21,p:'¿Cuál es el objetivo de todas las teorías en fisiología?',a:'Desarrollar conocimientos a nivel de partículas.',b:'Analizar las leyes termodinámicas.',c:'Explicar las interacciones de los elementos básicos de un ser vivo con su entorno.',d:'Estudiar las funciones de los seres vivos.',ok:'C',r:'Correcta: C. Explicar las interacciones de los elementos básicos de un ser vivo con su entorno. Ej.: las interacciones moleculares que permiten que las células realicen sus funciones específicas. Por ejemplo, se analiza cómo las proteínas transportadoras en la membrana celular permiten el paso de (M1, p. 33)',ref:'(M1, p. 33)'},
+    {id:29,p:'¿En qué zona de la lengua se aprecia de preferencia el sabor dulce?',a:'Zona central.',b:'Punta.',c:'Zona posterior.',d:'Bordes.',ok:'B',r:'Correcta: B. Punta. Ej.: El sabor dulce se aprecia de preferencia en la punta de la lengua; el amargo en la zona posterior; el (M1, p. 42)',ref:'(M1, p. 42)'},
+    {id:95,p:'¿En qué se basa la complejidad de la memoria?',a:'En la edad del sujeto que aprende.',b:'En la forma en que se presenta la información.',c:'En la duración de la memoria.',d:'En la cantidad de información a memorizar.',ok:'B',r:'Correcta: B. En la forma en que se presenta la información. Ej.: al sujeto que aprende. Esa complejidad así se representa en las partes, sustratos e interacciones neurofisiológicas que ocurren en la dinámica de registrar, almacenar y recuperar información; tal y (M1, p. 92)',ref:'(M1, p. 92)'},
+    {id:124,p:'¿Qué aspectos neuropsicológicos se relacionan con el proceso lector y el rendimiento académico?',a:'Habilidades motoras y sensoriales.',b:'Habilidades visuales y auditivas.',c:'Habilidades matemáticas y lingüísticas.',d:'Habilidades emocionales y sociales.',ok:'B',r:'Correcta: B. Habilidades visuales y auditivas. Ej.: lector, y por ente el rendimiento académico, se relacionan con aspectos neuropsicológicos como las habilidades visuales y auditivas (Gallardo y Gallego, 2003; Zhang, Yan, Kendrick y Yi Li, 2012). Más (M1, p. 112)',ref:'(M1, p. 112)'},
+    {id:87,p:'¿Cuál es la función de la memoria que consiste en retener los datos en la memoria para utilizarlos posteriormente?',a:'Organizar la información.',b:'Recuperar la información.',c:'Recoger nueva información.',d:'Almacenar la información.',ok:'D',r:'Correcta: D. Almacenar la información. Ej.: 4 / 15conocimiento guardo para poder usarse posteriormente si fuese necesario. Del mismo modo, la memoria es considerada como una función intelectual, es por ello que tiene (M1, p. 51)',ref:'(M1, p. 51)'},
+    {id:125,p:'¿Cuál es el primer paso neuropsicológico del proceso de lectura?',a:'Identificación.',b:'Precomprensión.',c:'Decodificación.',d:'Comprensión.',ok:'C',r:'Correcta: C. Decodificación. Ej.: 1.2. Proceso neuropsicológico de la lectura La lectura ha sido ampliamente estudiada a lo largo de la historia. Sin embargo, a pesar de ser un (M1, p. 112)',ref:'(M1, p. 112)'},
+    {id:8,p:'¿Qué función tiene el sistema simpático del sistema nervioso periférico?',a:'Aumentar la tasa cardiaca.',b:'Conservar la energía.',c:'Reducir la tasa cardiaca.',d:'Aumentar la digestión.',ok:'A',r:'Correcta: A. Aumentar la tasa cardiaca. Ej.: 4 / 6Sistema nervioso periférico. Sistema nervioso central:  comprende el cerebro, el cerebelo, el tronco encefálico y la médula (M1, p. 10)',ref:'(M1, p. 10)'},
+    {id:32,p:'¿Qué favorece la neuroplasticidad en sistemas dañados o en síndromes?',a:'Detener la progresión de la lesión.',b:'Reorganizar funciones.',c:'Modificar las bases genéticas.',d:'Curar el déficit.',ok:'B',r:'Correcta: B. Reorganizar funciones. Ej.: La neuroplasticidad es uno de los conceptos más importante para la neuropsicología en el ámbito del desarrollo infantil. (M1, p. 46)',ref:'(M1, p. 46)'},
+    {id:91,p:'¿Cómo se puede resumir la capacidad del cerebro para aprender y recordar?',a:'En la capacidad del cerebro para olvidar información.',b:'En la capacidad del cerebro para adquirir información.',c:'En la capacidad del cerebro para desaprender información.',d:'En la capacidad del cerebro para ignorar información.',ok:'B',r:'Correcta: B. En la capacidad del cerebro para adquirir información. Ej.: organismos manejan y elaboran la información proporcionada por los sentidos. El aprendizaje: (M1, p. 90)',ref:'(M1, p. 90)'},
+  ],
+  [
+    {id:105,p:'¿Qué función cumple la atención en los procesos cognitivos?',a:'Controlar la motivación.',b:'Regular la percepción.',c:'Inhibir la memoria.',d:'Facilitar el aprendizaje.',ok:'D',r:'Correcta: D. Facilitar el aprendizaje. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 51)',ref:'(M1, p. 51)'},
+    {id:37,p:'¿Cuál es una de las funciones básicas de la memoria?',a:'Organizar información conocida.',b:'Almacenar información temporalmente.',c:'Recoger información desconocida.',d:'Recuperar información nueva.',ok:'A',r:'Correcta: A. Organizar información conocida. Ej.: encargada de adquirir y almacenar toda la información que llega a las personas. Las personas pueden construir y modificar la idea que tienen del mundo por medio de los siguientes (M1, p. 51)',ref:'(M1, p. 51)'},
+    {id:24,p:'¿Cuál es la función del área visual secundaria?',a:'Percepción de la vista.',b:'Asociación con funciones viscerales.',c:'Movimiento involuntario de los ojos.',d:'Relacionar información visual con experiencias pasadas.',ok:'D',r:'Correcta: D. Relacionar información visual con experiencias pasadas. Ej.: procesamiento de la información auditiva y en la percepción visual compleja. Se encuentra en la parte inferior de los lóbulos temporales y está dividida en dos áreas principales: el giro temporal (M1, p. 37)',ref:'(M1, p. 37)'},
+    {id:98,p:'¿Qué zonas cerebrales intervienen en la memoria emocional?',a:'Corteza entorrinal y lóbulos temporales.',b:'Hipocampo y amígdala.',c:'Corteza frontal y hipocampo.',d:'Corteza prefrontal y corteza entorrinal.',ok:'B',r:'Correcta: B. Hipocampo y amígdala. Ej.: Las zonas cerebrales que intervienen en este caso son la corteza entorrinal y los lóbulos temporales. 2.6. Memoria emocional (M1, p. 94)',ref:'(M1, p. 94)'},
+    {id:143,p:'¿Cuál es una de las conclusiones sobre la eficacia de la enseñanza recíproca según las investigaciones realizadas?',a:'Andamiaje',b:'Modelado.',c:'Autointerrogación.',d:'Transferencia.',ok:'A',r:'Correcta: A. Andamiaje Ej.: Con las investigaciones realizadas  hasta el momento no es posible establecer cuáles son las estrategias más eficaces, aunque los resultados han sido beneficiosos tanto cuando se han (M1, p. 139)',ref:'(M1, p. 139)'},
+    {id:113,p:'¿Qué medio universal de organización de la atención se menciona en el texto?',a:'Circunstancias determinadas.',b:'Lenguaje.',c:'Indicaciones verbales.',d:'Láminas y cuentos.',ok:'B',r:'Correcta: B. Lenguaje. Ej.: concreta, particular, existe un medio universal de organización de la atención, el lenguaje. Al principio, los adultos organizan la atención del niño mediante indicaciones verbales y recordatorios (M1, p. 102)',ref:'(M1, p. 102)'},
+    {id:85,p:'¿Qué es la memoria según el texto?',a:'Proceso psicológico de retención de información.',b:'Almacenamiento de percepciones internas.',c:'Proceso de adaptación al entorno.',d:'Capacidad de reactivar representaciones mentales.',ok:'A',r:'Correcta: A. Proceso psicológico de retención de información. Ej.: elementos de información mientras se integran entre sí. Memoria es la retención en el tiempo de la información aprendida. Esta retención depende de (M1, p. 88)',ref:'(M1, p. 88)'},
+    {id:121,p:'¿Cuál es la importancia de la funcionalidad visual en el aprendizaje?',a:'Mejora la memoria a corto plazo.',b:'Potencia la creatividad artística.',c:'Facilita la comprensión lectora.',d:'Aumenta la capacidad de cálculo matemático.',ok:'C',r:'Correcta: C. Facilita la comprensión lectora. Ej.: 2 / 171.1. Funcionalidad visual y su importancia en el aprendizaje Función visual: (M1, p. 111)',ref:'(M1, p. 111)'},
+    {id:33,p:'¿Qué son las funciones cognitivas en el aprendizaje?',a:'Procesos sensoriales.',b:'Procesos motores.',c:'Procesos mentales.',d:'Procesos emocionales.',ok:'C',r:'Correcta: C. Procesos mentales. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 48)',ref:'(M1, p. 48)'},
+    {id:25,p:'¿Cuál es el sentido que permite al ser humano conocer el medio que lo rodea y relacionarse con sus semejantes?',a:'Gusto.',b:'Vista.',c:'Olfato.',d:'Tacto.',ok:'B',r:'Correcta: B. Vista. Ej.: conocer (ver) el medio que lo rodea y relacionarse con sus semejantes. El Órgano  receptor es el ojo o globo ocular . El ojo cuenta con distintas estructuras que lo (M1, p. 39)',ref:'(M1, p. 39)'},
+    {id:89,p:'¿Cuáles son las funciones básicas de la memoria?',a:'Codificación.',b:'Recuperación.',c:'Almacenamiento.',d:'Ordenación.',ok:'B',r:'Correcta: B. Recuperación. Ej.: hechos o conocimientos consta de tres etapas: codificación, almacenamiento y recuperación. Codificación (M1, p. 89)',ref:'(M1, p. 89)'},
+    {id:15,p:'¿Cuál es la función de las dendritas en una neurona?',a:'Conducir el impulso nervioso.',b:'Enviar impulsos al soma de la neurona.',c:'Recibir estímulos y alimentación celular.',d:'Establecer sinapsis con otras neuronas.',ok:'C',r:'Correcta: C. Recibir estímulos y alimentación celular. Ej.: recibir estímulos procedentes del mundo exterior, transmitir los impulsos sensitivos a los centros de elaboración, producir los impulsos efectores y transmitir órdenes a los músculos (M1, p. 10)',ref:'(M1, p. 10)'},
+    {id:142,p:'¿Cuál es uno de los principios establecidos por la LOMLOE para asegurar la igualdad de oportunidades en la educación?',a:'Discriminación.',b:'Exclusión educativa.',c:'Calidad educativa.',d:'Individualismo.',ok:'C',r:'Correcta: C. Calidad educativa. Ej.: calidad y garantizar la igualdad de oportunidades a todo el alumnado para participar en un proceso de aprendizaje permanente. (M1, p. 127)',ref:'(M1, p. 127)'},
+    {id:128,p:'Según el Consejo General de Colegios oficiales de Psicólogos, ¿por qué PROLEC_R es una prueba particularmente importante en la detección de dificultades de la lectura en castellano?',a:'Por su ajuste a un modelo de Teoría de la Mente.',b:'Por su ajuste a un modelo de neurocognición.',c:'Por su ajuste a un modelo de aciertos en la evaluación.',d:'Por su ajuste a un modelo teórico lingüístico.',ok:'D',r:'Correcta: D. Por su ajuste a un modelo teórico lingüístico. Ej.: particularmente importante en la detección de dificultades de la lectura en castellano por el modelo teórico en que se inspira y por el ajuste de los ítems de evaluación a este modelo. (M1, p. 115)',ref:'(M1, p. 115)'},
+    {id:36,p:'¿Qué característica de la atención hace referencia a la cantidad de información y funciones que una persona puede realizar a la misma vez?',a:'Selectividad.',b:'Amplitud.',c:'Intensidad.',d:'Oscilamiento.',ok:'B',r:'Correcta: B. Amplitud. Ej.: Características de la atención Amplitud : hace referencia a la cantidad de información y funciones que una persona puede (M1, p. 50)',ref:'(M1, p. 50)'},
+    {id:5,p:'¿Cuál es la función principal del cerebelo?',a:'Controlar la sed.',b:'Controlar las emociones.',c:'Regular el sueño.',d:'Coordinar los movimientos.',ok:'D',r:'Correcta: D. Coordinar los movimientos. Ej.: sensibilidad, inteligencia, movimientos, aprendizaje, funcionamiento de los órganos… Es el órgano más poderoso y se divide en tres partes principales: (M1, p. 8)',ref:'(M1, p. 8)'},
+    {id:114,p:'¿En qué etapa se forma la atención voluntaria en los niños?',a:'Edad adulta.',b:'Etapa infantil.',c:'Vejez.',d:'Adolescencia.',ok:'B',r:'Correcta: B. Etapa infantil. Ej.: Las fuentes de la atención voluntaria  se encuentran fuera de la atención del niño. Esto quiere decir que el propio desarrollo de la atención involuntaria no implica el surgimiento de la atención (M1, p. 102)',ref:'(M1, p. 102)'},
+    {id:60,p:'¿En qué etapa del proceso de aprendizaje se encuentra una persona que no es consciente de su incompetencia en un área específica?',a:'Etapa de incompetencia inconsciente.',b:'Etapa de competencia consciente.',c:'Etapa de incompetencia consciente.',d:'Etapa de competencia inconsciente.',ok:'A',r:'Correcta: A. Etapa de incompetencia inconsciente. Ej.: 3.1. Etapa de incompetencia inconsciente A la hora de empezar el proceso de aprendizaje de algo nuevo para todos, lo más habitual es (M1, p. 76)',ref:'(M1, p. 76)'},
+    {id:123,p:'¿Cuáles son algunas de las funciones o capacidades propias del sistema visual que inciden directamente en el proceso de adquisición de la lectura y el aprendizaje?',a:'Movimientos oculares.',b:'Coordinación.',c:'Percepción.',d:'Atención.',ok:'A',r:'Correcta: A. Movimientos oculares. Ej.: Todas y cada una de ellas están implicadas en el proceso de adquisición de la lectura y por tanto en el proceso de aprendizaje. (M1, p. 111)',ref:'(M1, p. 111)'},
+    {id:138,p:'¿Cuáles son las cuatro causas que pueden determinar el fracaso escolar según el texto?',a:'Lesiones estructurales, trastornos funcionales, inmadurez cerebral, problemas de lateralidad.',b:'Trastorno de aprendizaje, discapacidad intelectual, trastorno con déficit de atención, lesiones estructurales.',c:'Trastornos de conducta, trastorno de aprendizaje, inmadurez cerebral, problemas de lateralidad.',d:'Trastornos de conducta, trastorno de aprendizaje, discapacidad intelectual, trastorno con déficit de atención.',ok:'D',r:'Correcta: D. Trastornos de conducta, trastorno de aprendizaje, discapacidad intelectual, trastorno con déficit de atención. Ej.: Discapacidad intelectual. Trastorno con déficit de atención, con y sin hiperactividad. (M1, p. 126)',ref:'(M1, p. 126)'},
+    {id:112,p:'¿Cómo se desarrolla la atención en los niños a medida que crecen?',a:'Se vuelve más concentrada y estable.',b:'No cambia a lo largo del tiempo.',c:'Se vuelve menos concentrada y estable.',d:'Se vuelve más dispersa.',ok:'A',r:'Correcta: A. Se vuelve más concentrada y estable. Ej.: los niños y de su avance en el plano intelectual general, la atención se hace más concentrada y estable. (M1, p. 101)',ref:'(M1, p. 101)'},
+    {id:79,p:'¿Qué tipo de evaluación se basa en la apreciación subjetiva de la producción del alumno?',a:'Evaluación subjetiva.',b:'Evaluación tradicional.',c:'Evaluación parcial.',d:'Evaluación objetiva.',ok:'A',r:'Correcta: A. Evaluación subjetiva. Ej.: Cuando la evaluación no depende (o depende muy poco) de la apreciación subjetiva, teniendo en cuenta que la producción del alumno debe atender a cuestiones delimitadas (M1, p. 85)',ref:'(M1, p. 85)'},
+    {id:18,p:'¿Cuál es la función principal de las células ependimarias?',a:'Acompañan a las neuronas durante su crecimiento.',b:'Contribuyen al flujo de líquido cefalorraquídeo.',c:'Forman la mielina que recubre los axones.',d:'Revisten las cavidades del encéfalo.',ok:'B',r:'Correcta: B. Contribuyen al flujo de líquido cefalorraquídeo. Ej.: cilios. Los cilios son móviles y contribuyen al flujo de líquido cefalorraquídeo. Son fundamentales para el mantenimiento del microambiente neuronal, la regulación del líquido cefalorraquídeo y la (M1, p. 26)',ref:'(M1, p. 26)'},
+    {id:96,p:'¿Qué tipo de memoria permite mantener guardada, durante un tiempo breve, información útil para resolver problemas inmediatos?',a:'Memoria a largo plazo.',b:'Memoria prospectiva.',c:'Memoria de procedimientos.',d:'Memoria de trabajo.',ok:'D',r:'Correcta: D. Memoria de trabajo. Ej.: breve, información útil para resolver problemas inmediatos. Por ejemplo: números de teléfono, una corta lista de artículos que requerimos del supermercado, el nombre de una persona o compañía que (M1, p. 93)',ref:'(M1, p. 93)'},
+    {id:55,p:'¿Cuál es la función primordial del aprendizaje?',a:'Revertir situaciones.',b:'Acumular conocimiento.',c:'Desarrollar capacidades.',d:'Adaptarse biológicamente.',ok:'D',r:'Correcta: D. Adaptarse biológicamente. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 71)',ref:'(M1, p. 71)'},
+    {id:72,p:'¿Qué tipos de memoria incluye el sistema de memoria estática?',a:'De emociones.',b:'De habilidades.',c:'De imágenes.',d:'De hechos.',ok:'D',r:'Correcta: D. De hechos. Ej.: estática y dinámica. La memoria estática es la por todos conocida memoria declarativa  (de hechos), la semántica (M1, p. 81)',ref:'(M1, p. 81)'},
+    {id:82,p:'¿Qué es la memoria humana?',a:'Fuente de la vida.',b:'Almacén de recuerdos.',c:'Facultad creativa.',d:'Capacidad mental.',ok:'C',r:'Correcta: C. Facultad creativa. Ej.: elabora, es una memoria creativa. Además, la memoria no es una realidad unitaria, sino la integración de múltiples sistemas. Y no es perfecta, está sujeta a errores, distorsiones e ilusiones. (M1, p. 87)',ref:'(M1, p. 87)'},
+    {id:144,p:'¿Cuál fue el enfoque dominante en el campo de las dificultades de aprendizaje desde sus orígenes?',a:'Enfoque médico.',b:'Enfoque cognitivo.',c:'Enfoque conductista.',d:'Enfoque sociohistórico.',ok:'C',r:'Correcta: C. Enfoque conductista. Ej.: dificultades de aprendizaje,  así como de las diferentes prácticas educativas, ha sido el reflejo de las teorías que se han configurado sucesivamente como referentes explicativos en el campo del (M1, p. 131)',ref:'(M1, p. 131)'},
+    {id:50,p:'¿Qué función cognitiva es fundamental en el proceso de aprendizaje?',a:'Memoria.',b:'Atención.',c:'Procesamiento.',d:'Almacenamiento.',ok:'A',r:'Correcta: A. Memoria. Ej.: [AFO028VTC] Master O ﬁcial Universitario en Di ﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD024BCZ] Neurocognición del Aprendizaje (M1, p. 66)',ref:'(M1, p. 66)'},
+    {id:45,p:'¿Qué son las funciones cognitivas?',a:'Acciones motoras.',b:'Capacidades emocionales.',c:'Procesos mentales.',d:'Procesos sensoriales.',ok:'C',r:'Correcta: C. Procesos mentales. Ej.: [UDI151K8C] Fisiología del Sistema Nervioso. 4. Funciones cognitivas ueca.euroinnova.com (M1, p. 48)',ref:'(M1, p. 48)'},
+  ],
+];
+let currentSim=0,currentQ=0,answers=[];
+const LABELS=['A','B','C','D'],KEYS=['a','b','c','d'];
+
+function getScores(){try{return JSON.parse(localStorage.getItem('m1_scores')||'{}');}catch{return{};}}
+function saveScore(i,pct){const s=getScores();s[i]=pct;localStorage.setItem('m1_scores',JSON.stringify(s));}
+
+function renderHome(){
+  const scores=getScores(),grid=document.getElementById('simGrid');
+  grid.innerHTML='';
+  SIMS.forEach((sim,i)=>{
+    const card=document.createElement('div');
+    card.className='sim-card';card.onclick=()=>startQuiz(i);
+    let badge='';
+    if(scores[i]!==undefined){
+      const p=scores[i],cls=p>=70?'pass':p>=50?'partial':'fail';
+      badge=`<div class="sim-score-badge shown ${cls}">${p}% — ${p>=70?'✓ Aprobado':p>=50?'~ En progreso':'✗ A mejorar'}</div>`;
+    }
+    card.innerHTML=`
+      <div class="sim-card-header">
+        <div class="sim-num">0${i+1}</div>
+        <div class="sim-badge-m">M1</div>
+      </div>
+      <div class="sim-title">Simulacro</div>
+      <div class="sim-count">${sim.length} preguntas · opción múltiple</div>
+      ${badge}`;
+    grid.appendChild(card);
+  });
+}
+
+function startQuiz(simIdx){
+  currentSim=simIdx;currentQ=0;answers=new Array(SIMS[simIdx].length).fill(null);
+  document.getElementById('home').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('quizTitle').textContent=`Simulacro 0${simIdx+1} — Módulo 1`;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const sim=SIMS[currentSim],q=sim[currentQ];
+  const correct_so_far=answers.filter(a=>a&&a.correct).length;
+  document.getElementById('progressText').textContent=`Pregunta ${currentQ+1} de ${sim.length}`;
+  document.getElementById('scoreText').textContent=`${correct_so_far} correctas`;
+  document.getElementById('progressFill').style.width=((currentQ+1)/sim.length*100).toFixed(0)+'%';
+
+  const savedAns=answers[currentQ];
+  const opts=KEYS.map((k,i)=>{
+    let cls='';
+    if(savedAns){
+      const l=LABELS[i];
+      if(l===q.ok)cls=savedAns.selected===l?'selected-correct':'show-correct';
+      else if(l===savedAns.selected)cls='selected-wrong';
+    }
+    return `<button class="opt-btn ${cls}" onclick="selectAnswer('${LABELS[i]}')" ${savedAns?'disabled':''}><div class="opt-letter">${LABELS[i]}</div><div>${q[k]}</div></button>`;
+  }).join('');
+
+  let fb='';
+  if(savedAns)fb=`<div class="feedback-box ${savedAns.correct?'correct':'wrong'}" style="display:block"><strong>${savedAns.correct?'✅ ¡Correcto!':'❌ Respuesta incorrecta'}</strong><br>${q.r}<div class="feedback-ref">${q.ref}</div></div>`;
+
+  const isLast=currentQ===sim.length-1;
+  const prevBtn=currentQ>0?`<button class="btn-secondary" onclick="goToPrev()">← Anterior</button>`:`<div></div>`;
+
+  document.getElementById('qWrap').innerHTML=`
+    <div class="q-card fade-in">
+      <div class="q-number">Pregunta ${currentQ+1} de ${sim.length}</div>
+      <div class="q-text">${q.p}</div>
+      <div class="options">${opts}</div>${fb}
+    </div>
+    <div class="quiz-actions">
+      ${prevBtn}
+      <button class="btn-primary" onclick="goToNext()" ${!savedAns?'disabled':''}>${isLast?'🏁 Ver resultados':'Siguiente →'}</button>
+    </div>`;
+}
+
+function selectAnswer(letter){
+  if(answers[currentQ]!==null)return;
+  answers[currentQ]={selected:letter,correct:letter===SIMS[currentSim][currentQ].ok};
+  renderQuestion();
+}
+function goToNext(){
+  if(currentQ<SIMS[currentSim].length-1){currentQ++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+  else showResults();
+}
+function goToPrev(){if(currentQ>0){currentQ--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  const sim=SIMS[currentSim],total=sim.length;
+  const correct=answers.filter(a=>a&&a.correct).length;
+  const pct=Math.round(correct/total*100);
+  saveScore(currentSim,pct);
+  const cls=pct>=70?'pass':pct>=50?'partial':'fail';
+  const msg=pct>=70?'¡Excelente trabajo!':pct>=50?'Buen intento, sigue practicando':'Necesitas repasar más';
+  document.getElementById('scoreRing').className='results-score-ring '+cls;
+  document.getElementById('scorePct').className='score-pct '+cls;
+  document.getElementById('scorePct').textContent=pct+'%';
+  document.getElementById('resultsTitle').textContent=msg;
+  document.getElementById('resultsMeta').textContent=`Simulacro ${currentSim+1} · ${correct} de ${total} correctas`;
+  document.getElementById('statCorr').textContent=correct;
+  document.getElementById('statWrong').textContent=total-correct;
+  document.getElementById('statPct').textContent=pct+'%';
+
+  const list=document.getElementById('reviewList');list.innerHTML='';
+  sim.forEach((q,i)=>{
+    const ans=answers[i];if(!ans)return;
+    const div=document.createElement('div');
+    div.className='review-item '+(ans.correct?'correct':'wrong');
+    const myText=ans.correct?'':`<div class="review-item-ans">❌ Tu respuesta: <span class="my">${ans.selected}. ${q[ans.selected.toLowerCase()]}</span></div>`;
+    div.innerHTML=`<div class="review-item-q"><strong>${i+1}.</strong> ${q.p}</div>${myText}<div class="review-item-ans">${ans.correct?'✅':'✔'} Correcta: <span class="ok">${q.ok}. ${q[q.ok.toLowerCase()]}</span></div><div class="review-item-retro">${q.r} <em>${q.ref}</em></div>`;
+    list.appendChild(div);
+  });
+}
+
+function retryQuiz(){startQuiz(currentSim);}
+function goHome(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('home').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderHome();
+}
+renderHome();
+</script>
+</body>
+</html>

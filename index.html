@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacros — Trastornos del Lenguaje</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6ff;
+    --bg2: #ffffff;
+    --border: #e2e8f0;
+    --text: #0f172a;
+    --text2: #475569;
+    --muted: #94a3b8;
+    --shadow: 0 2px 20px rgba(15,23,42,.07);
+    --shadow2: 0 8px 36px rgba(15,23,42,.13);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* subtle grid */
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      linear-gradient(rgba(99,102,241,.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(99,102,241,.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 56px 24px 80px; }
+
+  /* HERO */
+  .hero { text-align: center; margin-bottom: 64px; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: .72rem; font-weight: 700; letter-spacing: .18em;
+    text-transform: uppercase; color: #6366f1; margin-bottom: 20px;
+    background: #eef2ff; padding: 6px 18px; border-radius: 20px;
+    border: 1px solid #c7d2fe;
+  }
+  .hero h1 {
+    font-size: 3.2rem; font-weight: 800; line-height: 1.1;
+    color: var(--text); letter-spacing: -.02em;
+  }
+  .hero h1 em { font-style: italic; font-family: 'Lora', serif; color: #6366f1; }
+  .hero p {
+    font-family: 'Lora', serif; font-size: 1rem; color: var(--text2);
+    margin-top: 16px; line-height: 1.8; max-width: 520px; margin-left: auto; margin-right: auto;
+  }
+  .hero-stats {
+    display: flex; justify-content: center; gap: 32px; margin-top: 32px; flex-wrap: wrap;
+  }
+  .hero-stat .val { font-size: 2rem; font-weight: 800; color: var(--text); line-height: 1; }
+  .hero-stat .lbl { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-top: 3px; font-weight: 600; }
+
+  /* SECTION */
+  .section-label {
+    font-size: .72rem; font-weight: 700; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 18px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* GRID */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 48px; }
+
+  /* CARD */
+  .card {
+    background: var(--bg2); border: 1.5px solid var(--border);
+    border-radius: 20px; padding: 28px 24px;
+    text-decoration: none; color: inherit;
+    display: flex; flex-direction: column; gap: 0;
+    transition: all .22s ease; box-shadow: var(--shadow);
+    position: relative; overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: var(--accent, #6366f1);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform .22s ease;
+  }
+  .card:hover { transform: translateY(-4px); box-shadow: var(--shadow2); border-color: var(--accent, #6366f1); }
+  .card:hover::before { transform: scaleX(1); }
+
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+  .card-num {
+    font-size: 2.8rem; font-weight: 800; line-height: 1;
+    color: var(--accent, #6366f1); font-family: 'Lora', serif; font-style: italic;
+  }
+  .card-badge {
+    font-size: .68rem; font-weight: 700; padding: 4px 12px;
+    border-radius: 8px; text-transform: uppercase; letter-spacing: .08em;
+    background: var(--badge-bg, #eef2ff); color: var(--badge-color, #6366f1);
+    border: 1px solid var(--badge-bdr, #c7d2fe); margin-top: 6px;
+  }
+  .card-title { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 4px; }
+  .card-desc { font-size: .88rem; color: var(--text2); line-height: 1.55; font-weight: 400; }
+  .card-footer {
+    margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-meta { font-size: .72rem; color: var(--muted); font-weight: 600; }
+  .card-arrow {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--accent, #6366f1); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem; flex-shrink: 0;
+    transition: transform .18s;
+  }
+  .card:hover .card-arrow { transform: translateX(3px); }
+
+  /* SPECIAL CARD */
+  .card-special {
+    background: linear-gradient(135deg, #fffbeb, #fef3c7);
+    border-color: #fcd34d;
+  }
+  .card-special:hover { border-color: #f59e0b; }
+
+  /* FOOTER */
+  .footer { text-align: center; padding-top: 40px; border-top: 1px solid var(--border); }
+  .footer p { font-size: .8rem; color: var(--muted); line-height: 1.8; }
+  .footer strong { color: var(--text2); }
+
+  @media(max-width:600px) {
+    .hero h1 { font-size: 2.2rem; }
+    .grid { grid-template-columns: 1fr; }
+    .hero-stats { gap: 20px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-eyebrow">📚 Máster en Dificultades de Aprendizaje</div>
+    <h1>Banco de <em>Simulacros</em></h1>
+    <p>Accede a los 9 simulacros de práctica. Cada módulo tiene 5 simulacros de 30 preguntas con retroalimentación inmediata.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="val">8</div><div class="lbl">Módulos</div></div>
+      <div class="hero-stat"><div class="val">40</div><div class="lbl">Simulacros</div></div>
+      <div class="hero-stat"><div class="val">1.200</div><div class="lbl">Preguntas</div></div>
+      <div class="hero-stat"><div class="val">11</div><div class="lbl">Preguntas repetidas</div></div>
+    </div>
+  </div>
+
+  <!-- MÓDULOS -->
+  <div class="section-label">Módulos</div>
+  <div class="grid">
+
+    <a href="simulacros_M1.html" class="card" style="--accent:#1565c0;--badge-bg:#e3eeff;--badge-color:#1565c0;--badge-bdr:#93c5fd;">
+      <div class="card-top">
+        <div class="card-num">M1</div>
+        <div class="card-badge">Fondo claro</div>
+      </div>
+      <div class="card-title">Módulo 1</div>
+      <div class="card-desc">Neurocognición del aprendizaje</div>
+      <div class="card-footer">
+        <div class="card-meta">5 simulacros · 30 preguntas c/u</div>
+        <div class="card-arrow">→</div>
+      </div>
+    </a>
+
+    <a href="simulacros_M2.html" class="card" style="--accent:#0d6e6e;--badge-bg:#d4f0ef;--badge-color:#0d6e6e;--badge-bdr:#6ee7b7;">
+      <div class="card-top">
+        <div class="card-num">M2</div>
+        <div class="card-badge">Fondo claro</div>
+      </div>
+      <div class="card-title">Módulo 2</div>
+      <div class="card-desc">Trastornos del lenguaje</div>
+      <div class="card-footer">
+        <div class="card-meta">5 simulacros · 30 preguntas c/u</div>
+        <div class="card-arrow" style="background:#0d6e6e;">→</div>
+      </div>
+    </a>
+
+    <a href="simulacros_M3.html" class="card" style="--accent:#4c1d95;--badge-bg:#ede9fe;--badge-color:#4c1d95;--badge-bdr:#c4b5fd;">
+      <div class="card-top">
+        <div class="card-num">M3</div>
+        <div class="card-badge">Fondo claro</div>
+      </div>
+      <div class="card-title">Módulo 3</div>
+      <div class="card-desc">Atención a la diversidad: medidas normativas, organizativas y curriculares</div>
+      <div class="card-footer">
+        <div class="card-meta">5 simulacros · 30 preguntas c/u</div>
+        <div class="card-arrow" style="background:#4c1d95;">→</div>
+      </div>
+    </a>
+
+    <a href="simulacros_M4.html" class="card" style="--accent:#1e9e62;--badge-bg:#d4f0e5;--badge-color:#1e9e62;--badge-bdr:#6ee7b7;">
+      <div class="card-top">
+        <div class="card-num">M4</div>
+        <div class="card-badge">Fondo oscuro</div>
+      </div>
+      <div class="card-title">Módulo 4</div>
+      <div class="card-desc">Evaluación, diagnóstico e intervención en dificultades del aprendizaje</div>
+      <div class="card-footer">
+        <div class="card-meta">5 simulacros · 30 preguntas c/u</div>
+        <div class="card-arrow" style="background:#1e9e62;">→</div>
+      </div>
+    </a>
+
+    <a href="simulacros_M5.html" class="card" style="--accent:#1a4f9c;--badge-bg:#dbeafe;--badge-color:#1a4f9c;--badge-bdr:#93c5fd;">
+      <div class="card-top">
+        <div class="card-num">M5</div>
+        <div class="card-badge">Fondo claro</div>
+      </div>
+      <div class="card-title">Módulo 5</div>
+      <div class="card-desc">Trastornos del lenguaje</div>
+      <div class="card-footer">
+        <div class="card-meta">5 simulacros · 30 preguntas c/u</div>
+        <div class="card-arrow" style="background:#1a4f9c;">→</div>
+      </div>
+    </a>
+
+    <a href="simulacros_M6.html" class="card" style="--accent:#c0241e;--badge-bg:#fee2e2;--badge-color:#c0241e;--badge-bdr:#fca5a5;">
+      <div class="card-top">
+        <div class="card-num">M6</div>
+        <div class="card-badge">Fondo oscuro</div>
+      </div>
+      <div class="card-title">Módulo 6</div>
+      <div class="card-desc">Evaluación, diagnóstico e intervención en autismo</div>
+      <div class="card-footer">
+        <div class="card-meta">5 simulacros · 30 preguntas c/u</div>
+        <div class="card-arrow" style="background:#c0241e;">→</div>
+      </div>
+    </a>
+
+    <a href="simulacros_M7.html" class="card" style="--accent:#c0524a;--badge-bg:#ffe4e1;--badge-color:#c0524a;--badge-bdr:#fca5a5;">
+      <div class="card-top">
+        <div class="card-num">M7</div>
+        <div class="card-badge">Fondo oscuro</div>
+      </div>
+      <div class="card-title">Módulo 7</div>
+      <div class="card-desc">Trastornos del lenguaje</div>
+      <div class="card-footer">
+        <div class="card-meta">5 simulacros · 30 preguntas c/u</div>
+        <div class="card-arrow" style="background:#c0524a;">→</div>
+      </div>
+    </a>
+
+    <a href="simulacros_M8.html" class="card" style="--accent:#2e8b8b;--badge-bg:#d4f0ef;--badge-color:#2e8b8b;--badge-bdr:#6ee7b7;">
+      <div class="card-top">
+        <div class="card-num">M8</div>
+        <div class="card-badge">Fondo oscuro</div>
+      </div>
+      <div class="card-title">Módulo 8</div>
+      <div class="card-desc">Evaluación e intervención en los trastornos del lenguaje</div>
+      <div class="card-footer">
+        <div class="card-meta">5 simulacros · 30 preguntas c/u</div>
+        <div class="card-arrow" style="background:#2e8b8b;">→</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- ESPECIAL -->
+  <div class="section-label">Estudio especial</div>
+  <div class="grid" style="grid-template-columns: 1fr;">
+
+    <a href="simulacro_REPETIDAS.html" class="card card-special" style="--accent:#d97706;">
+      <div class="card-top">
+        <div class="card-num" style="font-style:normal;font-family:'Syne',sans-serif;font-size:2rem;">⚠️</div>
+        <div class="card-badge" style="background:#fef3c7;color:#92400e;border-color:#fcd34d;">Estudio especial</div>
+      </div>
+      <div class="card-title" style="color:#92400e;">Preguntas Repetidas M1–M8</div>
+      <div class="card-desc" style="color:#78350f;">11 preguntas que aparecen en más de un simulacro o módulo — 9 de ellas con respuestas distintas y 1 con la misma respuesta pero distinta letra. Estúdialas con especial atención antes del examen.</div>
+      <div class="card-footer" style="border-color:#fcd34d;">
+        <div class="card-meta" style="color:#92400e;">9 con conflicto · 1 misma respuesta, distinta letra</div>
+        <div class="card-arrow" style="background:#d97706;">→</div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Para que los links funcionen, todos los archivos deben estar en la <strong>misma carpeta</strong> o repositorio.<br>
+    Sube este <strong>index.html</strong> junto con los demás archivos HTML a tu repositorio de GitHub Pages.</p>
+  </div>
+
+</div>
+</body>
+</html>

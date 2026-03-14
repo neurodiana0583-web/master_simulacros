@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacros M7 — Trastornos del Lenguaje</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #1a0f0f;
+    --bg2:      #251515;
+    --bg3:      #2e1a1a;
+    --rose:     #c0524a;
+    --rose2:    #e07060;
+    --amber:    #d4923a;
+    --amber2:   #f0b060;
+    --cream:    #f2ebe0;
+    --cream2:   #e0d5c5;
+    --red:      #e05050;
+    --green:    #4caf80;
+    --muted:    #8a7070;
+    --border:   rgba(192,82,74,.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--cream);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg2);
+    border-bottom: 2px solid var(--rose);
+    padding: 16px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.15rem;
+    color: var(--amber);
+    letter-spacing: .02em;
+  }
+  .header-sub { font-size: .76rem; color: var(--rose2); margin-top: 2px; }
+  .header-badge {
+    background: var(--rose);
+    color: #fff;
+    font-size: .72rem;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: .06em;
+  }
+
+  /* HOME */
+  #home { max-width: 800px; margin: 0 auto; padding: 52px 24px; }
+  .home-hero { text-align: center; margin-bottom: 52px; }
+  .home-hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.8rem;
+    color: var(--amber);
+    line-height: 1.15;
+  }
+  .home-hero h1 em { color: var(--rose2); font-style: italic; }
+  .home-hero p { color: var(--cream2); font-size: .95rem; margin-top: 14px; opacity: .8; }
+  .ornament { color: var(--rose); font-size: 1.2rem; margin: 12px 0; letter-spacing: .3em; }
+
+  .sim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 16px; }
+  .sim-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 26px 22px;
+    cursor: pointer;
+    transition: all .22s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .sim-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--rose), var(--amber));
+    transform: scaleX(0);
+    transition: transform .25s ease;
+    transform-origin: left;
+  }
+  .sim-card:hover { border-color: var(--rose2); transform: translateY(-3px); box-shadow: 0 10px 32px rgba(0,0,0,.5); }
+  .sim-card:hover::after { transform: scaleX(1); }
+  .sim-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: var(--rose2);
+    line-height: 1;
+  }
+  .sim-label { font-size: .8rem; color: var(--amber); margin-top: 5px; text-transform: uppercase; letter-spacing: .1em; font-weight: 600; }
+  .sim-count { font-size: .76rem; color: var(--muted); margin-top: 8px; }
+  .sim-score-badge { display: none; margin-top: 10px; font-size: .78rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; width: fit-content; }
+  .sim-score-badge.shown { display: inline-block; }
+  .sim-score-badge.pass { background: rgba(76,175,128,.2); color: #7de0a8; border: 1px solid #4caf80; }
+  .sim-score-badge.fail { background: rgba(224,80,80,.18); color: #e08080; border: 1px solid var(--red); }
+  .sim-score-badge.partial { background: rgba(212,146,58,.2); color: var(--amber2); border: 1px solid var(--amber); }
+
+  /* QUIZ */
+  #quiz { display: none; max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .quiz-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .btn-back {
+    background: none; border: 1px solid rgba(255,255,255,.18);
+    color: var(--cream); padding: 7px 16px; border-radius: 8px;
+    cursor: pointer; font-size: .82rem; transition: .2s;
+  }
+  .btn-back:hover { border-color: var(--rose2); color: var(--rose2); }
+  .quiz-title { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--amber); flex: 1; }
+
+  .progress-wrap { margin-bottom: 26px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: .76rem; color: var(--muted); margin-bottom: 6px; }
+  .progress-bar { height: 5px; background: rgba(255,255,255,.08); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--rose), var(--amber)); border-radius: 4px; transition: width .4s ease; }
+
+  .q-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px 28px;
+    margin-bottom: 20px;
+  }
+  .q-number { font-size: .73rem; text-transform: uppercase; letter-spacing: .12em; color: var(--rose2); margin-bottom: 12px; font-weight: 600; }
+  .q-text { font-size: 1.05rem; line-height: 1.7; color: var(--cream); margin-bottom: 28px; font-weight: 300; }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: rgba(255,255,255,.03);
+    border: 1.5px solid rgba(255,255,255,.1);
+    border-radius: 10px; padding: 14px 16px;
+    cursor: pointer; text-align: left;
+    color: var(--cream); font-family: 'DM Sans', sans-serif;
+    font-size: .92rem; line-height: 1.5;
+    transition: all .17s ease;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--rose2); background: rgba(192,82,74,.12); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    min-width: 27px; height: 27px; border-radius: 6px;
+    background: rgba(255,255,255,.08);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .76rem; font-weight: 700; letter-spacing: .05em;
+    flex-shrink: 0; margin-top: 1px; transition: .17s;
+  }
+  .opt-btn.selected-correct { border-color: var(--green); background: rgba(76,175,128,.12); }
+  .opt-btn.selected-correct .opt-letter { background: var(--green); color: #fff; }
+  .opt-btn.selected-wrong { border-color: var(--red); background: rgba(224,80,80,.12); }
+  .opt-btn.selected-wrong .opt-letter { background: var(--red); color: #fff; }
+  .opt-btn.show-correct { border-color: var(--green); background: rgba(76,175,128,.06); }
+  .opt-btn.show-correct .opt-letter { background: rgba(76,175,128,.35); color: #fff; }
+
+  .feedback-box {
+    display: none; margin-top: 16px; padding: 14px 18px;
+    border-radius: 10px; font-size: .88rem; line-height: 1.6;
+    animation: fadeUp .3s ease;
+  }
+  .feedback-box.correct { background: rgba(76,175,128,.1); border: 1px solid rgba(76,175,128,.4); color: #7de0a8; }
+  .feedback-box.wrong { background: rgba(224,80,80,.1); border: 1px solid rgba(224,80,80,.4); color: #e08080; }
+  .feedback-ref { font-size: .77rem; margin-top: 5px; opacity: .65; font-style: italic; }
+
+  .quiz-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 6px; }
+  .btn-primary {
+    background: var(--rose); color: #fff; border: none;
+    padding: 12px 28px; border-radius: 10px; cursor: pointer;
+    font-size: .9rem; font-weight: 600; letter-spacing: .04em;
+    transition: .2s; font-family: 'DM Sans', sans-serif;
+  }
+  .btn-primary:hover { background: var(--rose2); }
+  .btn-primary:disabled { opacity: .35; cursor: default; }
+  .btn-secondary {
+    background: none; border: 1.5px solid var(--amber); color: var(--amber);
+    padding: 11px 22px; border-radius: 10px; cursor: pointer;
+    font-size: .88rem; font-weight: 600; transition: .2s;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .btn-secondary:hover { background: rgba(212,146,58,.12); }
+
+  /* RESULTS */
+  #results { display: none; max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+  .results-header { text-align: center; margin-bottom: 40px; }
+  .results-score-ring {
+    width: 130px; height: 130px; border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif;
+  }
+  .results-score-ring.pass { background: radial-gradient(circle, rgba(76,175,128,.2), transparent); border: 3px solid var(--green); }
+  .results-score-ring.fail { background: radial-gradient(circle, rgba(224,80,80,.2), transparent); border: 3px solid var(--red); }
+  .results-score-ring.partial { background: radial-gradient(circle, rgba(212,146,58,.2), transparent); border: 3px solid var(--amber); }
+  .score-pct { font-size: 2.5rem; font-weight: 700; }
+  .score-pct.pass { color: #7de0a8; }
+  .score-pct.fail { color: #e08080; }
+  .score-pct.partial { color: var(--amber2); }
+  .score-label { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; opacity: .6; }
+  .results-title { font-family: 'DM Serif Display', serif; font-size: 1.9rem; color: var(--amber); margin-bottom: 8px; }
+  .results-meta { font-size: .88rem; color: var(--muted); }
+
+  .results-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin: 30px 0; }
+  .stat-box { background: var(--bg2); border: 1px solid rgba(255,255,255,.08); border-radius: 10px; padding: 16px; text-align: center; }
+  .stat-val { font-family: 'DM Serif Display', serif; font-size: 1.9rem; }
+  .stat-val.green { color: #7de0a8; }
+  .stat-val.red { color: #e08080; }
+  .stat-val.amber { color: var(--amber2); }
+  .stat-lbl { font-size: .72rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .07em; }
+
+  .review-section { margin-top: 32px; }
+  .review-title { font-family: 'DM Serif Display', serif; font-size: 1.15rem; color: var(--amber); margin-bottom: 16px; }
+  .review-item {
+    background: var(--bg2); border-radius: 10px;
+    padding: 16px 18px; margin-bottom: 10px;
+    border-left: 4px solid transparent; font-size: .87rem; line-height: 1.55;
+  }
+  .review-item.correct { border-color: var(--green); }
+  .review-item.wrong { border-color: var(--red); }
+  .review-item-q { color: var(--cream); margin-bottom: 6px; font-weight: 500; }
+  .review-item-ans { font-size: .81rem; margin-top: 4px; }
+  .review-item-ans .my { color: #e08080; }
+  .review-item-ans .ok { color: #7de0a8; }
+  .review-item-retro { font-size: .78rem; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+  .results-actions { display: flex; gap: 14px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in { animation: fadeUp .35s ease; }
+
+  @media (max-width: 540px) {
+    .home-hero h1 { font-size: 2rem; }
+    .q-card { padding: 22px 16px; }
+    .results-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">Simulacros M7</div>
+    <div class="header-sub">Trastornos del lenguaje</div>
+  </div>
+  <div class="header-badge">5 × 30 preguntas</div>
+</div>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-hero">
+    <div class="ornament">◆ ◆ ◆</div>
+    <h1>Banco de <em>Simulacros</em></h1>
+    <p>Selecciona un simulacro para comenzar tu práctica.<br>Cada uno contiene 30 preguntas de opción múltiple.</p>
+  </div>
+  <div class="sim-grid" id="simGrid"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-nav">
+    <button class="btn-back" onclick="goHome()">← Inicio</button>
+    <div class="quiz-title" id="quizTitle"></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="progressText">Pregunta 1 de 30</span>
+      <span id="scoreText">0 correctas</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div id="qWrap"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="results-header">
+    <div class="results-score-ring" id="scoreRing">
+      <div class="score-pct" id="scorePct"></div>
+      <div class="score-label">puntuación</div>
+    </div>
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-meta" id="resultsMeta"></div>
+  </div>
+  <div class="results-stats">
+    <div class="stat-box"><div class="stat-val green" id="statCorr">0</div><div class="stat-lbl">Correctas</div></div>
+    <div class="stat-box"><div class="stat-val red" id="statWrong">0</div><div class="stat-lbl">Incorrectas</div></div>
+    <div class="stat-box"><div class="stat-val amber" id="statPct">0%</div><div class="stat-lbl">Porcentaje</div></div>
+  </div>
+  <div class="review-section">
+    <div class="review-title">📋 Revisión detallada</div>
+    <div id="reviewList"></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-secondary" onclick="retryQuiz()">🔁 Repetir simulacro</button>
+    <button class="btn-primary" onclick="goHome()">← Volver al inicio</button>
+  </div>
+</div>
+
+<script>
+const SIMS = [
+  [
+    {id:80,p:'¿Qué repercusión tiene la mejora en el lenguaje de los implantados cocleares precoces?',a:'Dificultad para comprender el entorno.',b:'Pobre dominio del lenguaje oral.',c:'Problemas de aprendizaje.',d:'Mejora en la socialización.',ok:'D',r:'Correcta: D. Mejora en la socialización.',ref:'(M7, p. 1)'},
+    {id:125,p:'¿Cuál es una enfermedad infecciosa producida por uno de tres tipos de virus que tienen afinidad por las astas anteriores de la médula espinal?',a:'Esclerosis Lateral Amiotrófica.',b:'Esclerosis Múltiple.',c:'Parálisis infantil.',d:'Ataxia de Friedreich.',ok:'C',r:'Correcta: C. Parálisis infantil.',ref:'(M7, p. 1)'},
+    {id:102,p:'¿Qué dificultades en el lenguaje presentan los niños con el síndrome de Prader Willi?',a:'Fluidez verbal.',b:'Ausencia de problemas articulatorios.',c:'Dificultades fonéticas.',d:'Voz clara y modulada.',ok:'C',r:'Correcta: C. Dificultades fonéticas.',ref:'(M7, p. 1)'},
+    {id:149,p:'¿Cuáles son las características del lenguaje hablado en individuos con TDI Grave?',a:'Completo y fluido.',b:'Limitado en vocabulario y gramática.',c:'Centrado en la comunicación escrita.',d:'Rico en expresiones y metáforas.',ok:'B',r:'Correcta: B. Limitado en vocabulario y gramática.',ref:'(M7, p. 1)'},
+    {id:19,p:'¿Cuál es uno de los síntomas del trastorno del lenguaje receptivo-expresivo?',a:'Problemas de audición.',b:'Problemas de memoria.',c:'Dificultad para socializarse.',d:'Habilidad para comprender el humor.',ok:'C',r:'Correcta: C. Dificultad para socializarse.',ref:'(M7, p. 1)'},
+    {id:59,p:'¿Cuál es el tipo de dislexia caracterizado por dificultades en la conversión grafema-fonema de palabras regulares?',a:'Dislexia fonológica.',b:'Dislexia mixta.',c:'Dislexia profunda.',d:'Dislexia semántica.',ok:'A',r:'Correcta: A. Dislexia fonológica.',ref:'(M7, p. 1)'},
+    {id:106,p:'Según el DSMV, ¿cómo se describen las patologías de la comunicación de carácter congénito?',a:'Afectadas por las neurociencias.',b:'Consideradas desde las contribuciones de las neurociencias.',c:'Influenciadas por las neurociencias.',d:'Relacionadas con las neurociencias.',ok:'B',r:'Correcta: B. Consideradas desde las contribuciones de las neurociencias.',ref:'(M7, p. 1)'},
+    {id:55,p:'¿Qué caracteriza a la dislexia?',a:'Influencia sobre la capacidad de lectura y escritura.',b:'Dificultad en el habla.',c:'Influencia en la capacidad de cálculo.',d:'Problemas en la memoria a largo plazo.',ok:'A',r:'Correcta: A. Influencia sobre la capacidad de lectura y escritura.',ref:'(M7, p. 1)'},
+    {id:24,p:'¿Qué es la dislalia evolutiva?',a:'Una alteración permanente del lenguaje infantil.',b:'Una dificultad en la articulación de fonemas que persiste en la madurez.',c:'Una fase del desarrollo del lenguaje infantil en la que el niño no es capaz de repetir, por imitación, las palabras que escucha.',d:'Una alteración del habla que aparece en niños mayores de 5 años.',ok:'C',r:'Correcta: C. Una fase del desarrollo del lenguaje infantil en la que el niño no es capaz de repetir, por imitación, las palabras que escucha.',ref:'(M7, p. 1)'},
+    {id:141,p:'¿Cuáles son las alteraciones más comunes en el lenguaje expresivo de niños con parálisis cerebral?',a:'Alteraciones en la visión.',b:'Alteraciones en la mímica facial.',c:'Alteraciones en la articulación.',d:'Alteraciones en la audición.',ok:'B',r:'Correcta: B. Alteraciones en la mímica facial.',ref:'(M7, p. 1)'},
+    {id:15,p:'¿Qué trastorno se caracteriza por repetir sílabas y palabras enteras, sobre todo aquellas que contienen oclusivas y muchas consonantes?',a:'Mixta.',b:'Disfonía.',c:'Clónica.',d:'Taquifemia.',ok:'C',r:'Correcta: C. Clónica.',ref:'(M7, p. 1)'},
+    {id:21,p:'¿En qué se diferencia un trastorno fonológico de un trastorno fonético?',a:'En la ausencia de patrones de movimiento articulatorio.',b:'En la capacidad articulatoria.',c:'En la discriminación auditiva.',d:'En la producción del habla.',ok:'B',r:'Correcta: B. En la capacidad articulatoria.',ref:'(M7, p. 1)'},
+    {id:22,p:'¿Qué es la dislalia?',a:'Una dificultad en la comprensión del lenguaje.',b:'Un trastorno de la articulación de los sonidos del lenguaje.',c:'Una alteración en la escritura.',d:'Un trastorno del lenguaje.',ok:'B',r:'Correcta: B. Un trastorno de la articulación de los sonidos del lenguaje.',ref:'(M7, p. 1)'},
+    {id:76,p:'¿Qué es la vocalización en la lectura?',a:'Relectura de palabras y frases.',b:'Hábito de apoyo indicador.',c:'Repetición verbal de palabras.',d:'Pronunciar mentalmente las palabras.',ok:'D',r:'Correcta: D. Pronunciar mentalmente las palabras.',ref:'(M7, p. 1)'},
+    {id:101,p:'¿Cuál es una característica del síndrome de Williams en relación al lenguaje?',a:'Dificultades fonéticas.',b:'Lenguaje expresivo inferior al comprensivo.',c:'Retraso en la aparición del lenguaje.',d:'Habla rápida y entrecortada.',ok:'B',r:'Correcta: B. Lenguaje expresivo inferior al comprensivo.',ref:'(M7, p. 1)'},
+    {id:93,p:'¿Cuáles son los aspectos que se pueden observar en el desarrollo de los diferentes niveles del lenguaje en niños con discapacidad intelectual?',a:'Aspectos morfológicos y léxicos.',b:'Aspectos fonéticos y fonológicos.',c:'Aspectos sintácticos y semánticos.',d:'Aspectos pragmáticos y discursivos.',ok:'B',r:'Correcta: B. Aspectos fonéticos y fonológicos.',ref:'(M7, p. 1)'},
+    {id:148,p:'¿Cuál es una característica de los niños con TDI Grave?',a:'Rápido aprendizaje de hábitos de cuidado personal.',b:'Comunicación verbal limitada.',c:'Pronunciación clara y precisa.',d:'Buena memoria a largo plazo.',ok:'B',r:'Correcta: B. Comunicación verbal limitada.',ref:'(M7, p. 1)'},
+    {id:94,p:'¿Cuál es uno de los prerrequisitos necesarios para un buen inicio del desarrollo lingüístico en niños con discapacidad intelectual?',a:'Habilidad para escribir correctamente.',b:'Vocabulario extenso.',c:'Maduración de las aptitudes locutivas.',d:'Comprensión del lenguaje.',ok:'C',r:'Correcta: C. Maduración de las aptitudes locutivas.',ref:'(M7, p. 1)'},
+    {id:99,p:'¿Cuál es una característica de la etapa prelocutiva en niños con discapacidad intelectual?',a:'Dificultad para tomar una referencia conjunta.',b:'Buena capacidad para anticiparse lúdicamente en los juegos.',c:'Facilidad para establecer rutinas.',d:'Papel secundario de los padres como estimuladores del desarrollo cognitivo.',ok:'A',r:'Correcta: A. Dificultad para tomar una referencia conjunta.',ref:'(M7, p. 1)'},
+    {id:17,p:'¿Qué es la disfasia?',a:'Pérdida parcial del habla.',b:'Alteración de la elaboración del lenguaje.',c:'Problemas de procesamiento del lenguaje.',d:'Retraso evolutivo del lenguaje.',ok:'A',r:'Correcta: A. Pérdida parcial del habla.',ref:'(M7, p. 1)'},
+    {id:131,p:'¿Cuáles son las manifestaciones de la parálisis cerebral espástica?',a:'Movimientos bruscos y rápidos en las extremidades.',b:'Atrofia de fibras musculares.',c:'Debilidad y temblores en un lado del cuerpo.',d:'Resistencia al movimiento pasivo de un grupo muscular.',ok:'D',r:'Correcta: D. Resistencia al movimiento pasivo de un grupo muscular.',ref:'(M7, p. 1)'},
+    {id:58,p:'¿Qué tipo de dislexia se caracteriza por tener deteriorada la ruta fonológica?',a:'Dislexia superficial.',b:'Dislexia visual.',c:'Dislexia fonológica.',d:'Dislexia profunda.',ok:'C',r:'Correcta: C. Dislexia fonológica.',ref:'(M7, p. 1)'},
+    {id:41,p:'¿Qué tipo de lesión cerebral se produce durante la gestación o en el momento del parto?',a:'Afasia adquirida del lenguaje.',b:'Afasia infantil connatal.',c:'Afasia congénita.',d:'Afasia adquirida infantil.',ok:'B',r:'Correcta: B. Afasia infantil connatal.',ref:'(M7, p. 1)'},
+    {id:73,p:'¿Qué mecanismos nos permiten obtener la forma ortográfica o grafemas de la palabra que hemos decidido utilizar?',a:'Selección de la audiencia.',b:'Elección automática de la forma escrita.',c:'Análisis sintáctico del mensaje.',d:'Búsqueda del significado abstracto.',ok:'D',r:'Correcta: D. Búsqueda del significado abstracto.',ref:'(M7, p. 1)'},
+    {id:115,p:'¿Cuál es una característica del desarrollo del lenguaje en niños con discapacidad auditiva?',a:'Facilidad para captar el significado de palabras abstractas.',b:'Dificultad para generalizar conceptos y emplear genéricos.',c:'Prontitud en la adquisición de reglas gramaticales.',d:'Rápido crecimiento del vocabulario.',ok:'B',r:'Correcta: B. Dificultad para generalizar conceptos y emplear genéricos.',ref:'(M7, p. 1)'},
+    {id:39,p:'¿Cuál es una característica de la afasia de Wernicke?',a:'Comprensión auditiva mejorada en la fase aguda.',b:'Comprensión del lenguaje deteriorada.',c:'Parálisis del lado derecho.',d:'Habla fluida.',ok:'B',r:'Correcta: B. Comprensión del lenguaje deteriorada.',ref:'(M7, p. 1)'},
+    {id:3,p:'¿Cuál es el papel del lingüista en el estudio de los trastornos del lenguaje?',a:'Diagnosticar síntomas lingüísticos.',b:'Intervenir directamente con el paciente.',c:'Diseñar instrumentos de evaluación.',d:'Realizar pruebas neurológicas.',ok:'C',r:'Correcta: C. Diseñar instrumentos de evaluación.',ref:'(M7, p. 1)'},
+    {id:48,p:'¿Cuáles son los procesos psicológicos que intervienen en la lectura?',a:'Procesamiento Léxico.',b:'Procesamiento semántico.',c:'Procesos perceptivos.',d:'Procesamiento sintáctico.',ok:'C',r:'Correcta: C. Procesos perceptivos.',ref:'(M7, p. 1)'},
+    {id:36,p:'¿Quién inició el estudio de las afasias en 1861?',a:'Paul Broca.',b:'Wernicke.',c:'Área de Wernicke.',d:'Área de Broca.',ok:'A',r:'Correcta: A. Paul Broca.',ref:'(M7, p. 1)'},
+    {id:54,p:'¿Cuál es uno de los signos comunes de la dislexia?',a:'Facilidad para recordar palabras comunes.',b:'Rapidez en la lectura y escritura.',c:'Dificultad para reconocer letras y sus sonidos.',d:'Buena ortografía y gramática.',ok:'C',r:'Correcta: C. Dificultad para reconocer letras y sus sonidos.',ref:'(M7, p. 1)'},
+  ],
+  [
+    {id:66,p:'¿Cuál es el proceso que se sigue en la escritura a través de la copia?',a:'Sistema semántico.',b:'Léxico visual.',c:'Vía léxica.',d:'Vía fonológica.',ok:'C',r:'Correcta: C. Vía léxica.',ref:'(M7, p. 1)'},
+    {id:40,p:'¿Cuál es el síntoma más característico de la afasia de conducción?',a:'Dificultad para encontrar palabras.',b:'Dificultad para la comprensión del lenguaje.',c:'Problemas en la selección apropiada de las palabras.',d:'Dificultad para la repetición de palabras polisilábicas.',ok:'D',r:'Correcta: D. Dificultad para la repetición de palabras polisilábicas.',ref:'(M7, p. 1)'},
+    {id:9,p:'¿Cuál es un ejemplo de trastorno congénito del lenguaje?',a:'Afasia congénita.',b:'Trastornos del ritmo del habla.',c:'Trastornos del habla por lesiones.',d:'Trastornos del lenguaje temporales.',ok:'A',r:'Correcta: A. Afasia congénita.',ref:'(M7, p. 1)'},
+    {id:92,p:'¿Por qué los adolescentes con sordera prelocutiva pueden encontrar dificultad en razonamientos matemáticos con texto?',a:'Falta de oportunidades para aprender a argumentar.',b:'Falta de conocimiento y dominio de los temas.',c:'Falta de habilidades lingüísticas.',d:'Limitaciones cognitivas.',ok:'B',r:'Correcta: B. Falta de conocimiento y dominio de los temas.',ref:'(M7, p. 1)'},
+    {id:44,p:'¿Cuál es una de las posibles causas del mutismo infantil?',a:'Falta de maduración en las habilidades motoras del habla.',b:'Falta de interacción social.',c:'Problemas de visión.',d:'Exceso de estimulación lingüística.',ok:'A',r:'Correcta: A. Falta de maduración en las habilidades motoras del habla.',ref:'(M7, p. 1)'},
+    {id:119,p:'¿Cuál es uno de los efectos más importantes que la discapacidad auditiva suele tener sobre el desarrollo del niño?',a:'Problemas de aprendizaje.',b:'Retraso en la adquisición del lenguaje.',c:'Problemas de visión.',d:'Dificultades motoras.',ok:'B',r:'Correcta: B. Retraso en la adquisición del lenguaje.',ref:'(M7, p. 1)'},
+    {id:86,p:'¿Qué observó la Dra. Sclumberger en su estudio sobre el desarrollo de los niños sordos?',a:'No se vieron afectados por la discapacidad auditiva.',b:'No presentan diferencias en el desarrollo neuropsicológico.',c:'Presentan diferencias sutiles de rendimiento en áreas funcionales.',d:'Desarrollan la motricidad compleja de forma más rápida.',ok:'C',r:'Correcta: C. Presentan diferencias sutiles de rendimiento en áreas funcionales.',ref:'(M7, p. 1)'},
+    {id:145,p:'¿En qué área pueden existir dificultades en el aprendizaje de aptitudes académicas en niños de edad escolar y adultos con TDI Leve?',a:'Dominio práctico.',b:'Dominio social.',c:'Ninguna de las anteriores.',d:'Dominio conceptual.',ok:'A',r:'Correcta: A. Dominio práctico.',ref:'(M7, p. 1)'},
+    {id:97,p:'¿Qué porcentaje del alumnado con discapacidad intelectual se estima que presenta problemas de lenguaje?',a:'0.6',b:'40%',c:'100%',d:'80%',ok:'A',r:'Correcta: A. 0.6',ref:'(M7, p. 1)'},
+    {id:67,p:'¿Qué ruta se utiliza para el aprendizaje de la escritura cuando se encuentran palabras desconocidas?',a:'Ruta ortográfica.',b:'Ruta fonológica.',c:'Ruta alográfica.',d:'Ruta léxica.',ok:'B',r:'Correcta: B. Ruta fonológica.',ref:'(M7, p. 1)'},
+    {id:104,p:'¿Qué abarca el trastorno del lenguaje escrito?',a:'Alteraciones en la escritura que producen malestar.',b:'Alteraciones en la comunicación.',c:'Alteraciones en la expresión oral.',d:'Conjunto de síntomas que producen malestar interfiriendo en la persona.',ok:'A',r:'Correcta: A. Alteraciones en la escritura que producen malestar.',ref:'(M7, p. 1)'},
+    {id:111,p:'¿Cuál es uno de los efectos en el habla de una sordera postlocutiva?',a:'Nasalidad rápida.',b:'Melodía de la voz alterada.',c:'Desarrollo lingüístico rápido.',d:'Confusión entre sordas y sonoras.',ok:'D',r:'Correcta: D. Confusión entre sordas y sonoras.',ref:'(M7, p. 1)'},
+    {id:82,p:'¿Qué dificultades suelen presentar los niños con discapacidad auditiva en el ámbito escolar?',a:'Dificultades en matemáticas.',b:'Dificultades en lectoescritura.',c:'Dificultades en educación física.',d:'Dificultades en música.',ok:'B',r:'Correcta: B. Dificultades en lectoescritura.',ref:'(M7, p. 1)'},
+    {id:140,p:'¿Cuáles son algunas de las dificultades que pueden presentar los trastornos del lenguaje en el período sensoriomotor?',a:'Habla no inteligible.',b:'Producción de algunas palabras.',c:'Habla inteligible en ciertos contextos.',d:'Emisión de sonidos guturales.',ok:'A',r:'Correcta: A. Habla no inteligible.',ref:'(M7, p. 1)'},
+    {id:114,p:'¿Qué dificultades presentan los niños con discapacidad auditiva en la adquisición de la lengua oral?',a:'Retraso en la adquisición de las primeras palabras.',b:'Ampliación rápida del vocabulario.',c:'Rápida adquisición de las primeras combinaciones.',d:'Flexibilidad en el uso del lenguaje.',ok:'A',r:'Correcta: A. Retraso en la adquisición de las primeras palabras.',ref:'(M7, p. 1)'},
+    {id:139,p:'¿Qué son las disartrias?',a:'Trastornos en la escritura del lenguaje.',b:'Trastornos en la lectura del lenguaje.',c:'Trastornos en la comprensión del lenguaje.',d:'Trastornos en la articulación del lenguaje hablado.',ok:'D',r:'Correcta: D. Trastornos en la articulación del lenguaje hablado.',ref:'(M7, p. 1)'},
+    {id:37,p:'¿Qué caracteriza a las afasias fluentes?',a:'Gran esfuerzo articulatorio.',b:'Graves trastornos de articulación.',c:'Expresión sin esfuerzo.',d:'Pobreza en su contenido.',ok:'D',r:'Correcta: D. Pobreza en su contenido.',ref:'(M7, p. 1)'},
+    {id:121,p:'¿Qué tipo de problemas en el uso del lenguaje son comunes en personas sordas que emplean el lenguaje oral?',a:'Alteraciones prosódicas.',b:'Problemas en la discriminación de los sonidos.',c:'Vocabulario empobrecido.',d:'Alteraciones en la articulación.',ok:'D',r:'Correcta: D. Alteraciones en la articulación.',ref:'(M7, p. 1)'},
+    {id:134,p:'¿Cuál es una consideración importante sobre la discapacidad motora y el lenguaje en el contexto de la parálisis cerebral?',a:'Necesidades de comunicación individuales.',b:'Variabilidad en la afectación.',c:'Apoyo familiar.',d:'Enfoque temprano.',ok:'A',r:'Correcta: A. Necesidades de comunicación individuales.',ref:'(M7, p. 1)'},
+    {id:23,p:'¿Cuál es el trastorno permanente de la articulación que se caracteriza por la incapacidad de conseguir la posición y movimientos adecuados para lograr la articulación o la emisión correcta del aire para la fonación?',a:'Rotacismo.',b:'Seseo.',c:'Ceceo.',d:'Dislalia.',ok:'D',r:'Correcta: D. Dislalia.',ref:'(M7, p. 1)'},
+    {id:105,p:'¿Qué es el retraso del lenguaje?',a:'Una aparición de los niveles del lenguaje que afecta sobre todo a la expresión.',b:'Una alteración sensorial.',c:'Una alteración de la comunicación.',d:'Una alteración del habla.',ok:'A',r:'Correcta: A. Una aparición de los niveles del lenguaje que afecta sobre todo a la expresión.',ref:'(M7, p. 1)'},
+    {id:79,p:'¿Qué ayuda es imprescindible para los alumnos con discapacidad auditiva profunda?',a:'Audífonos.',b:'Canal visual.',c:'Emisoras de Frecuencia Modulada.',d:'Labiolectura.',ok:'D',r:'Correcta: D. Labiolectura.',ref:'(M7, p. 1)'},
+    {id:70,p:'¿Cuál es uno de los errores de ortografía natural que se producen en el proceso de escritura?',a:'Puntuación.',b:'Sustitución.',c:'Acentuación.',d:'Cambio Consonántico.',ok:'B',r:'Correcta: B. Sustitución.',ref:'(M7, p. 1)'},
+    {id:124,p:'¿Cuáles son los criterios para la clasificación de la deficiencia motora según su origen?',a:'Óseo-articular, cerebral, espinal y muscular.',b:'Cerebral, óseo-articular, muscular y espinal.',c:'Muscular, espinal, cerebral y óseo-articular.',d:'Espinal, muscular, óseo-articular y cerebral.',ok:'D',r:'Correcta: D. Espinal, muscular, óseo-articular y cerebral.',ref:'(M7, p. 1)'},
+    {id:20,p:'¿Qué son los trastornos fonológicos en el lenguaje?',a:'Producción inadecuada de los sonidos del habla.',b:'Dificultad en la comprensión del significado de algunas palabras.',c:'Incapacidad para hablar frases sencillas.',d:'Incapacidad para comprender el vocabulario básico.',ok:'A',r:'Correcta: A. Producción inadecuada de los sonidos del habla.',ref:'(M7, p. 1)'},
+    {id:108,p:'¿Cuáles son los factores relevantes para el desarrollo del lenguaje infantil?',a:'Competencia lingüística y capacidad de percibir el mundo sonoro.',b:'Edad y género del niño.',c:'Nivel de inteligencia y habilidades motoras.',d:'Nivel de educación y nivel socioeconómico.',ok:'A',r:'Correcta: A. Competencia lingüística y capacidad de percibir el mundo sonoro.',ref:'(M7, p. 1)'},
+    {id:113,p:'¿Qué dificulta la comprensión de la intención del interlocutor y su estado de ánimo en niños con déficit auditivo?',a:'La exposición a acciones repetidas.',b:'La comunicación gestual.',c:'La percepción de la entonación del habla.',d:'La alternancia de la mirada hacia el objeto y hacia el rostro.',ok:'C',r:'Correcta: C. La percepción de la entonación del habla.',ref:'(M7, p. 1)'},
+    {id:147,p:'¿Cuáles son las características del desarrollo de las habilidades conceptuales en individuos con TDI moderado?',a:'Rápido desarrollo en preescolares.',b:'Progreso normal en lectura y escritura.',c:'Desarrollo lento en preescolares.',d:'Desarrollo rápido en adultos.',ok:'C',r:'Correcta: C. Desarrollo lento en preescolares.',ref:'(M7, p. 1)'},
+    {id:88,p:'¿En qué etapa del desarrollo del niño de 7–12 años se observa un desfase entre los chicos con discapacidad auditiva y los oyentes?',a:'En las tareas relacionadas con la inteligencia práctica.',b:'En las operaciones lógicas concretas.',c:'En las operaciones lógicas más complejas.',d:'En las etapas iniciales de desarrollo.',ok:'C',r:'Correcta: C. En las operaciones lógicas más complejas.',ref:'(M7, p. 1)'},
+    {id:53,p:'¿Qué aspectos deben estar desarrollados para que tenga lugar un buen aprendizaje lector?',a:'Desarrollo de representaciones léxicas adecuadas.',b:'Capacidad de la memoria operativa.',c:'Esquemas de conocimiento.',d:'Conciencia fonológica, rima y aliteración.',ok:'D',r:'Correcta: D. Conciencia fonológica, rima y aliteración.',ref:'(M7, p. 1)'},
+  ],
+  [
+    {id:136,p:'¿Qué área del desarrollo es afectada en niños con parálisis cerebral debido al déficit motor?',a:'Desarrollo sensorial.',b:'Desarrollo socio-afectivo.',c:'Desarrollo social.',d:'Desarrollo cognitivo.',ok:'C',r:'Correcta: C. Desarrollo social.',ref:'(M7, p. 1)'},
+    {id:42,p:'¿Cuál es una de las posibles causas del mutismo selectivo en niños?',a:'Trastornos del desarrollo.',b:'Condiciones médicas.',c:'Trauma o estrés severo.',d:'Desconexión social.',ok:'A',r:'Correcta: A. Trastornos del desarrollo.',ref:'(M7, p. 1)'},
+    {id:4,p:'¿Cuál es una de las actuaciones principales en materia de patología del lenguaje?',a:'Obtener y analizar corpus del lenguaje.',b:'Realizar evaluación y estimar características.',c:'Construir test y pruebas en colaboración.',d:'Diseñar y crear instrumentos de evaluación.',ok:'C',r:'Correcta: C. Construir test y pruebas en colaboración.',ref:'(M7, p. 1)'},
+    {id:63,p:'¿Por qué las lectoras y lectores con dislexia pueden utilizar con más frecuencia la ruta visual?',a:'Diferencias cualitativas.',b:'Desarrollo retrasado.',c:'Conocimiento deficitario de reglas.',d:'Edad lectora.',ok:'C',r:'Correcta: C. Conocimiento deficitario de reglas.',ref:'(M7, p. 1)'},
+    {id:150,p:'¿Cuáles son las características del lenguaje hablado en personas con Trastorno del Desarrollo Intelectual Profundo?',a:'Uso de lenguaje escrito en lugar de hablado.',b:'Palabras sueltas o frases limitadas.',c:'Amplio vocabulario y gramática compleja.',d:'Comunicación gestual predominante.',ok:'B',r:'Correcta: B. Palabras sueltas o frases limitadas.',ref:'(M7, p. 1)'},
+    {id:33,p:'¿Cuál es una característica del trastorno fonológico-sintáctico?',a:'Comprensión del lenguaje oral severamente afectada.',b:'Habla fluente, a menudo logorreica.',c:'Fluidez verbal perturbada.',d:'Articulación normal o con ligeras dificultades.',ok:'C',r:'Correcta: C. Fluidez verbal perturbada.',ref:'(M7, p. 1)'},
+    {id:89,p:'¿Cuáles son las dimensiones del juego simbólico que guardan correspondencia en su evolución con el desarrollo del lenguaje, según Marchesi?',a:'Planificación e Identidad.',b:'Descentración e Integración.',c:'Descentración e Sustitución.',d:'Sustitución e Integración.',ok:'A',r:'Correcta: A. Planificación e Identidad.',ref:'(M7, p. 1)'},
+    {id:56,p:'¿Cuál es una de las implicaciones de la dislexia?',a:'Hablar y pelearse.',b:'Conductas disruptivas.',c:'No trabajar.',d:'Inhibición y retraimiento.',ok:'B',r:'Correcta: B. Conductas disruptivas.',ref:'(M7, p. 1)'},
+    {id:46,p:'¿Qué es leer?',a:'Desentrañar escritos.',b:'Comprender un texto.',c:'Expresar pensamientos.',d:'Interpretar signos gráficos.',ok:'B',r:'Correcta: B. Comprender un texto.',ref:'(M7, p. 1)'},
+    {id:6,p:'¿Qué disciplinas están implicadas en la conducta comunicativa y verbal según el texto?',a:'Psicología y medicina.',b:'Lingüística y pedagogía.',c:'Audiología y sociolingüística.',d:'Neurología y psicopatología.',ok:'A',r:'Correcta: A. Psicología y medicina.',ref:'(M7, p. 1)'},
+    {id:64,p:'¿Qué tipos de procesos intervienen en la escritura?',a:'Procesos de copia y narración.',b:'Procesos fonológicos y léxicos.',c:'Procesos de redacción y dictado.',d:'Procesos de organización y expresión.',ok:'B',r:'Correcta: B. Procesos fonológicos y léxicos.',ref:'(M7, p. 1)'},
+    {id:7,p:'¿Qué aspectos están implicados en el desarrollo del lenguaje?',a:'Desarrollo físico.',b:'Desarrollo emocional.',c:'Desarrollo social.',d:'Desarrollo cognitivo.',ok:'D',r:'Correcta: D. Desarrollo cognitivo.',ref:'(M7, p. 1)'},
+    {id:5,p:'¿Qué aportaciones puede realizar un lingüista en el abordaje de un problema fonético o fonológico?',a:'Realizar el tratamiento de pacientes.',b:'Aportar estrategias de interacción comunicativa.',c:'Realizar diagnósticos clínicos.',d:'Aportar secuencias de estímulos verbales.',ok:'B',r:'Correcta: B. Aportar estrategias de interacción comunicativa.',ref:'(M7, p. 1)'},
+    {id:2,p:'¿Qué aspectos pueden estar asociados a los trastornos del lenguaje?',a:'Problemas de visión.',b:'Problemas de memoria.',c:'Problemas de comprensión verbal.',d:'Problemas de articulación.',ok:'C',r:'Correcta: C. Problemas de comprensión verbal.',ref:'(M7, p. 1)'},
+    {id:146,p:'¿Cuál es una característica de la capacidad de comunicación en personas con discapacidad intelectual moderada?',a:'Capacidad para comprender significados complejos.',b:'Habilidad para establecer relaciones entre elementos aprendidos.',c:'Expresión verbal y escrita fluida.',d:'Dificultad en la pronunciación y escritura.',ok:'D',r:'Correcta: D. Dificultad en la pronunciación y escritura.',ref:'(M7, p. 1)'},
+    {id:18,p:'¿Cuál es el trastorno del habla que se caracteriza por una velocidad alterada en el ritmo del habla y en modificaciones de la voz?',a:'Taquilalia.',b:'Fonológico.',c:'Mutismo selectivo.',d:'Bradilalia.',ok:'D',r:'Correcta: D. Bradilalia.',ref:'(M7, p. 1)'},
+    {id:133,p:'¿Cuál es la clasificación topográfica de la parálisis cerebral que se caracteriza por la afectación leve de las extremidades superiores y espasticidad en las inferiores, de forma simétrica?',a:'Hemiplejía.',b:'Diplejía.',c:'Paraplejía.',d:'Tetraplejía.',ok:'B',r:'Correcta: B. Diplejía.',ref:'(M7, p. 1)'},
+    {id:143,p:'Según el DSM-5, ¿cuáles son los criterios diagnósticos de la discapacidad intelectual?',a:'Deficiencias en la participación social.',b:'Deficiencias en las funciones intelectuales.',c:'Deficiencias en la comunicación.',d:'Deficiencias del comportamiento adaptativo.',ok:'B',r:'Correcta: B. Deficiencias en las funciones intelectuales.',ref:'(M7, p. 1)'},
+    {id:98,p:'¿Qué aspecto de la sintaxis se ve afectado en niños con discapacidad intelectual?',a:'Abundancia de morfemas gramaticales.',b:'Dificultades en la construcción gramatical, más en las estructuras sintácticas que en las morfológicas.',c:'Rápida evolución en la conjugación de las formas verbales.',d:'Construcciones sintácticas complejas y frases largas.',ok:'B',r:'Correcta: B. Dificultades en la construcción gramatical, más en las estructuras sintácticas que en las morfológicas.',ref:'(M7, p. 1)'},
+    {id:120,p:'¿Cuál es una característica de la adquisición de las lenguas gestuales por parte de niños sordos expuestos a la lengua de signos desde el nacimiento?',a:'No tienen capacidad para aprender la lengua de signos.',b:'Aprenden la lengua de signos de manera espontánea y natural.',c:'La adquisición de las lenguas gestuales es más rápida que la del lenguaje oral.',d:'Necesitan un entrenamiento directo y específico para aprender la lengua de signos.',ok:'B',r:'Correcta: B. Aprenden la lengua de signos de manera espontánea y natural.',ref:'(M7, p. 1)'},
+    {id:32,p:'¿Qué es la disglosia o dislalia orgánica?',a:'Un trastorno del crecimiento.',b:'Un trastorno neurológico central.',c:'Una alteración del lenguaje por lesiones físicas o malformaciones de los órganos articulatorios periféricos.',d:'Una parálisis periférica.',ok:'C',r:'Correcta: C. Una alteración del lenguaje por lesiones físicas o malformaciones de los órganos articulatorios periféricos.',ref:'(M7, p. 1)'},
+    {id:87,p:'¿Qué impacto tiene la discapacidad auditiva en el desarrollo motor de los niños?',a:'Mejora la motricidad compleja.',b:'No afecta el desarrollo motor.',c:'Complica el proceso de comunicación.',d:'Repercute en la estructuración espacio-temporal.',ok:'D',r:'Correcta: D. Repercute en la estructuración espacio-temporal.',ref:'(M7, p. 1)'},
+    {id:78,p:'¿Qué necesitan los niños con discapacidad auditiva media?',a:'Audífonos.',b:'Apoyo en la escritura.',c:'Apoyo en la lectura labial.',d:'Apoyo en la lectura oral.',ok:'A',r:'Correcta: A. Audífonos.',ref:'(M7, p. 1)'},
+    {id:144,p:'¿Cuál es una característica común de las personas con Trastorno del Lenguaje Discapacidad Intelectual Leve?',a:'Presentan retraso psicomotor evidente desde el nacimiento.',b:'Tienen dificultades para comunicarse oralmente y por escrito.',c:'Suelen ser muy independientes desde temprana edad.',d:'Pueden llegar a la Formación Profesional o incluso a Secundaria.',ok:'D',r:'Correcta: D. Pueden llegar a la Formación Profesional o incluso a Secundaria.',ref:'(M7, p. 1)'},
+    {id:52,p:'¿Cuál es uno de los subprocesos del procesamiento semántico en la comprensión lectora?',a:'Extracción del significado.',b:'Análisis sintáctico.',c:'Integración de signos de puntuación.',d:'Reconocimiento de palabras.',ok:'A',r:'Correcta: A. Extracción del significado.',ref:'(M7, p. 1)'},
+    {id:137,p:'¿Cuáles son los síntomas de alarma en el período de lactancia que podrían indicar la presencia de parálisis cerebral en un niño?',a:'Posición en extensión.',b:'Posición en flexión.',c:'Reflejos fuertes y presentes.',d:'Movimientos simétricos.',ok:'A',r:'Correcta: A. Posición en extensión.',ref:'(M7, p. 1)'},
+    {id:68,p:'¿En qué casos se utiliza la ruta léxica al escribir lo que oímos?',a:'Cuando las palabras son desconocidas.',b:'Cuando se accede al sistema semántico.',c:'Cuando se analizan acústicamente los sonidos.',d:'Cuando las palabras son conocidas o familiares.',ok:'D',r:'Correcta: D. Cuando las palabras son conocidas o familiares.',ref:'(M7, p. 1)'},
+    {id:135,p:'¿Cuáles son las dificultades que pueden observarse en el desarrollo cognitivo de los niños con parálisis cerebral?',a:'Dificultades en la motricidad fina.',b:'Dificultades en la interacción social.',c:'Dificultades en la comunicación y en el lenguaje.',d:'Dificultades en la percepción visual.',ok:'C',r:'Correcta: C. Dificultades en la comunicación y en el lenguaje.',ref:'(M7, p. 1)'},
+    {id:16,p:'¿Qué caracteriza a la disfemia tónica?',a:'Espasmos y rigidez facial.',b:'Prolongación de sonidos.',c:'Repetición de sonidos.',d:'Tensión facial.',ok:'A',r:'Correcta: A. Espasmos y rigidez facial.',ref:'(M7, p. 1)'},
+    {id:126,p:'¿Cuál es la manifestación principal de la espina bífida sin hidrocefalia?',a:'Incontinencia urinaria.',b:'Parálisis por encima del nivel de la lesión.',c:'Alteraciones ortopédicas en miembros superiores.',d:'Abultamiento cubierto de piel.',ok:'D',r:'Correcta: D. Abultamiento cubierto de piel.',ref:'(M7, p. 1)'},
+  ],
+  [
+    {id:81,p:'¿Qué necesitan algunos sordos a pesar de los implantes cocleares precoces?',a:'Métodos educativos tradicionales.',b:'Autocontrol de la expresión oral.',c:'Buena percepción del habla.',d:'Sistemas aumentativos y alternativos de comunicación.',ok:'D',r:'Correcta: D. Sistemas aumentativos y alternativos de comunicación.',ref:'(M7, p. 1)'},
+    {id:112,p:'¿Qué dificultades tienen los niños con deficiencia auditiva al emitir fonemas?',a:'Controlan menos las consonantes que las vocales.',b:'Controlan menos las vocales que las consonantes.',c:'Controlan igual las vocales y las consonantes.',d:'No tienen dificultades al emitir fonemas.',ok:'B',r:'Correcta: B. Controlan menos las vocales que las consonantes.',ref:'(M7, p. 1)'},
+    {id:35,p:'¿Qué es la afasia?',a:'Pérdida de la memoria.',b:'Trastorno de la escritura.',c:'Alteración adquirida del lenguaje.',d:'Dificultades articulatorias.',ok:'C',r:'Correcta: C. Alteración adquirida del lenguaje.',ref:'(M7, p. 1)'},
+    {id:14,p:'¿Qué es la dislalia?',a:'Dificultad para producir sonidos en las sílabas.',b:'Dificultad para comunicarse de forma no verbal.',c:'Dificultad para leer y escribir.',d:'Dificultad para entender el lenguaje hablado.',ok:'A',r:'Correcta: A. Dificultad para producir sonidos en las sílabas.',ref:'(M7, p. 1)'},
+    {id:116,p:'¿Qué dificultades presentan los niños con discapacidad auditiva prelocutiva al aprender la lengua oral?',a:'Dificultad para comprender frases complejas.',b:'Dificultad para identificar palabras conocidas.',c:'Problemas con adverbios.',d:'Problemas con verbos irregulares.',ok:'A',r:'Correcta: A. Dificultad para comprender frases complejas.',ref:'(M7, p. 1)'},
+    {id:117,p:'¿Cuál es un error frecuente en el lenguaje de los alumnos con discapacidad auditiva?',a:'Uso correcto de tiempos verbales.',b:'Concordancia adecuada.',c:'Habla telegráfica.',d:'Uso excesivo de adjetivos.',ok:'C',r:'Correcta: C. Habla telegráfica.',ref:'(M7, p. 1)'},
+    {id:60,p:'¿Cuál es la característica principal de la dislexia motriz y viso-espacial?',a:'Problemas de comprensión.',b:'Déficit en fluidez verbal.',c:'Dificultades de expresión oral.',d:'Confusión en la escritura.',ok:'D',r:'Correcta: D. Confusión en la escritura.',ref:'(M7, p. 1)'},
+    {id:74,p:'¿Cuáles son los principales trastornos que pueden surgir a nivel motor en el aprendizaje de la escritura?',a:'Problemas con los procesos léxicos.',b:'Referentes a los alográfos.',c:'Errores en la planificación.',d:'Estilo \'telegráfico\' en la escritura.',ok:'B',r:'Correcta: B. Referentes a los alográfos.',ref:'(M7, p. 1)'},
+    {id:107,p:'¿Qué aspecto se revisa en los trabajos dirigidos al estudio del perfil de habilidades lingüísticas y de comunicación del individuo con Síndrome de Asperger?',a:'Perfil social.',b:'Perfil psicológico.',c:'Perfil neurológico.',d:'Perfil lingüístico.',ok:'D',r:'Correcta: D. Perfil lingüístico.',ref:'(M7, p. 1)'},
+    {id:127,p:'¿Qué tipo de discapacidad motora afecta a los músculos de la cara, mímica facial, cuello, hombros y miembros superiores?',a:'Miotonía.',b:'Distrofia muscular ocular.',c:'Malformaciones microbianas.',d:'Malformaciones congénitas.',ok:'B',r:'Correcta: B. Distrofia muscular ocular.',ref:'(M7, p. 1)'},
+    {id:43,p:'¿Cuál es una característica del mutismo?',a:'Desarrollo comunicativo del gesto y de la música.',b:'Lenguaje telegráfico (ausencia de determinantes y nexos gramaticales).',c:'Vocabulario muy reducido a los 3 años.',d:'Aparición de las primeras palabras después de los 2 años.',ok:'D',r:'Correcta: D. Aparición de las primeras palabras después de los 2 años.',ref:'(M7, p. 1)'},
+    {id:96,p:'¿Cuál es uno de los aspectos en los que se observan dificultades en el desarrollo semántico de los niños con discapacidad intelectual?',a:'Iniciativa comunicativa.',b:'Entorno lingüístico familiar.',c:'Uso de morfemas gramaticales.',d:'Comprensión de preposiciones.',ok:'C',r:'Correcta: C. Uso de morfemas gramaticales.',ref:'(M7, p. 1)'},
+    {id:28,p:'¿En qué consiste la adición como trastorno del habla?',a:'Sustitución de consonantes anteriores por velares.',b:'Sustitución de una velar por una consonante anterior.',c:'Pérdida de sonoridad en grupos de consonante nasal+oclusiva sonora.',d:'Intercalar un sonido que no corresponde a la palabra.',ok:'D',r:'Correcta: D. Intercalar un sonido que no corresponde a la palabra.',ref:'(M7, p. 1)'},
+    {id:95,p:'¿Cuál es una posible causa de los problemas articulatorios en el desarrollo del lenguaje en niños con discapacidad intelectual?',a:'Dificultades de organización respiratoria.',b:'Problemas de organización nerviosa.',c:'Problemas de ubicación de la laringe.',d:'Insuficiencias auditivas.',ok:'C',r:'Correcta: C. Problemas de ubicación de la laringe.',ref:'(M7, p. 1)'},
+    {id:110,p:'¿Qué etapa del desarrollo del lenguaje se alcanza hacia los 3 años en niños con déficit auditivo?',a:'Etapa de organización progresiva.',b:'Etapa holofrástica.',c:'Etapa prelingüística.',d:'Etapa telegráfica.',ok:'A',r:'Correcta: A. Etapa de organización progresiva.',ref:'(M7, p. 1)'},
+    {id:103,p:'¿Cuáles son las características del lenguaje en el síndrome de Cornelia de Lange?',a:'Fluidez verbal.',b:'Ausencia del lenguaje oral.',c:'Hiperarticulación.',d:'Voz hipernasal.',ok:'B',r:'Correcta: B. Ausencia del lenguaje oral.',ref:'(M7, p. 1)'},
+    {id:13,p:'¿Cuándo se considera que un retraso en el desarrollo del lenguaje es profundo o grave?',a:'6-12 meses.',b:'Más de 12 meses.',c:'3-6 meses.',d:'Menos de 3 meses.',ok:'B',r:'Correcta: B. Más de 12 meses.',ref:'(M7, p. 1)'},
+    {id:118,p:'¿Qué tipo de programas y métodos educativos pueden ser necesarios para niños con discapacidad auditiva?',a:'Programas de música.',b:'Programas de matemáticas.',c:'Programas de lectura.',d:'Programas de lengua de signos.',ok:'D',r:'Correcta: D. Programas de lengua de signos.',ref:'(M7, p. 1)'},
+    {id:123,p:'¿Qué es la discapacidad motora?',a:'Limitación de la capacidad visual.',b:'Limitación de la capacidad auditiva.',c:'Limitación de la función motora.',d:'Limitación de la capacidad cognitiva.',ok:'C',r:'Correcta: C. Limitación de la función motora.',ref:'(M7, p. 1)'},
+    {id:91,p:'¿Por qué los estudiantes con discapacidad auditiva pueden mostrar inseguridad al defender sus ideas?',a:'Falta de interacciones comunicativas.',b:'Limitaciones cognitivas.',c:'Falta de habilidades lingüísticas.',d:'Falta de oportunidades para aprender a argumentar.',ok:'D',r:'Correcta: D. Falta de oportunidades para aprender a argumentar.',ref:'(M7, p. 1)'},
+    {id:77,p:'¿Qué dificultades pueden presentar los niños con discapacidad auditiva ligera?',a:'Dificultad para interpretar estrategias morfosintácticas.',b:'Dificultades sociales.',c:'Dificultad para incorporar palabras nuevas.',d:'Pérdida de vocabulario.',ok:'C',r:'Correcta: C. Dificultad para incorporar palabras nuevas.',ref:'(M7, p. 1)'},
+    {id:57,p:'¿Qué tipo de dislexia se caracteriza por errores de tipo visual?',a:'Dislexia atencional.',b:'Dislexia visual.',c:'Dislexia fonológica.',d:'Dislexia letra a letra.',ok:'B',r:'Correcta: B. Dislexia visual.',ref:'(M7, p. 1)'},
+    {id:138,p:'¿Cuál es la principal alteración del lenguaje en personas con parálisis cerebral?',a:'Disartria.',b:'Disfonía.',c:'Dislexia.',d:'Apraxia.',ok:'A',r:'Correcta: A. Disartria.',ref:'(M7, p. 1)'},
+    {id:90,p:'¿Qué dificultad presentan los adolescentes con sordera profunda prelocutiva en la etapa de las Operaciones Formales?',a:'Menos habilidad al razonar sobre proposiciones.',b:'Menos conscientes de la deformación que entraña la fijación en su propio punto de vista.',c:'Menos eficaces al formular hipótesis.',d:'Menos eficaces al realizar operaciones formales.',ok:'D',r:'Correcta: D. Menos eficaces al realizar operaciones formales.',ref:'(M7, p. 1)'},
+    {id:26,p:'¿Cuál es la causa más común de la dislalia funcional?',a:'Inmadurez del sujeto.',b:'Falta de discriminación auditiva.',c:'Escasa habilidad motora.',d:'Problemas de conceptualización de sonidos.',ok:'C',r:'Correcta: C. Escasa habilidad motora.',ref:'(M7, p. 1)'},
+    {id:109,p:'¿Qué habilidades auditivas y lingüísticas se desarrollan entre el 3º y 4º mes de vida?',a:'Comprensión semántica del discurso.',b:'Producción de sonidos ininteligibles.',c:'Repetición de sonidos homófonos.',d:'Indiferencia a los ruidos familiares.',ok:'B',r:'Correcta: B. Producción de sonidos ininteligibles.',ref:'(M7, p. 1)'},
+    {id:11,p:'¿Qué aspectos del discurso propuesto por el adulto pueden dificultar la expresión del niño?',a:'Pragmáticos y semánticos.',b:'Sintácticos y fonéticos.',c:'Pragmáticos y fonéticos.',d:'Sintácticos y semánticos.',ok:'D',r:'Correcta: D. Sintácticos y semánticos.',ref:'(M7, p. 1)'},
+    {id:10,p:'¿Cuáles son algunas de las causas ambientales de los trastornos del lenguaje, el habla y la comunicación?',a:'Extraversión.',b:'Desarrollo genético.',c:'Estimulación insuficiente.',d:'Neuroticismo.',ok:'C',r:'Correcta: C. Estimulación insuficiente.',ref:'(M7, p. 1)'},
+    {id:25,p:'¿Qué es la dislalia funcional?',a:'Trastorno de la articulación causado por alteraciones anatómicas.',b:'Alteración de la articulación por mal funcionamiento de los órganos articulatorios.',c:'Alteración de la articulación por audición defectuosa.',d:'Trastorno de la articulación por causas orgánicas.',ok:'B',r:'Correcta: B. Alteración de la articulación por mal funcionamiento de los órganos articulatorios.',ref:'(M7, p. 1)'},
+    {id:29,p:'¿Qué trastorno del habla se caracteriza por la protusión de la lengua o ceceo?',a:'Asimilación velar.',b:'Sonorización de fricativas sordas.',c:'Dislalia.',d:'Desnasalización de una nasal.',ok:'C',r:'Correcta: C. Dislalia.',ref:'(M7, p. 1)'},
+  ],
+  [
+    {id:27,p:'¿Qué es la dislalia?',a:'Una alteración en la capacidad intelectual.',b:'Una dificultad en la percepción auditiva.',c:'Un trastorno permanente de la articulación.',d:'Una distorsión en la emisión del sonido.',ok:'C',r:'Correcta: C. Un trastorno permanente de la articulación.',ref:'(M7, p. 1)'},
+    {id:142,p:'¿Cuáles son algunas de las características más frecuentes de los deficientes mentales según el texto?',a:'Hiperactividad.',b:'Problemas de audición.',c:'Dificultades de percepción.',d:'Incapacidad motora.',ok:'C',r:'Correcta: C. Dificultades de percepción.',ref:'(M7, p. 1)'},
+    {id:69,p:'¿En qué consiste el uso de la ruta fonológica en el aprendizaje de la escritura?',a:'Análisis de rasgos visuales.',b:'Análisis de rasgos auditivos.',c:'Ejecución de movimientos motores.',d:'Selección de letras a escribir.',ok:'B',r:'Correcta: B. Análisis de rasgos auditivos.',ref:'(M7, p. 1)'},
+    {id:34,p:'¿Cuál es una característica de los trastornos léxico-semánticos en el trastorno específico del lenguaje (TEL)?',a:'Habla con tartamudeo frecuente.',b:'Articulación con grandes dificultades.',c:'Comprensión normal de enunciados.',d:'Sintaxis perturbada.',ok:'D',r:'Correcta: D. Sintaxis perturbada.',ref:'(M7, p. 1)'},
+    {id:132,p:'¿Cuáles son las características de las disartrias hipocinéticas?',a:'Falta de flexibilidad y control de los centros faríngeos.',b:'Voz débil y articulación defectuosa.',c:'Movimientos lentos y repetitivos.',d:'Tono monótono y variabilidad en el ritmo articulatorio.',ok:'B',r:'Correcta: B. Voz débil y articulación defectuosa.',ref:'(M7, p. 1)'},
+    {id:71,p:'¿Qué caracteriza la escritura de niños hipercinéticos?',a:'Presión insuficiente y trazos imprecisos.',b:'Presión intensa y trazos precisos.',c:'Presión insuficiente y trazos precisos.',d:'Presión intensa y trazos imprecisos.',ok:'D',r:'Correcta: D. Presión intensa y trazos imprecisos.',ref:'(M7, p. 1)'},
+    {id:12,p:'¿Qué sustratos biológicos son imprescindibles para que un niño o niña acceda al lenguaje?',a:'Cognitivos, emocionales y anatómicos.',b:'Físicos, emocionales y sociales.',c:'Neurales, cognitivos y sensoriales.',d:'Neurales, sensoriales y anatómicos.',ok:'D',r:'Correcta: D. Neurales, sensoriales y anatómicos.',ref:'(M7, p. 1)'},
+    {id:31,p:'¿Qué es la disglosia?',a:'Disfunción orgánica en los órganos del habla.',b:'Trastorno del lenguaje.',c:'Trastorno del habla.',d:'Problemas en la coordinación muscular.',ok:'A',r:'Correcta: A. Disfunción orgánica en los órganos del habla.',ref:'(M7, p. 1)'},
+    {id:83,p:'¿Cuáles son algunas de las áreas en las que se han encontrado déficits en niños con discapacidad auditiva?',a:'Problemas de visión.',b:'Problemas de alimentación.',c:'Problemas de lenguaje.',d:'Problemas de motricidad.',ok:'C',r:'Correcta: C. Problemas de lenguaje.',ref:'(M7, p. 1)'},
+    {id:85,p:'¿Qué indica la investigación sobre el desarrollo sensoriomotor de los niños sordos durante los primeros 24 meses de vida?',a:'No muestran retrasos en ningún aspecto del desarrollo.',b:'No se ha investigado el desarrollo sensoriomotor de los niños sordos.',c:'Muestran retrasos en comparación con los niños oyentes.',d:'Solo muestran retrasos en la imitación vocal.',ok:'A',r:'Correcta: A. No muestran retrasos en ningún aspecto del desarrollo.',ref:'(M7, p. 1)'},
+    {id:47,p:'¿Qué es la lectura según la concepción decodificadora?',a:'Proceso de desciframiento de grafemas y fonemas.',b:'Reconocimiento de dibujos.',c:'Proceso de asociación de representación y significado.',d:'Proceso de identificación alfabética.',ok:'A',r:'Correcta: A. Proceso de desciframiento de grafemas y fonemas.',ref:'(M7, p. 1)'},
+    {id:100,p:'¿Qué característica del síndrome de X-frágil está relacionada con el lenguaje?',a:'Retraso expresivo desproporcionado.',b:'Dificultades pragmáticas.',c:'Voz nasal.',d:'Déficit receptivo del lenguaje.',ok:'A',r:'Correcta: A. Retraso expresivo desproporcionado.',ref:'(M7, p. 1)'},
+    {id:130,p:'¿Cuál es la forma más frecuente de parálisis cerebral?',a:'Parálisis cerebral sin patología asociada.',b:'Parálisis cerebral atáxica.',c:'Parálisis cerebral asociada a deficiencia mental.',d:'Parálisis cerebral espástica.',ok:'D',r:'Correcta: D. Parálisis cerebral espástica.',ref:'(M7, p. 1)'},
+    {id:49,p:'¿Cuál es el proceso en el que se llevan a cabo las operaciones destinadas a reconocer la información, como por ejemplo, determinadas letras?',a:'Identificación de los signos gráficos.',b:'Análisis visual.',c:'Procesamiento léxico.',d:'Reconocimiento global de las palabras.',ok:'B',r:'Correcta: B. Análisis visual.',ref:'(M7, p. 1)'},
+    {id:45,p:'¿Cuáles son algunas de las posibles causas del mutismo en niños?',a:'Divorcio de los padres.',b:'Incapacidad comunicativa específica.',c:'Déficit lingüístico hereditario.',d:'Exceso de preocupación de los padres.',ok:'C',r:'Correcta: C. Déficit lingüístico hereditario.',ref:'(M7, p. 1)'},
+    {id:128,p:'¿Qué es la Parálisis Cerebral Infantil (PCI)?',a:'Pérdida temporal de funciones motóricas.',b:'Alteración del tamaño de un órgano.',c:'Pérdida permanente de funciones motóricas.',d:'Lesiones producidas por un objeto que golpea el cráneo.',ok:'A',r:'Correcta: A. Pérdida temporal de funciones motóricas.',ref:'(M7, p. 1)'},
+    {id:8,p:'¿A qué se refieren las causas orgánico-funcionales de los trastornos del habla, el lenguaje y la comunicación?',a:'A procesos mentales, psíquicos o mecánicos.',b:'A trastornos adquiridos del lenguaje.',c:'A lesiones en el sistema nervioso central.',d:'A retraso evolutivo.',ok:'A',r:'Correcta: A. A procesos mentales, psíquicos o mecánicos.',ref:'(M7, p. 1)'},
+    {id:72,p:'¿Cuál es el proceso de mayor complejidad cognitiva en la escritura productiva?',a:'Procesos motores.',b:'Procesos sintácticos.',c:'Procesos de planificación.',d:'Procesos léxicos.',ok:'C',r:'Correcta: C. Procesos de planificación.',ref:'(M7, p. 1)'},
+    {id:1,p:'¿Cuáles son los trastornos del lenguaje oral?',a:'Trastornos del habla.',b:'Dislexia.',c:'Trastornos de la voz.',d:'Tartamudez.',ok:'A',r:'Correcta: A. Trastornos del habla.',ref:'(M7, p. 1)'},
+    {id:129,p:'¿Cuál es una de las características fundamentales de la parálisis cerebral?',a:'Manifestación predominantemente sensorial.',b:'Progresión del trastorno.',c:'Lesión en el sistema nervioso periférico.',d:'Desarrollo completo del cerebro.',ok:'B',r:'Correcta: B. Progresión del trastorno.',ref:'(M7, p. 1)'},
+    {id:38,p:'¿Cuál es el tipo de afasia en el que el habla es fluida, con un elevado número de sustituciones y parafasias?',a:'Afasia transcortical motora.',b:'Afasia de Wernicke.',c:'Afasia mixta.',d:'Afasia de Broca.',ok:'B',r:'Correcta: B. Afasia de Wernicke.',ref:'(M7, p. 1)'},
+    {id:61,p:'¿Qué tipo de dislexia evolutiva se presenta cuando un niño no utiliza adecuadamente la ruta fonológica y usa exclusivamente la ruta visual para la lectura?',a:'Dislexia aléxica.',b:'Dislexia fonológica.',c:'Dislexia disfonética.',d:'Dislexia diseidética.',ok:'B',r:'Correcta: B. Dislexia fonológica.',ref:'(M7, p. 1)'},
+    {id:122,p:'¿Qué tipo de dificultades en el lenguaje se presentan en niños con déficits auditivos?',a:'Frases excesivamente simples.',b:'Pobreza gramatical.',c:'Dificultades en las relaciones semánticas.',d:'Dificultades en la comprensión.',ok:'C',r:'Correcta: C. Dificultades en las relaciones semánticas.',ref:'(M7, p. 1)'},
+    {id:75,p:'¿Qué es la adicción en el contexto de errores de exactitud lectora?',a:'Cambiar el orden lógico-secuencial de las grafías.',b:'Omitir letras o sílabas.',c:'Cambiar unos sonidos por otros que no se corresponden con la grafía.',d:'Añadir sílabas inexistentes a las palabras.',ok:'D',r:'Correcta: D. Añadir sílabas inexistentes a las palabras.',ref:'(M7, p. 1)'},
+    {id:30,p:'¿Qué trastorno del habla se caracteriza por la simplificación de los grupos consonánticos?',a:'Asimilación.',b:'Dislalia.',c:'Coalescencia.',d:'Metátesis.',ok:'B',r:'Correcta: B. Dislalia.',ref:'(M7, p. 1)'},
+    {id:50,p:'¿Cuál es una de las vías que establece una conexión directa entre la forma visual de la palabra y su significado?',a:'Léxico visual.',b:'Ruta Fonológica.',c:'Ruta Visual.',d:'Sistema semántica.',ok:'C',r:'Correcta: C. Ruta Visual.',ref:'(M7, p. 1)'},
+    {id:62,p:'¿Cuál es una característica de la dislexia superficial?',a:'Falta de motivación.',b:'Procesamiento rápido de palabras.',c:'Retraso en todas las materias escolares.',d:'Errores en la conciencia de la palabra.',ok:'D',r:'Correcta: D. Errores en la conciencia de la palabra.',ref:'(M7, p. 1)'},
+    {id:51,p:'¿Cuál es uno de los mecanismos de conversión grafema a fonema en el proceso de lectura?',a:'Activar el significado en el sistema semántico.',b:'Recuperar los sonidos correspondientes a las letras.',c:'Almacenar la pronunciación de las palabras.',d:'Asignar sonidos a las letras.',ok:'D',r:'Correcta: D. Asignar sonidos a las letras.',ref:'(M7, p. 1)'},
+    {id:84,p:'Según el texto, ¿por qué algunos niños sordos pueden tener un mejor desarrollo cognitivo que otros?',a:'Por la influencia de los padres sordos.',b:'Por la falta de relación directa entre sordera y desarrollo.',c:'Por la falta de problemas en el desarrollo de los niños sordos.',d:'Por la variabilidad entre casos de niños sordos.',ok:'A',r:'Correcta: A. Por la influencia de los padres sordos.',ref:'(M7, p. 1)'},
+    {id:65,p:'¿Qué procesos intervienen en la escritura productiva?',a:'Léxicos.',b:'Planificación.',c:'Sintácticos.',d:'Motores.',ok:'B',r:'Correcta: B. Planificación.',ref:'(M7, p. 1)'},
+  ],
+];
+let currentSim = 0, currentQ = 0, answers = [];
+const LABELS = ['A','B','C','D'], KEYS = ['a','b','c','d'];
+
+function getScores() { try { return JSON.parse(localStorage.getItem('m7_scores')||'{}'); } catch { return {}; } }
+function saveScore(i, pct) { const s=getScores(); s[i]=pct; localStorage.setItem('m7_scores', JSON.stringify(s)); }
+
+function renderHome() {
+  const scores = getScores();
+  const grid = document.getElementById('simGrid');
+  grid.innerHTML = '';
+  SIMS.forEach((sim, i) => {
+    const card = document.createElement('div');
+    card.className = 'sim-card';
+    card.onclick = () => startQuiz(i);
+    let badge = '';
+    if (scores[i] !== undefined) {
+      const p = scores[i];
+      const cls = p >= 70 ? 'pass' : p >= 50 ? 'partial' : 'fail';
+      badge = `<div class="sim-score-badge shown ${cls}">${p}% — ${p>=70?'✓ Aprobado':p>=50?'~ En progreso':'✗ A mejorar'}</div>`;
+    }
+    card.innerHTML = `<div class="sim-num">0${i+1}</div><div class="sim-label">Simulacro ${i+1}</div><div class="sim-count">30 preguntas · opción múltiple</div>${badge}`;
+    grid.appendChild(card);
+  });
+}
+
+function startQuiz(simIdx) {
+  currentSim = simIdx; currentQ = 0;
+  answers = new Array(SIMS[simIdx].length).fill(null);
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  document.getElementById('quizTitle').textContent = `Simulacro ${simIdx+1}`;
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const sim = SIMS[currentSim], q = sim[currentQ];
+  const correct_so_far = answers.filter(a=>a&&a.correct).length;
+  const pct = ((currentQ+1)/sim.length*100).toFixed(0);
+  document.getElementById('progressText').textContent = `Pregunta ${currentQ+1} de ${sim.length}`;
+  document.getElementById('scoreText').textContent = `${correct_so_far} correctas`;
+  document.getElementById('progressFill').style.width = pct+'%';
+
+  const savedAns = answers[currentQ];
+  const opts = KEYS.map((k,i) => {
+    let cls = '';
+    if (savedAns) {
+      const letter = LABELS[i];
+      if (letter === q.ok) cls = savedAns.selected === letter ? 'selected-correct' : 'show-correct';
+      else if (letter === savedAns.selected) cls = 'selected-wrong';
+    }
+    return `<button class="opt-btn ${cls}" onclick="selectAnswer('${LABELS[i]}')" ${savedAns?'disabled':''}><div class="opt-letter">${LABELS[i]}</div><div>${q[k]}</div></button>`;
+  }).join('');
+
+  let feedbackHTML = '';
+  if (savedAns) {
+    feedbackHTML = `<div class="feedback-box ${savedAns.correct?'correct':'wrong'}" style="display:block"><strong>${savedAns.correct?'✅ ¡Correcto!':'❌ Respuesta incorrecta'}</strong><br>${q.r}<div class="feedback-ref">${q.ref}</div></div>`;
+  }
+
+  const isLast = currentQ === sim.length - 1;
+  const prevBtn = currentQ > 0 ? `<button class="btn-secondary" onclick="goToPrev()">← Anterior</button>` : `<div></div>`;
+
+  document.getElementById('qWrap').innerHTML = `
+    <div class="q-card fade-in">
+      <div class="q-number">Pregunta ${currentQ+1}</div>
+      <div class="q-text">${q.p}</div>
+      <div class="options">${opts}</div>
+      ${feedbackHTML}
+    </div>
+    <div class="quiz-actions">
+      ${prevBtn}
+      <button class="btn-primary" id="btnNext" onclick="goToNext()" ${!savedAns?'disabled':''}>${isLast?'🏁 Ver resultados':'Siguiente →'}</button>
+    </div>`;
+}
+
+function selectAnswer(letter) {
+  if (answers[currentQ] !== null) return;
+  const q = SIMS[currentSim][currentQ];
+  answers[currentQ] = { selected: letter, correct: letter === q.ok };
+  renderQuestion();
+}
+
+function goToNext() {
+  if (currentQ < SIMS[currentSim].length-1) { currentQ++; renderQuestion(); window.scrollTo({top:0,behavior:'smooth'}); }
+  else showResults();
+}
+function goToPrev() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); window.scrollTo({top:0,behavior:'smooth'}); }
+}
+
+function showResults() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  const sim = SIMS[currentSim], total = sim.length;
+  const correct = answers.filter(a=>a&&a.correct).length;
+  const pct = Math.round(correct/total*100);
+  saveScore(currentSim, pct);
+  const cls = pct>=70?'pass':pct>=50?'partial':'fail';
+  const msg = pct>=70?'¡Excelente trabajo!':pct>=50?'Buen intento, sigue practicando':'Necesitas repasar más';
+  document.getElementById('scoreRing').className = 'results-score-ring '+cls;
+  document.getElementById('scorePct').className = 'score-pct '+cls;
+  document.getElementById('scorePct').textContent = pct+'%';
+  document.getElementById('resultsTitle').textContent = msg;
+  document.getElementById('resultsMeta').textContent = `Simulacro ${currentSim+1} · ${correct} de ${total} correctas`;
+  document.getElementById('statCorr').textContent = correct;
+  document.getElementById('statWrong').textContent = total-correct;
+  document.getElementById('statPct').textContent = pct+'%';
+
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+  sim.forEach((q,i) => {
+    const ans = answers[i]; if (!ans) return;
+    const div = document.createElement('div');
+    div.className = 'review-item '+(ans.correct?'correct':'wrong');
+    const myText = ans.correct?'':`<div class="review-item-ans">❌ Tu respuesta: <span class="my">${ans.selected}. ${q[ans.selected.toLowerCase()]}</span></div>`;
+    div.innerHTML = `<div class="review-item-q"><strong>${i+1}.</strong> ${q.p}</div>${myText}<div class="review-item-ans">${ans.correct?'✅':'✔'} Correcta: <span class="ok">${q.ok}. ${q[q.ok.toLowerCase()]}</span></div><div class="review-item-retro">${q.r} <em>${q.ref}</em></div>`;
+    list.appendChild(div);
+  });
+}
+
+function retryQuiz() { startQuiz(currentSim); }
+function goHome() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('home').style.display = 'block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderHome();
+}
+
+renderHome();
+</script>
+</body>
+</html>

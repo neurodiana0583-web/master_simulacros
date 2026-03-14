@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacros M8 — Trastornos del Lenguaje</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy2: #1b2d42;
+    --teal: #2e8b8b;
+    --teal2: #3aa8a8;
+    --gold: #d4a843;
+    --gold2: #f0c060;
+    --cream: #f5f0e8;
+    --cream2: #ede7d9;
+    --red: #c0392b;
+    --green: #27ae60;
+    --text: #1a1a2e;
+    --muted: #6b7280;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--navy);
+    color: var(--cream);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy2);
+    border-bottom: 2px solid var(--teal);
+    padding: 18px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    letter-spacing: .04em;
+  }
+  .header-sub { font-size: .78rem; color: var(--teal2); margin-top: 2px; }
+  .header-badge {
+    background: var(--teal);
+    color: #fff;
+    font-size: .72rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: .05em;
+  }
+
+  /* ── HOME ── */
+  #home { max-width: 780px; margin: 0 auto; padding: 48px 24px; }
+  .home-hero {
+    text-align: center;
+    margin-bottom: 52px;
+  }
+  .home-hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.6rem;
+    color: var(--gold);
+    line-height: 1.15;
+  }
+  .home-hero p {
+    color: var(--cream2);
+    font-size: 1rem;
+    margin-top: 14px;
+    font-style: italic;
+    opacity: .85;
+  }
+  .ornament { color: var(--teal); font-size: 1.4rem; margin: 12px 0; }
+
+  .sim-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .sim-card {
+    background: var(--navy2);
+    border: 1px solid rgba(46,139,139,.35);
+    border-radius: 12px;
+    padding: 24px 20px;
+    cursor: pointer;
+    transition: all .25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .sim-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px; height: 100%;
+    background: var(--teal);
+    transition: width .25s ease;
+  }
+  .sim-card:hover { border-color: var(--teal2); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,.4); }
+  .sim-card:hover::before { width: 6px; }
+  .sim-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    color: var(--teal2);
+    font-weight: 900;
+    line-height: 1;
+  }
+  .sim-label { font-size: .82rem; color: var(--gold); margin-top: 4px; text-transform: uppercase; letter-spacing: .08em; }
+  .sim-count { font-size: .78rem; color: var(--muted); margin-top: 8px; }
+  .sim-score-badge {
+    display: none;
+    margin-top: 10px;
+    font-size: .8rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    width: fit-content;
+  }
+  .sim-score-badge.shown { display: inline-block; }
+  .sim-score-badge.pass { background: rgba(39,174,96,.25); color: #6fcf97; border: 1px solid #27ae60; }
+  .sim-score-badge.fail { background: rgba(192,57,43,.2); color: #e07070; border: 1px solid var(--red); }
+  .sim-score-badge.partial { background: rgba(212,168,67,.2); color: var(--gold2); border: 1px solid var(--gold); }
+
+  /* ── QUIZ ── */
+  #quiz { display: none; max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .quiz-nav {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .btn-back {
+    background: none;
+    border: 1px solid rgba(255,255,255,.2);
+    color: var(--cream);
+    padding: 7px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: .82rem;
+    transition: .2s;
+  }
+  .btn-back:hover { border-color: var(--teal); color: var(--teal2); }
+  .quiz-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    flex: 1;
+  }
+
+  /* progress */
+  .progress-wrap { margin-bottom: 28px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); margin-bottom: 6px; }
+  .progress-bar { height: 5px; background: rgba(255,255,255,.1); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--gold)); border-radius: 4px; transition: width .4s ease; }
+
+  /* question card */
+  .q-card {
+    background: var(--navy2);
+    border: 1px solid rgba(46,139,139,.3);
+    border-radius: 14px;
+    padding: 32px 28px;
+    margin-bottom: 20px;
+  }
+  .q-number {
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--teal);
+    margin-bottom: 12px;
+  }
+  .q-text {
+    font-size: 1.05rem;
+    line-height: 1.65;
+    color: var(--cream);
+    margin-bottom: 28px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: rgba(255,255,255,.04);
+    border: 1.5px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    text-align: left;
+    color: var(--cream);
+    font-family: 'Source Serif 4', serif;
+    font-size: .93rem;
+    line-height: 1.5;
+    transition: all .18s ease;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--teal2); background: rgba(46,139,139,.12); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    min-width: 26px; height: 26px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.1);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .78rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: .18s;
+  }
+  .opt-btn.selected-correct { border-color: var(--green); background: rgba(39,174,96,.15); }
+  .opt-btn.selected-correct .opt-letter { background: var(--green); color: #fff; }
+  .opt-btn.selected-wrong { border-color: var(--red); background: rgba(192,57,43,.15); }
+  .opt-btn.selected-wrong .opt-letter { background: var(--red); color: #fff; }
+  .opt-btn.show-correct { border-color: var(--green); background: rgba(39,174,96,.08); }
+  .opt-btn.show-correct .opt-letter { background: rgba(39,174,96,.4); color: #fff; }
+
+  .feedback-box {
+    display: none;
+    margin-top: 16px;
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-size: .88rem;
+    line-height: 1.6;
+    animation: fadeUp .3s ease;
+  }
+  .feedback-box.correct { background: rgba(39,174,96,.12); border: 1px solid rgba(39,174,96,.4); color: #6fcf97; }
+  .feedback-box.wrong { background: rgba(192,57,43,.12); border: 1px solid rgba(192,57,43,.4); color: #e07070; }
+  .feedback-ref { font-size: .78rem; margin-top: 6px; opacity: .7; font-style: italic; }
+
+  .quiz-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+  }
+  .btn-primary {
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: .9rem;
+    font-weight: 600;
+    letter-spacing: .04em;
+    transition: .2s;
+    font-family: 'Source Serif 4', serif;
+  }
+  .btn-primary:hover { background: var(--teal2); }
+  .btn-primary:disabled { opacity: .4; cursor: default; }
+  .btn-secondary {
+    background: none;
+    border: 1.5px solid var(--gold);
+    color: var(--gold);
+    padding: 11px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: .88rem;
+    font-weight: 600;
+    transition: .2s;
+    font-family: 'Source Serif 4', serif;
+  }
+  .btn-secondary:hover { background: rgba(212,168,67,.12); }
+
+  /* ── RESULTS ── */
+  #results { display: none; max-width: 680px; margin: 0 auto; padding: 48px 24px 80px; }
+  .results-header { text-align: center; margin-bottom: 40px; }
+  .results-score-ring {
+    width: 130px; height: 130px;
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    position: relative;
+  }
+  .results-score-ring.pass { background: radial-gradient(circle, rgba(39,174,96,.2), rgba(39,174,96,.05)); border: 3px solid var(--green); }
+  .results-score-ring.fail { background: radial-gradient(circle, rgba(192,57,43,.2), rgba(192,57,43,.05)); border: 3px solid var(--red); }
+  .results-score-ring.partial { background: radial-gradient(circle, rgba(212,168,67,.2), rgba(212,168,67,.05)); border: 3px solid var(--gold); }
+  .score-pct { font-size: 2.4rem; font-weight: 900; }
+  .score-pct.pass { color: #6fcf97; }
+  .score-pct.fail { color: #e07070; }
+  .score-pct.partial { color: var(--gold2); }
+  .score-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .1em; opacity: .7; }
+  .results-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: var(--gold); margin-bottom: 8px; }
+  .results-meta { font-size: .9rem; color: var(--muted); }
+
+  .results-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin: 30px 0;
+  }
+  .stat-box {
+    background: var(--navy2);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .stat-val { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; }
+  .stat-val.green { color: #6fcf97; }
+  .stat-val.red { color: #e07070; }
+  .stat-val.grey { color: var(--teal2); }
+  .stat-lbl { font-size: .75rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .06em; }
+
+  .review-section { margin-top: 32px; }
+  .review-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: 16px; }
+  .review-item {
+    background: var(--navy2);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 10px;
+    border-left: 4px solid transparent;
+    font-size: .88rem;
+    line-height: 1.55;
+  }
+  .review-item.correct { border-color: var(--green); }
+  .review-item.wrong { border-color: var(--red); }
+  .review-item-q { color: var(--cream); margin-bottom: 6px; }
+  .review-item-ans { font-size: .82rem; margin-top: 4px; }
+  .review-item-ans .my { color: #e07070; }
+  .review-item-ans .ok { color: #6fcf97; }
+  .review-item-retro { font-size: .8rem; color: var(--muted); margin-top: 4px; font-style: italic; }
+  .icon { display: inline-block; margin-right: 5px; }
+
+  .results-actions { display: flex; gap: 14px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in { animation: fadeUp .35s ease; }
+
+  @media (max-width: 540px) {
+    .home-hero h1 { font-size: 1.9rem; }
+    .q-card { padding: 22px 16px; }
+    .results-stats { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-title">Simulacros M8</div>
+    <div class="header-sub">Evaluación e intervención en los trastornos del lenguaje</div>
+  </div>
+  <div class="header-badge">5 × 30 preguntas</div>
+</div>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-hero">
+    <div class="ornament">✦ ✦ ✦</div>
+    <h1>Banco de Simulacros</h1>
+    <p>Selecciona un simulacro para comenzar tu práctica.<br>Cada uno contiene 30 preguntas de opción múltiple.</p>
+  </div>
+  <div class="sim-grid" id="simGrid"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-nav">
+    <button class="btn-back" onclick="goHome()">← Inicio</button>
+    <div class="quiz-title" id="quizTitle"></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-meta">
+      <span id="progressText">Pregunta 1 de 30</span>
+      <span id="scoreText">0 / 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div id="qWrap"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="results-header">
+    <div class="results-score-ring" id="scoreRing">
+      <div class="score-pct" id="scorePct"></div>
+      <div class="score-label">puntuación</div>
+    </div>
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-meta" id="resultsMeta"></div>
+  </div>
+  <div class="results-stats">
+    <div class="stat-box"><div class="stat-val green" id="statCorr">0</div><div class="stat-lbl">Correctas</div></div>
+    <div class="stat-box"><div class="stat-val red" id="statWrong">0</div><div class="stat-lbl">Incorrectas</div></div>
+    <div class="stat-box"><div class="stat-val grey" id="statPct">0%</div><div class="stat-lbl">Porcentaje</div></div>
+  </div>
+  <div class="review-section">
+    <div class="review-title">📋 Revisión detallada</div>
+    <div id="reviewList"></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-secondary" onclick="retryQuiz()">🔁 Repetir simulacro</button>
+    <button class="btn-primary" onclick="goHome()">← Volver al inicio</button>
+  </div>
+</div>
+
+<script>
+const SIMS = [
+  [
+    {id:82,p:'¿Cuáles son algunas de las características típicas de la dislexia en niños?',a:'Desorganización en casa y en la escuela.',b:'Dificultad en la comprensión oral.',c:'Facilidad para copiar cuidadosamente en la pizarra.',d:'Expresión oral precisa.',ok:'A',r:'Correcta: A. Desorganización en casa y en la escuela.',ref:'(M8, p. 1)'},
+    {id:83,p:'¿Cuál es una característica común en la escritura de niños con dislexia?',a:'Fluidez motriz.',b:'Buena ortografía.',c:'Torpeza en el aspecto motriz.',d:'Facilidad para ordenar oraciones.',ok:'C',r:'Correcta: C. Torpeza en el aspecto motriz.',ref:'(M8, p. 1)'},
+    {id:48,p:'¿Cuándo sería apropiado que el logopeda trabaje con los profesores para diseñar un programa de enseñanza de lectoescritura?',a:'A los 3-4 años.',b:'A los 10-11 años.',c:'A los 6-7 años.',d:'A los 8-9 años.',ok:'C',r:'Correcta: C. A los 6-7 años.',ref:'(M8, p. 1)'},
+    {id:12,p:'¿Qué aspectos se evalúan en la evaluación fonética y fonológica de un niño con trastornos del lenguaje?',a:'Construcción del sistema fonológico.',b:'Reconocimiento de estímulos simultáneos.',c:'Percepción y discriminación auditiva.',d:'Presencia o ausencia de ruidos y sonidos.',ok:'A',r:'Correcta: A. Construcción del sistema fonológico.',ref:'(M8, p. 1)'},
+    {id:24,p:'¿Para qué se utiliza la observación conductual en la evaluación del lenguaje?',a:'Para evaluar la competencia comunicativa del niño.',b:'Para evaluar la memoria secuencial auditiva.',c:'Para evaluar la discriminación auditiva.',d:'Para evaluar la articulación mecánica de sonidos.',ok:'A',r:'Correcta: A. Para evaluar la competencia comunicativa del niño.',ref:'(M8, p. 1)'},
+    {id:59,p:'¿Qué prueba evalúa la capacidad de la memoria a corto plazo para repetir dígitos?',a:'Emparejamiento dibujo-oración.',b:'Prueba de repetición de palabras.',c:'Juicios de gramaticalidad.',d:'Prueba de repetición de dígitos.',ok:'D',r:'Correcta: D. Prueba de repetición de dígitos.',ref:'(M8, p. 1)'},
+    {id:23,p:'¿Cuál es la finalidad de la Escala del Desarrollo Psicomotor de la Primera Infancia?',a:'Evaluar la sociabilidad.',b:'Evaluar los niveles de desarrollo.',c:'Evaluar la coordinación óculo-motriz.',d:'Evaluar la capacidad de aprendizaje.',ok:'B',r:'Correcta: B. Evaluar los niveles de desarrollo.',ref:'(M8, p. 1)'},
+    {id:114,p:'¿Cuáles son los campos a los que se dirigen las estrategias de evaluación previa a la intervención del lenguaje en discapacidad motora?',a:'Fisioterapéutico.',b:'Neurológico.',c:'Otorrinolaringólogo.',d:'Familiar.',ok:'A',r:'Correcta: A. Fisioterapéutico.',ref:'(M8, p. 1)'},
+    {id:115,p:'¿Qué aspecto es imprescindible evaluar previamente a la intervención del lenguaje en discapacidad motora?',a:'Evaluación de la memoria.',b:'Evaluación del tono muscular.',c:'Evaluación de la visión.',d:'Evaluación de la audición.',ok:'D',r:'Correcta: D. Evaluación de la audición.',ref:'(M8, p. 1)'},
+    {id:137,p:'¿Cuándo se considera recomendable implementar un sistema alternativo de comunicación (SAC) en casos de retraso mental?',a:'A los 3 años con habla inteligible.',b:'En casos de parálisis cerebral.',c:'En casos de autismo.',d:'A los 2 años sin comprensión verbal.',ok:'D',r:'Correcta: D. A los 2 años sin comprensión verbal.',ref:'(M8, p. 1)'},
+    {id:88,p:'¿Qué es importante comunicarle a un niño con dislexia?',a:'Que sus padres están preocupados por su desempeño.',b:'Que no se le seguirá queriendo si no va bien en el colegio.',c:'Que debe esforzarse más en el colegio.',d:'Que puede tener éxito a pesar de las dificultades.',ok:'D',r:'Correcta: D. Que puede tener éxito a pesar de las dificultades.',ref:'(M8, p. 1)'},
+    {id:110,p:'¿Qué modalidades educativas permite la legislación actual en España para las personas con discapacidad auditiva?',a:'Ninguna de las anteriores.',b:'Ambas opciones A y B.',c:'Colegios especializados en lengua de signos.',d:'Integración en aulas normales con ayuda de especialistas.',ok:'B',r:'Correcta: B. Ambas opciones A y B.',ref:'(M8, p. 1)'},
+    {id:105,p:'¿Qué sistema de comunicación alternativa emplea exclusivamente un canal de comunicación visoespacial?',a:'Lengua de signos.',b:'Sistema bimodal.',c:'Palabra complementada.',d:'Alfabeto dactilológico.',ok:'A',r:'Correcta: A. Lengua de signos.',ref:'(M8, p. 1)'},
+    {id:124,p:'¿Cuáles son los déficits más sobresalientes que se pueden encontrar en los niños deficientes mentales, además del déficit mental?',a:'Déficit en la memoria.',b:'Déficit en la visión.',c:'Déficit en el lenguaje.',d:'Déficit en la coordinación.',ok:'C',r:'Correcta: C. Déficit en el lenguaje.',ref:'(M8, p. 1)'},
+    {id:56,p:'¿Qué prueba se utiliza para evaluar la comprensión de homófonos en la ruta visual de procesamiento léxico?',a:'Comprensión de palabras homófonas.',b:'Decisión léxica con pseudohomófonos.',c:'Prueba de reconocimiento de palabras.',d:'Deletreo oral.',ok:'A',r:'Correcta: A. Comprensión de palabras homófonas.',ref:'(M8, p. 1)'},
+    {id:97,p:'¿Qué evalúa la logoaudiometría?',a:'La comprensión del lenguaje.',b:'La discriminación de sonidos.',c:'La intensidad de la audición.',d:'La audición de tonos puros.',ok:'A',r:'Correcta: A. La comprensión del lenguaje.',ref:'(M8, p. 1)'},
+    {id:84,p:'¿Cuál es una característica común en niños de 12 años con dislexia?',a:'Buena comprensión lectora.',b:'Alta autoestima.',c:'Gran dificultad para el aprendizaje de lenguas extranjeras.',d:'Facilidad para redactar relatos.',ok:'C',r:'Correcta: C. Gran dificultad para el aprendizaje de lenguas extranjeras.',ref:'(M8, p. 1)'},
+    {id:72,p:'¿Cuál es una técnica no recomendada para intervenir en los problemas de disortografía según el texto?',a:'Dictados.',b:'Listas de palabras.',c:'Ejercicios de escritura de palabras.',d:'Copias.',ok:'C',r:'Correcta: C. Ejercicios de escritura de palabras.',ref:'(M8, p. 1)'},
+    {id:18,p:'¿Cuáles son los cuatro procedimientos básicos para la evaluación de la conducta verbal?',a:'Tests no estandarizados.',b:'Observación conductual.',c:'Tests estandarizados.',d:'Escalas de desarrollo.',ok:'C',r:'Correcta: C. Tests estandarizados.',ref:'(M8, p. 1)'},
+    {id:34,p:'¿Cuál es uno de los principios que se deben perseguir ante toda intervención en trastornos del habla y del lenguaje?',a:'Evitar la colaboración del paciente.',b:'Fomentar la espontaneidad.',c:'Realizar actividades largas y repetidas.',d:'No utilizar estrategias comunicativas.',ok:'B',r:'Correcta: B. Fomentar la espontaneidad.',ref:'(M8, p. 1)'},
+    {id:143,p:'¿Qué tipo de actividades se utilizan para trabajar el nivel pragmático del lenguaje en niños con discapacidad intelectual?',a:'Contar experiencias personales.',b:'Aprender a tocar un instrumento musical.',c:'Hacer ejercicios de respiración.',d:'Realizar cálculos matemáticos.',ok:'A',r:'Correcta: A. Contar experiencias personales.',ref:'(M8, p. 1)'},
+    {id:126,p:'¿Cuáles son los aspectos del lenguaje que suelen afectarse en el déficit intelectual sin etiología conocida?',a:'Aspectos léxicos, prelingüísticos, morfosintácticos.',b:'Aspectos fonológicos, morfosintácticos, pragmáticos.',c:'Aspectos morfosintácticos, pragmáticos, prelingüísticos.',d:'Aspectos prelingüísticos, fonológicos y léxicos.',ok:'B',r:'Correcta: B. Aspectos fonológicos, morfosintácticos, pragmáticos.',ref:'(M8, p. 1)'},
+    {id:134,p:'¿Cuál es una de las actuaciones básicas del logopeda con la familia en casos de retraso mental?',a:'Realizar terapia individual.',b:'Proporcionar apoyo emocional.',c:'Realizar el diagnóstico.',d:'Administrar medicamentos.',ok:'B',r:'Correcta: B. Proporcionar apoyo emocional.',ref:'(M8, p. 1)'},
+    {id:81,p:'¿Cuáles son algunas características de la dislexia en niños hasta 9 años?',a:'Facilidad para aprender el alfabeto y las tablas de multiplicar.',b:'Dificultad para distinguir la izquierda de la derecha.',c:'Atención y concentración adecuadas.',d:'Falta de frustración.',ok:'B',r:'Correcta: B. Dificultad para distinguir la izquierda de la derecha.',ref:'(M8, p. 1)'},
+    {id:5,p:'¿Cuál es una de las dificultades de la evaluación del lenguaje según el texto?',a:'Relación interpersonal estable.',b:'Naturaleza escurridiza del lenguaje.',c:'Contexto sociocultural irrelevante.',d:'Datos completos sobre el desarrollo.',ok:'B',r:'Correcta: B. Naturaleza escurridiza del lenguaje.',ref:'(M8, p. 1)'},
+    {id:142,p:'¿Qué tipo de ejercicios se emplean para trabajar la comprensión de oraciones en el nivel morfosintáctico del lenguaje?',a:'Scripts.',b:'Role-playing.',c:'Producir oraciones semejantes.',d:'Seguimiento de órdenes individuales.',ok:'D',r:'Correcta: D. Seguimiento de órdenes individuales.',ref:'(M8, p. 1)'},
+    {id:112,p:'¿Cuál es una característica fundamental de la espina bífida?',a:'Alteraciones ortopédicas.',b:'Parálisis cerebral.',c:'Hendidura en la columna vertebral.',d:'Inflamación en las neuronas.',ok:'C',r:'Correcta: C. Hendidura en la columna vertebral.',ref:'(M8, p. 1)'},
+    {id:53,p:'¿Qué tipo de pruebas se utilizan para evaluar las dificultades de lectura que involucran emparejamiento, discriminación y búsqueda de letras como signos gráficos?',a:'Pruebas con palabras.',b:'Pruebas con números.',c:'Pruebas con figuras geométricas.',d:'Pruebas con letras.',ok:'D',r:'Correcta: D. Pruebas con letras.',ref:'(M8, p. 1)'},
+    {id:121,p:'¿Cuál es el enfoque principal para desarrollar la comprensión del lenguaje en pacientes con discapacidad motora?',a:'Estimulación táctil y olfativa.',b:'Estimulación visual y auditiva.',c:'Estimulación gustativa y kinestésica.',d:'Estimulación auditiva y kinestésica.',ok:'B',r:'Correcta: B. Estimulación visual y auditiva.',ref:'(M8, p. 1)'},
+    {id:30,p:'¿Cuál de las siguientes actividades forma parte de las tareas de comprensión verbal?',a:'Actividades de respiración y soplo.',b:'Actividades de vocalización.',c:'Actividades de desarrollo sintáctico.',d:'Seguimiento motor de órdenes verbales.',ok:'D',r:'Correcta: D. Seguimiento motor de órdenes verbales.',ref:'(M8, p. 1)'},
+  ],
+  [
+    {id:67,p:'¿Cuál es una técnica para mejorar la entonación y la puntuación al leer en voz alta?',a:'Hacer mapas conceptuales.',b:'Realizar resúmenes.',c:'Aumentar el tamaño de los signos de puntuación.',d:'Subrayar el texto.',ok:'C',r:'Correcta: C. Aumentar el tamaño de los signos de puntuación.',ref:'(M8, p. 1)'},
+    {id:108,p:'¿Qué tipo de ejercicios se utilizan para corregir las dificultades en la articulación en casos de discapacidad auditiva?',a:'Lectura de sílabas, palabras y oraciones.',b:'Realizar emisiones con un tono correcto.',c:'Ejercicios de discriminación.',d:'Producir pequeñas oraciones a distinta intensidad.',ok:'A',r:'Correcta: A. Lectura de sílabas, palabras y oraciones.',ref:'(M8, p. 1)'},
+    {id:75,p:'¿Qué tipo de error es de origen auditivo lingüístico?',a:'Errores de confusión visual.',b:'Errores de adición.',c:'Errores de omisión.',d:'Errores de inversión.',ok:'B',r:'Correcta: B. Errores de adición.',ref:'(M8, p. 1)'},
+    {id:3,p:'¿Por qué las pruebas estandarizadas destacan por su incompetencia en la evaluación de las habilidades pragmáticas del sujeto?',a:'Por la falta de rigurosidad.',b:'Por la escasa participación de lingüistas en su proceso de elaboración.',c:'Por la falta de fundamentación teórica.',d:'Por la artificialidad de la situación.',ok:'D',r:'Correcta: D. Por la artificialidad de la situación.',ref:'(M8, p. 1)'},
+    {id:31,p:'¿En qué situaciones se recomienda intervenir de manera individual o en pequeños grupos en una sala especialmente habilitada para la intervención correctora?',a:'En el aula participando de las actividades de prevención y estimulación lingüística.',b:'En el aula con todos los niños.',c:'En la consulta o gabinete de logopedia, para desarrollar actividades específicas individualmente o en pequeño grupo.',d:'En momentos puntuales reforzar algunas habilidades lingüísticas.',ok:'C',r:'Correcta: C. En la consulta o gabinete de logopedia, para desarrollar actividades específicas individualmente o en pequeño grupo.',ref:'(M8, p. 1)'},
+    {id:55,p:'¿Qué tarea implica buscar una determinada letra entre un grupo de letras o dentro de una palabra?',a:'Nombrar las letras escritas en mayúsculas y minúsculas.',b:'Indicar si pares de letras son iguales o diferentes.',c:'Tarea de igual - diferente utilizando letras.',d:'Buscar la letra diferente a un modelo dado.',ok:'D',r:'Correcta: D. Buscar la letra diferente a un modelo dado.',ref:'(M8, p. 1)'},
+    {id:26,p:'¿Cuál es uno de los desafíos al intervenir en los trastornos del lenguaje según el texto?',a:'Heterogeneidad de las alteraciones del lenguaje.',b:'Variedad de modelos lingüísticos.',c:'Desarrollo cognitivo del lenguaje.',d:'Modelo completo sobre el desarrollo del lenguaje.',ok:'A',r:'Correcta: A. Heterogeneidad de las alteraciones del lenguaje.',ref:'(M8, p. 1)'},
+    {id:135,p:'¿Cuál es un requisito básico importante para la adquisición del lenguaje en niños con autismo?',a:'Habilidades comunicativas básicas.',b:'Habilidades musicales.',c:'Habilidades matemáticas.',d:'Habilidades deportivas.',ok:'A',r:'Correcta: A. Habilidades comunicativas básicas.',ref:'(M8, p. 1)'},
+    {id:103,p:'¿Cuál es la función de las audioprótesis?',a:'Proporcionar audición en personas sordas.',b:'Amplificar la audición en casos de sordera.',c:'Implantar electrodos en la cóclea.',d:'Recoger el sonido ambiental y dirigirlo al interior del oído.',ok:'D',r:'Correcta: D. Recoger el sonido ambiental y dirigirlo al interior del oído.',ref:'(M8, p. 1)'},
+    {id:52,p:'¿Qué tipo de tareas se utilizan para comprobar si las dificultades de lectura se deben a problemas puramente perceptivos o lingüísticos?',a:'Tareas de análisis visual.',b:'Tareas de procesos sintácticos.',c:'Tareas de movimientos oculares.',d:'Tareas de procesos semánticos.',ok:'A',r:'Correcta: A. Tareas de análisis visual.',ref:'(M8, p. 1)'},
+    {id:138,p:'¿Qué técnica se puede utilizar para trabajar las alteraciones articulatorias en el nivel fonológico del lenguaje en personas con discapacidad intelectual?',a:'Realizar emisiones correctas, primero muy cortas y luego más largas.',b:'Lectura de sílabas, palabras, oraciones y textos.',c:'Manipulación directa de los órganos de la articulación.',d:'Realizar emisiones con distintas prosodias.',ok:'C',r:'Correcta: C. Manipulación directa de los órganos de la articulación.',ref:'(M8, p. 1)'},
+    {id:149,p:'¿Cuál es el enfoque del estudio que muestra una conjugación de las perspectivas neuropsicológica y logopédica con el enfoque lingüístico, focalizando especialmente la contribución de la pragmática tanto a la evaluación como a la rehabilitación?',a:'Pragmática y patología del lenguaje.',b:'Trastornos del lenguaje. Instrumentos de recogida de datos.',c:'Estudios de lingüística clínica.',d:'Instrumentos para la evaluación en TEL.',ok:'A',r:'Correcta: A. Pragmática y patología del lenguaje.',ref:'(M8, p. 1)'},
+    {id:77,p:'¿Cuál es el objetivo de los ejercicios de contenido léxico en el tratamiento de los trastornos de la escritura?',a:'Mejorar la pronunciación de las palabras.',b:'Identificar la estructura gramatical de las oraciones.',c:'Aprender nuevas palabras.',d:'Reconocer la entidad de las palabras.',ok:'D',r:'Correcta: D. Reconocer la entidad de las palabras.',ref:'(M8, p. 1)'},
+    {id:132,p:'¿Cuáles son algunos de los instrumentos de uso más habitual en nuestro país para evaluar los problemas lingüísticos y de la comunicación de casos de TEL?',a:'Evaluación de la memoria visual.',b:'Test de inteligencia emocional.',c:'Pruebas de vocabulario.',d:'Evaluación de la comprensión auditiva.',ok:'C',r:'Correcta: C. Pruebas de vocabulario.',ref:'(M8, p. 1)'},
+    {id:109,p:'¿Qué actividad se utiliza para mejorar las alteraciones en el ritmo articulatorio en casos de discapacidad auditiva?',a:'Canciones infantiles.',b:'Empleo de modificadores de la voz.',c:'Entrenamiento en habla rítmica.',d:'Realizar distintas voces.',ok:'C',r:'Correcta: C. Entrenamiento en habla rítmica.',ref:'(M8, p. 1)'},
+    {id:107,p:'¿Cuál es uno de los objetivos del entrenamiento auditivo en casos de discapacidad auditiva?',a:'Lograr la percepción de fenómenos sonoros.',b:'Aprender a leer.',c:'Mejorar la visión.',d:'Aprender a escribir.',ok:'A',r:'Correcta: A. Lograr la percepción de fenómenos sonoros.',ref:'(M8, p. 1)'},
+    {id:11,p:'¿Cuál es uno de los aspectos a tener en cuenta en la estructuración de la entrevista familiar para la evaluación del lenguaje o logopédica?',a:'Hábitos de autonomía personal.',b:'Aspectos médicos perinatales y postnatales.',c:'Aspectos de carácter y personalidad.',d:'Intereses, motivaciones, juegos y actividades.',ok:'B',r:'Correcta: B. Aspectos médicos perinatales y postnatales.',ref:'(M8, p. 1)'},
+    {id:9,p:'¿Cuáles son algunos de los contenidos de la evaluación del proceso lector según el texto?',a:'Procesos emocionales.',b:'Procesos cognitivos.',c:'Procesos motores.',d:'Procesos perceptivos.',ok:'D',r:'Correcta: D. Procesos perceptivos.',ref:'(M8, p. 1)'},
+    {id:148,p:'¿Cuál es el fin de la prueba de observar la diferencia de velocidad y precisión entre la lectura de palabras y pseudopalabras?',a:'Evaluar la comprensión lectora.',b:'Evaluar la ortografía.',c:'Evaluar la fluidez lectora.',d:'Evaluar la decodificación de palabras.',ok:'D',r:'Correcta: D. Evaluar la decodificación de palabras.',ref:'(M8, p. 1)'},
+    {id:38,p:'¿Cuál es el objetivo de la intervención en las alteraciones del habla según el texto?',a:'Facilitar la escritura correcta.',b:'Reforzar la adquisición de la lectura.',c:'Trabajar la posición orgánica de los fonemas.',d:'Mejorar la comprensión del lenguaje.',ok:'C',r:'Correcta: C. Trabajar la posición orgánica de los fonemas.',ref:'(M8, p. 1)'},
+    {id:63,p:'¿A qué deben dirigirse los tratamientos educativos de las dificultades de la lectura según el texto?',a:'A recuperar el mecanismo defectuoso.',b:'A programas estándar.',c:'A la mejora de la comprensión lectora.',d:'A la aplicación de recetas.',ok:'A',r:'Correcta: A. A recuperar el mecanismo defectuoso.',ref:'(M8, p. 1)'},
+    {id:127,p:'¿Cuál es una de las características del lenguaje en niños con discapacidad intelectual?',a:'Habilidad en el uso de elementos morfosintácticos.',b:'Amplio vocabulario.',c:'Retraso en la adquisición fonética.',d:'Facilidad en la organización léxica.',ok:'C',r:'Correcta: C. Retraso en la adquisición fonética.',ref:'(M8, p. 1)'},
+    {id:70,p:'¿Qué pruebas se recomiendan para evaluar la planificación en la escritura?',a:'Construcción de oraciones.',b:'Ejercicios de composición.',c:'Ordenar las palabras de una oración.',d:'Pruebas de memoria.',ok:'B',r:'Correcta: B. Ejercicios de composición.',ref:'(M8, p. 1)'},
+    {id:120,p:'¿Qué recursos se pueden utilizar para la comunicación no verbal en la intervención del lenguaje en discapacidad motora?',a:'Juegos de tipo onomatopéyicos.',b:'Sistemas de comunicación no verbal.',c:'Espejos y enseñanza de la posición.',d:'Series de sonidos sin sentido.',ok:'B',r:'Correcta: B. Sistemas de comunicación no verbal.',ref:'(M8, p. 1)'},
+    {id:106,p:'¿Cuál es una de las actuaciones fundamentales que debe desarrollar el logopeda en la intervención en casos de discapacidad auditiva?',a:'Administrar medicación.',b:'Decidir el método a utilizar.',c:'Realizar pruebas auditivas.',d:'Realizar terapia ocupacional.',ok:'B',r:'Correcta: B. Decidir el método a utilizar.',ref:'(M8, p. 1)'},
+    {id:36,p:'¿Cuál es uno de los aspectos generales del paciente que es importante conocer para confirmar un problema de trastorno del habla y del lenguaje?',a:'Historial familiar.',b:'Grado de desarrollo.',c:'Habilidades motoras.',d:'Capacidad de aprendizaje.',ok:'B',r:'Correcta: B. Grado de desarrollo.',ref:'(M8, p. 1)'},
+    {id:16,p:'¿Qué elementos se deben observar en la evaluación de la sintaxis?',a:'Coherencia en relación con la información.',b:'Longitud de la oración.',c:'Capacidad de autocorrección.',d:'Uso excesivo del estilo directo.',ok:'B',r:'Correcta: B. Longitud de la oración.',ref:'(M8, p. 1)'},
+    {id:27,p:'¿Cuál es uno de los objetivos de la intervención logopédica según Gallardo y Gallego (1995)?',a:'Evaluación del desarrollo del lenguaje.',b:'Modificación de conducta lingüística.',c:'Estimulación del desarrollo físico.',d:'Prevención de alteraciones lingüísticas.',ok:'D',r:'Correcta: D. Prevención de alteraciones lingüísticas.',ref:'(M8, p. 1)'},
+    {id:4,p:'¿Cuál es el enfoque recomendado para evaluar la conducta lingüística?',a:'Realizar un análisis lingüístico exclusivamente.',b:'Obtener datos de situaciones comunicativas reales.',c:'Aplicar pruebas estandarizadas.',d:'Depender únicamente de interpretaciones de base psicológica o médica.',ok:'B',r:'Correcta: B. Obtener datos de situaciones comunicativas reales.',ref:'(M8, p. 1)'},
+    {id:10,p:'¿Cuál es una de las habilidades y conocimientos necesarios para llevar a cabo la evaluación del lenguaje según el texto?',a:'Conocimiento de la psicología del desarrollo.',b:'Conocimiento de la historia clínica.',c:'Conocimiento de la sintaxis.',d:'Conocimiento de la fonética.',ok:'A',r:'Correcta: A. Conocimiento de la psicología del desarrollo.',ref:'(M8, p. 1)'},
+  ],
+  [
+    {id:45,p:'¿Cuál es una actividad recomendada para intervenir en trastornos del lenguaje?',a:'Dibujar y contar historias.',b:'Contar chistes.',c:'Jugar videojuegos.',d:'Hacer deporte.',ok:'A',r:'Correcta: A. Dibujar y contar historias.',ref:'(M8, p. 1)'},
+    {id:90,p:'¿Qué caracteriza a la dislexia?',a:'Dificultades en la escritura.',b:'Dificultades en la lectura.',c:'Dificultades en la memoria.',d:'Dificultades en el habla.',ok:'B',r:'Correcta: B. Dificultades en la lectura.',ref:'(M8, p. 1)'},
+    {id:39,p:'¿Cuál es el proceso que se divide en dos fases diferenciadas en el tiempo para la adquisición de la correcta pronunciación?',a:'Enseñanza de la lectura.',b:'Integración de la lectura en el lenguaje dialogal.',c:'Automatización del lenguaje.',d:'Enseñanza de la articulación e integración en el lenguaje espontáneo.',ok:'D',r:'Correcta: D. Enseñanza de la articulación e integración en el lenguaje espontáneo.',ref:'(M8, p. 1)'},
+    {id:19,p:'¿Cuál es la finalidad del Test Illinois de Aptitudes Psicolingüísticas (ITPA)?',a:'Medir aspectos semánticos y habilidades expresivas.',b:'Explorar las funciones cognitivas y lingüísticas implicadas en la comunicación.',c:'Evaluar la memoria secuencial auditiva y visual.',d:'Evaluar la estructura formal del lenguaje.',ok:'B',r:'Correcta: B. Explorar las funciones cognitivas y lingüísticas implicadas en la comunicación.',ref:'(M8, p. 1)'},
+    {id:14,p:'¿Qué aspecto es clave en el diagnóstico de las diferentes patologías del lenguaje?',a:'Utilización de las marcas del plural.',b:'Comprensión de las preposiciones.',c:'Dominio de la flexión verbal.',d:'Uso de las formas de los pronombres personales.',ok:'C',r:'Correcta: C. Dominio de la flexión verbal.',ref:'(M8, p. 1)'},
+    {id:92,p:'¿Cuál es una característica de la dislexia profunda?',a:'Problemas de atención.',b:'Errores visuales.',c:'Errores semánticos.',d:'Dificultades perceptivas.',ok:'C',r:'Correcta: C. Errores semánticos.',ref:'(M8, p. 1)'},
+    {id:29,p:'¿Cuál es uno de los modelos de intervención en los trastornos del lenguaje mencionados en el texto?',a:'Modelo conductual.',b:'Modelo psicoanalítico.',c:'Modelo humanista.',d:'Modelo cognitivo.',ok:'A',r:'Correcta: A. Modelo conductual.',ref:'(M8, p. 1)'},
+    {id:25,p:'¿Cuál es una premisa necesaria para toda intervención del lenguaje según el texto?',a:'Estimulación multifactorial.',b:'Rigor en el registro de datos.',c:'Influencia sobre el entorno.',d:'Control de las variables.',ok:'C',r:'Correcta: C. Influencia sobre el entorno.',ref:'(M8, p. 1)'},
+    {id:66,p:'¿Cuál es el procedimiento para enseñar a un niño a leer y escribir una palabra?',a:'El niño propone una palabra y el profesor la escribe, pronunciando el nombre de las letras.',b:'El niño escribe la palabra y el profesor la nombra.',c:'El niño nombra la palabra y el profesor la escribe.',d:'El profesor escribe la palabra y el niño la nombra.',ok:'A',r:'Correcta: A. El niño propone una palabra y el profesor la escribe, pronunciando el nombre de las letras.',ref:'(M8, p. 1)'},
+    {id:145,p:'¿Cuáles son las dos actuaciones principales del logopeda en el apoyo educativo a niños con dificultades en el aprendizaje?',a:'Realizar adaptaciones del currículum educativo.',b:'Realizar evaluaciones psicológicas.',c:'Realizar terapia individual.',d:'Realizar actividades lúdicas.',ok:'A',r:'Correcta: A. Realizar adaptaciones del currículum educativo.',ref:'(M8, p. 1)'},
+    {id:139,p:'¿Qué ejercicio sería apropiado para mejorar el habla lenta, irregular y entrecortada?',a:'Realizar emisiones cortas.',b:'Imitación de distintas voces.',c:'Entrenamiento en habla rítmica.',d:'Modificación del ritmo de la respiración.',ok:'A',r:'Correcta: A. Realizar emisiones cortas.',ref:'(M8, p. 1)'},
+    {id:57,p:'¿Qué ruta se está utilizando si las diferencias de lectura entre palabras largas y cortas son muy acusadas?',a:'Ruta fonológica.',b:'Ruta visual.',c:'Ruta morfológica.',d:'Ruta semántica.',ok:'A',r:'Correcta: A. Ruta fonológica.',ref:'(M8, p. 1)'},
+    {id:140,p:'¿Cuál es una actividad adecuada para aumentar el vocabulario comprensivo y productivo en niños con discapacidad intelectual?',a:'Juegos de semejanzas y diferencias.',b:'Imitar historias sobre temas generales y específicos.',c:'Tareas de evocación.',d:'Juego del veo-veo.',ok:'A',r:'Correcta: A. Juegos de semejanzas y diferencias.',ref:'(M8, p. 1)'},
+    {id:150,p:'¿Cuál es el propósito del artículo \'Lingüística Clínica y Lenguaje Infantil\'?',a:'Definir perfiles y tendencias por etapas.',b:'Explorar la relación entre lenguaje y cultura.',c:'Analizar la adquisición del lenguaje en adultos.',d:'Estudiar la fonética del habla infantil.',ok:'A',r:'Correcta: A. Definir perfiles y tendencias por etapas.',ref:'(M8, p. 1)'},
+    {id:20,p:'¿Cuál es la finalidad del Test de Evaluación Preescolar y Especial?',a:'Evaluar el nivel de vocabulario receptivo.',b:'Hacer una detección rápida de dificultades verbales.',c:'Determinar el nivel de desarrollo en diversas áreas.',d:'Evaluar la comprensión de vocabulario en imágenes.',ok:'C',r:'Correcta: C. Determinar el nivel de desarrollo en diversas áreas.',ref:'(M8, p. 1)'},
+    {id:91,p:'¿Cuál es uno de los errores típicos de los disléxicos fonológicos?',a:'Confundir palabras regulares con irregulares.',b:'No acceder al significado mediante la lectura.',c:'Inventar el resto de la palabra al leer la raíz correctamente.',d:'No distinguir homófonos.',ok:'C',r:'Correcta: C. Inventar el resto de la palabra al leer la raíz correctamente.',ref:'(M8, p. 1)'},
+    {id:128,p:'¿Cuál es una característica común en el habla de los niños con síndrome de Williams?',a:'Dificultades en la comprensión del lenguaje.',b:'Alteraciones en las cualidades de la voz (ronquera)',c:'Retraso en la adquisición de las primeras palabras.',d:'Problemas severos en los aspectos pragmáticos del lenguaje.',ok:'D',r:'Correcta: D. Problemas severos en los aspectos pragmáticos del lenguaje.',ref:'(M8, p. 1)'},
+    {id:102,p:'¿Cuál es una de las herramientas que los logopedas pueden utilizar para realizar actuaciones de entrenamiento familiar en casos de discapacidad auditiva?',a:'Proporcionar pautas de intervención.',b:'Proporcionar información objetiva.',c:'Realizar programas integrales.',d:'Sugerir el contacto con asociaciones.',ok:'A',r:'Correcta: A. Proporcionar pautas de intervención.',ref:'(M8, p. 1)'},
+    {id:76,p:'¿Cuál es uno de los ejercicios más apropiados para trabajar con niños que cometen inversiones en la escritura?',a:'Ejercicios de cálculo mental.',b:'Ejercicios de lectura rápida.',c:'Ejercicios de escritura automática.',d:'Ejercicios de escucha \'a cámara lenta\' de los sonidos del lenguaje.',ok:'D',r:'Correcta: D. Ejercicios de escucha \'a cámara lenta\' de los sonidos del lenguaje.',ref:'(M8, p. 1)'},
+    {id:99,p:'¿Qué aspectos recomienda recoger el logopeda al evaluar un posible caso de discapacidad auditiva?',a:'El estado general del paciente.',b:'El tipo de discapacidad auditiva.',c:'El historial médico familiar.',d:'El tratamiento recomendado.',ok:'A',r:'Correcta: A. El estado general del paciente.',ref:'(M8, p. 1)'},
+    {id:98,p:'¿Cuál es la técnica más precisa para evaluar la audición de una persona?',a:'Actividad eléctrica.',b:'Potenciales evocados.',c:'Estímulo auditivo.',d:'Registro psicofisiológico.',ok:'B',r:'Correcta: B. Potenciales evocados.',ref:'(M8, p. 1)'},
+    {id:123,p:'¿Cuál es una característica frecuente de los deficientes mentales según la Asociación Americana para el Retraso Mental?',a:'Inadaptación social.',b:'Dificultades de percepción.',c:'Conductas impulsivas.',d:'Problemas emocionales.',ok:'C',r:'Correcta: C. Conductas impulsivas.',ref:'(M8, p. 1)'},
+    {id:32,p:'¿Qué tipo de alteración del habla se caracteriza por problemas en la articulación debido a causas neurológicas?',a:'Disartria.',b:'Disglosia.',c:'Dislalia fonética.',d:'Disfemia.',ok:'A',r:'Correcta: A. Disartria.',ref:'(M8, p. 1)'},
+    {id:136,p:'¿Cuál es el objetivo de la imitación verbal en la intervención de trastornos del lenguaje en discapacidad intelectual?',a:'Inventar modelos verbales.',b:'Repetir modelos verbales con exactitud.',c:'Aprender a leer modelos verbales.',d:'Comprender modelos verbales.',ok:'B',r:'Correcta: B. Repetir modelos verbales con exactitud.',ref:'(M8, p. 1)'},
+    {id:22,p:'¿Cuál es la finalidad de la Escala de Desarrollo Lingüístico de Reynell?',a:'Evaluar la percepción visual.',b:'Evaluar la memoria.',c:'Evaluar la formación de conceptos y el pensamiento simbólico.',d:'Evaluar la motricidad.',ok:'C',r:'Correcta: C. Evaluar la formación de conceptos y el pensamiento simbólico.',ref:'(M8, p. 1)'},
+    {id:79,p:'¿Qué estrategia se sugiere para ayudar a un alumno con dificultades en la organización de la información al escribir?',a:'Utilizar imágenes de apoyo.',b:'Rellenar oraciones incompletas con las palabras adecuadas.',c:'Jugar a dar órdenes por escrito.',d:'Manipulación de las letras.',ok:'C',r:'Correcta: C. Jugar a dar órdenes por escrito.',ref:'(M8, p. 1)'},
+    {id:6,p:'¿Cuál es uno de los objetivos de la evaluación del lenguaje según Gallardo y Gallego (1993)?',a:'Medir la producción verbal espontánea.',b:'Determinar el nivel de desarrollo escolar y familiar.',c:'Detectar posibles problemas.',d:'Establecer el nivel de desarrollo anatómico-funcional del lenguaje.',ok:'C',r:'Correcta: C. Detectar posibles problemas.',ref:'(M8, p. 1)'},
+    {id:89,p:'¿Qué es la dislexia?',a:'Baja inteligencia.',b:'Trastorno emocional.',c:'Dificultades de lenguaje.',d:'Problemas de lectura.',ok:'D',r:'Correcta: D. Problemas de lectura.',ref:'(M8, p. 1)'},
+    {id:41,p:'¿Cuál es una recomendación para mejorar la pronunciación de los fonemas en niños con trastornos del lenguaje?',a:'Imitación del logopeda.',b:'Lectura de sílabas, palabras, oraciones y textos.',c:'Discriminar la duración de palabras.',d:'Manipulación directa de los órganos de la articulación.',ok:'D',r:'Correcta: D. Manipulación directa de los órganos de la articulación.',ref:'(M8, p. 1)'},
+    {id:146,p:'¿Cuál es el concepto de Trastorno Específico del Lenguaje?',a:'Alteraciones en la voz y su tratamiento.',b:'Desarrollo cognitivo y lingüístico de los niños sordos.',c:'Desarrollo de la morfosintaxis en el niño.',d:'Concepto, clasificaciones y criterios de identificación.',ok:'D',r:'Correcta: D. Concepto, clasificaciones y criterios de identificación.',ref:'(M8, p. 1)'},
+  ],
+  [
+    {id:2,p:'¿Qué crítica se hace a las pruebas formales de evaluación del lenguaje?',a:'Ofrecen datos generales pero no valoran el sujeto.',b:'No valoran las características específicas de los sujetos.',c:'Son precisas en la ubicación del niño en los intervalos de edad.',d:'Miden el lenguaje principalmente en su uso.',ok:'B',r:'Correcta: B. No valoran las características específicas de los sujetos.',ref:'(M8, p. 1)'},
+    {id:13,p:'¿Qué aspectos se deben evaluar para determinar si los errores de simplificación del habla tienen un origen fonológico o fonético/práxico?',a:'Praxias bucofonatorias.',b:'Respiración.',c:'Implantación dentaria.',d:'Análisis de los procesos de simplificación del habla.',ok:'D',r:'Correcta: D. Análisis de los procesos de simplificación del habla.',ref:'(M8, p. 1)'},
+    {id:133,p:'¿En qué se centran las técnicas de intervención en los trastornos del lenguaje en discapacidad intelectual?',a:'Atención a las familias.',b:'Enseñanza de la lectoescritura.',c:'Adquisición de requisitos básicos para el lenguaje.',d:'Atención escolar.',ok:'C',r:'Correcta: C. Adquisición de requisitos básicos para el lenguaje.',ref:'(M8, p. 1)'},
+    {id:49,p:'¿Para qué se utiliza la evaluación formal en las dificultades de la lectura?',a:'Comparar al paciente con la población de referencia.',b:'Detectar anomalías en la lectura.',c:'Establecer el nivel de lectura del paciente.',d:'Construir pruebas de evaluación.',ok:'A',r:'Correcta: A. Comparar al paciente con la población de referencia.',ref:'(M8, p. 1)'},
+    {id:62,p:'¿Cuál es uno de los procesos que se realiza una vez reconocidas las palabras y asignados los papeles sintácticos en la extracción del significado?',a:'Predecir el final de un texto.',b:'Extraer las ideas principales de un texto.',c:'Ordenar oraciones para formar una narración.',d:'Integrar dos oraciones en una oración.',ok:'B',r:'Correcta: B. Extraer las ideas principales de un texto.',ref:'(M8, p. 1)'},
+    {id:21,p:'¿Cuál es la finalidad de la Prueba del Lenguaje Oral de Navarra (PLON)?',a:'Valorar el desarrollo del lenguaje en los niños de 4 a 6 años.',b:'Comparar la producción del niño a la producción media de su edad.',c:'Evaluar la comprensión del lenguaje en niños de 6 a 12 años.',d:'Registrar las peculiaridades del habla del niño en producción inducida de palabras.',ok:'A',r:'Correcta: A. Valorar el desarrollo del lenguaje en los niños de 4 a 6 años.',ref:'(M8, p. 1)'},
+    {id:46,p:'¿Qué tipo de actividad se sugiere para el desarrollo del discurso en niños con trastornos del lenguaje?',a:'Contar experiencias personales.',b:'Aprender a tocar un instrumento musical.',c:'Hacer manualidades.',d:'Jugar al escondite.',ok:'A',r:'Correcta: A. Contar experiencias personales.',ref:'(M8, p. 1)'},
+    {id:28,p:'¿Cuáles son las bases funcionales que abarca la intervención logopédica?',a:'Lectura.',b:'Audición.',c:'Comprensión.',d:'Escritura.',ok:'B',r:'Correcta: B. Audición.',ref:'(M8, p. 1)'},
+    {id:104,p:'¿Quién es el encargado de la selección de la audioprótesis?',a:'La familia.',b:'El logopeda.',c:'El médico.',d:'El audioprotesista.',ok:'D',r:'Correcta: D. El audioprotesista.',ref:'(M8, p. 1)'},
+    {id:117,p:'¿Cuál es el problema de habla más destacado en la Parálisis Cerebral?',a:'Apraxia.',b:'Dislalias.',c:'Anartria.',d:'Disfonías.',ok:'C',r:'Correcta: C. Anartria.',ref:'(M8, p. 1)'},
+    {id:80,p:'¿Cuál es un posible signo de dislexia en niños de preescolar?',a:'Retraso en aprender a hablar con claridad.',b:'Aptitud para la construcción y los objetos técnicos.',c:'Confusión en el vocabulario de orientación espacial.',d:'Facilidad para aprender las rimas típicas del preescolar.',ok:'A',r:'Correcta: A. Retraso en aprender a hablar con claridad.',ref:'(M8, p. 1)'},
+    {id:130,p:'¿Qué aspectos lingüísticos debe abarcar la evaluación en discapacidad intelectual?',a:'Pragmática y fonética.',b:'Sintaxis y pragmática.',c:'Sintaxis y morfología.',d:'Fonología y semántica.',ok:'D',r:'Correcta: D. Fonología y semántica.',ref:'(M8, p. 1)'},
+    {id:111,p:'¿Cuál es una actividad que se puede realizar para trabajar la sintaxis y gramática en casos de discapacidad auditiva?',a:'Descripción de dibujos.',b:'Canciones infantiles.',c:'Búsqueda de palabras colectivas.',d:'Corregir errores u omisiones.',ok:'D',r:'Correcta: D. Corregir errores u omisiones.',ref:'(M8, p. 1)'},
+    {id:58,p:'¿Qué tipo de tarea se utiliza para evaluar la ruta léxica en la lectura de palabras?',a:'Lectura de palabras concretas vs. abstractas.',b:'Lista manipulando la longitud de las palabras.',c:'Lista de palabras de distinta categorías.',d:'Presentar una lista de palabras homófonas.',ok:'D',r:'Correcta: D. Presentar una lista de palabras homófonas.',ref:'(M8, p. 1)'},
+    {id:101,p:'¿Cuáles son los aspectos fundamentales en los que se centran las técnicas de intervención logopédica en casos de discapacidad auditiva?',a:'Mejora de la visión.',b:'Mejora de la percepción del lenguaje oral.',c:'Mejora de la memoria.',d:'Mejora de la escritura.',ok:'B',r:'Correcta: B. Mejora de la percepción del lenguaje oral.',ref:'(M8, p. 1)'},
+    {id:100,p:'¿Qué aspecto debe incluir la evaluación logopédica en los trastornos del lenguaje en discapacidad auditiva?',a:'Análisis del estado emocional.',b:'Evaluación del estado visual.',c:'Valoración del estado auditivo.',d:'Estudio de la motricidad fina.',ok:'C',r:'Correcta: C. Valoración del estado auditivo.',ref:'(M8, p. 1)'},
+    {id:147,p:'¿En qué consiste la intervención psicopedagógica en la \'conciencia fonológica\'?',a:'Desarrollar la comprensión semántica.',b:'Entrenar al alumnado en la segmentación de elementos de la cadena hablada.',c:'Facilitar el desarrollo morfosintáctico.',d:'Estimular la producción de lenguaje espontáneo.',ok:'B',r:'Correcta: B. Entrenar al alumnado en la segmentación de elementos de la cadena hablada.',ref:'(M8, p. 1)'},
+    {id:7,p:'¿Qué aspectos abarca la evaluación del lenguaje?',a:'Competencia conversacional, funciones de comunicación, significado de las palabras.',b:'Sintaxis, fonología, léxico.',c:'Forma, contenido, uso.',d:'Audición, aparato fonador, respiración.',ok:'C',r:'Correcta: C. Forma, contenido, uso.',ref:'(M8, p. 1)'},
+    {id:96,p:'¿Qué técnica de screening auditivo se realiza en los primeros días tras el parto para determinar si la cóclea funciona correctamente?',a:'Examen pediátrico.',b:'Otoemisiones provocadas.',c:'Audiometría observacional.',d:'Otoemisiones espontáneas.',ok:'D',r:'Correcta: D. Otoemisiones espontáneas.',ref:'(M8, p. 1)'},
+    {id:50,p:'¿En qué se basa la evaluación informal en las dificultades de la lectura?',a:'Construir pruebas de evaluación.',b:'Detectar anomalías en la lectura.',c:'Comparar al paciente con la población de referencia.',d:'Establecer el nivel de lectura del paciente.',ok:'A',r:'Correcta: A. Construir pruebas de evaluación.',ref:'(M8, p. 1)'},
+    {id:1,p:'¿Cuáles son las metas de la Lingüística según el texto?',a:'Análisis y clasificación de descripciones.',b:'Interpretación de la compresión lingüística.',c:'Creación de material para la intervención.',d:'Descripción del habla del paciente.',ok:'A',r:'Correcta: A. Análisis y clasificación de descripciones.',ref:'(M8, p. 1)'},
+    {id:37,p:'¿Cuáles son las condiciones necesarias para realizar una perfecta articulación del lenguaje según el texto?',a:'Madurez psicomotriz, discriminación auditiva, control respiratorio, fondo tónico habitual.',b:'Agilidad bucofacial, discriminación auditiva, control respiratorio, fondo tónico habitual.',c:'Madurez psicomotriz, discriminación visual, control respiratorio, tensión muscular.',d:'Agilidad bucofacial, discriminación visual, control respiratorio, tensión muscular.',ok:'B',r:'Correcta: B. Agilidad bucofacial, discriminación auditiva, control respiratorio, fondo tónico habitual.',ref:'(M8, p. 1)'},
+    {id:118,p:'¿Cuál es un aspecto importante a trabajar en la intervención del lenguaje en discapacidad motora?',a:'Respiración.',b:'Escritura.',c:'Matemáticas.',d:'Historia.',ok:'A',r:'Correcta: A. Respiración.',ref:'(M8, p. 1)'},
+    {id:40,p:'¿Cuál es uno de los objetivos de la intervención en Trastorno Específico del Lenguaje (TEL) relacionado con la imitación verbal?',a:'Repetir modelos verbales con la mayor exactitud posible.',b:'Ayudar al niño a identificar personas, lugares y cosas por su nombre.',c:'Controlar las reacciones del niño.',d:'Enseñar al niño a controlar cuándo y cómo dejar una actividad.',ok:'A',r:'Correcta: A. Repetir modelos verbales con la mayor exactitud posible.',ref:'(M8, p. 1)'},
+    {id:113,p:'¿Qué caracteriza a la espina bífida oculta?',a:'Células nerviosas en el saco quístico.',b:'Grave.',c:'Quistes de líquido cefalorraquídeo.',d:'Leve.',ok:'D',r:'Correcta: D. Leve.',ref:'(M8, p. 1)'},
+    {id:93,p:'¿Qué es la hipoacusia?',a:'Pérdida auditiva superior a 90 dB.',b:'Audición funcional para la vida diaria.',c:'Audición no funcional para la vida diaria.',d:'Pérdida auditiva inferior a 90 dB.',ok:'D',r:'Correcta: D. Pérdida auditiva inferior a 90 dB.',ref:'(M8, p. 1)'},
+    {id:85,p:'Según el texto, ¿qué recomienda Thomson para la intervención en dislexia?',a:'Orientación espacial.',b:'Trabajo repetitivo.',c:'Sobreaprendizaje.',d:'Fichas de lateralidad.',ok:'C',r:'Correcta: C. Sobreaprendizaje.',ref:'(M8, p. 1)'},
+    {id:86,p:'¿Qué estrategia se recomienda para ayudar a un estudiante con dislexia a comprender la información nueva?',a:'Corregir sistemáticamente todos los errores en su escritura.',b:'Aumentar la cantidad de trabajo para aumentar su capacidad de atención.',c:'Repetir las instrucciones verbales.',d:'Hacer exámenes orales.',ok:'C',r:'Correcta: C. Repetir las instrucciones verbales.',ref:'(M8, p. 1)'},
+    {id:87,p:'¿Cuál es el papel más importante que deben cumplir los padres de niños disléxicos?',a:'Comparación con otros niños.',b:'Apoyo emocional y social.',c:'Corrección constante.',d:'Enseñanza especializada.',ok:'B',r:'Correcta: B. Apoyo emocional y social.',ref:'(M8, p. 1)'},
+    {id:73,p:'¿Por qué no resulta adecuado copiar repetidas veces una palabra cuando un alumno comete errores ortográficos?',a:'Aumenta la concentración.',b:'Genera motivación.',c:'Genera olvido del modelo.',d:'Favorece el aprendizaje.',ok:'C',r:'Correcta: C. Genera olvido del modelo.',ref:'(M8, p. 1)'},
+  ],
+  [
+    {id:51,p:'¿Cuál es el objetivo de las pruebas de evaluación de los procesos perceptivos en la evaluación de las dificultades de lectura?',a:'Determinar el nivel general de lectura.',b:'Identificar problemas puramente perceptivos o lingüísticos.',c:'Detectar problemas sintácticos.',d:'Analizar los movimientos oculares.',ok:'B',r:'Correcta: B. Identificar problemas puramente perceptivos o lingüísticos.',ref:'(M8, p. 1)'},
+    {id:54,p:'¿Cuál es la tarea que consiste en indicar si pares de signos son iguales o diferentes?',a:'Tarea de emparejamiento de letras.',b:'Tarea de lectura.',c:'Tarea de escritura.',d:'Tarea de igual - diferente.',ok:'D',r:'Correcta: D. Tarea de igual - diferente.',ref:'(M8, p. 1)'},
+    {id:71,p:'¿Qué evalúa la tarea de denominación en el diagnóstico de los procesos de recuperación léxica?',a:'Errores en la escritura.',b:'Capacidad de generar palabras.',c:'Rutas léxicas.',d:'Capacidad motora.',ok:'B',r:'Correcta: B. Capacidad de generar palabras.',ref:'(M8, p. 1)'},
+    {id:60,p:'¿Para qué se utiliza la tarea de emparejamiento dibujo-oración en la evaluación de las dificultades de lectura?',a:'Para medir la capacidad de análisis sintáctico.',b:'Para comprobar la capacidad de manejar las diferentes claves sintácticas.',c:'Para evaluar la capacidad de memoria a corto plazo.',d:'Para evaluar la capacidad de retención de palabras.',ok:'B',r:'Correcta: B. Para comprobar la capacidad de manejar las diferentes claves sintácticas.',ref:'(M8, p. 1)'},
+    {id:129,p:'¿Cuál es una de las alteraciones en el habla que puede presentarse en el síndrome de X-frágil?',a:'Voz adecuada.',b:'Comprensión deficiente.',c:'Articulación clara.',d:'Fluidez afectada.',ok:'D',r:'Correcta: D. Fluidez afectada.',ref:'(M8, p. 1)'},
+    {id:43,p:'¿Qué tipo de ejercicios se emplean para trabajar en la comprensión de oraciones en niños con trastornos del lenguaje?',a:'Inventar historias.',b:'Ordenación de historietas.',c:'Role-playing.',d:'Seguimiento de órdenes complejas.',ok:'D',r:'Correcta: D. Seguimiento de órdenes complejas.',ref:'(M8, p. 1)'},
+    {id:131,p:'¿Cuál es una de las áreas recomendadas para evaluar en los trastornos del lenguaje en discapacidad intelectual?',a:'Estado general del paciente.',b:'Nivel de visión del niño.',c:'Historial de vacunación.',d:'Tipo de alimentación.',ok:'A',r:'Correcta: A. Estado general del paciente.',ref:'(M8, p. 1)'},
+    {id:64,p:'¿Cuál es el enfoque del tratamiento para los pacientes con déficit en los procesos perceptivos en la lectura?',a:'Actividades de discriminación de dibujos y letras.',b:'Actividades de escritura y ortografía.',c:'Actividades de comprensión lectora.',d:'Actividades de cálculo matemático.',ok:'A',r:'Correcta: A. Actividades de discriminación de dibujos y letras.',ref:'(M8, p. 1)'},
+    {id:44,p:'¿Cuáles son algunos ejercicios pertinentes para facilitar que el niño inicie el intercambio lingüístico de manera consciente e intencional?',a:'Producir oraciones semejantes.',b:'Seguimiento de órdenes complejas.',c:'Seguimiento de órdenes individuales.',d:'Imitación.',ok:'A',r:'Correcta: A. Producir oraciones semejantes.',ref:'(M8, p. 1)'},
+    {id:74,p:'¿Qué actividad se recomienda para corregir la sustitución de un fonema por otro en la escritura?',a:'Comparar letras confundidas.',b:'Reconocer letras en palabras.',c:'Toma de conciencia del fonema.',d:'Escuchar y distinguir pares de palabras.',ok:'D',r:'Correcta: D. Escuchar y distinguir pares de palabras.',ref:'(M8, p. 1)'},
+    {id:17,p:'¿Qué aspectos se deben observar en la evaluación de la semántica del lenguaje?',a:'Comprensión de mensajes cortos.',b:'Vocabulario receptivo y expresivo.',c:'Comprensión de mensajes largos y completos.',d:'Uso de pronombres personales.',ok:'B',r:'Correcta: B. Vocabulario receptivo y expresivo.',ref:'(M8, p. 1)'},
+    {id:69,p:'¿Qué aspectos se analizan en el diagnóstico de los trastornos de la escritura?',a:'Pruebas estandarizadas.',b:'Diagnóstico de los diferentes procesos.',c:'Características del diagnóstico.',d:'Ambiente y tipo de errores.',ok:'B',r:'Correcta: B. Diagnóstico de los diferentes procesos.',ref:'(M8, p. 1)'},
+    {id:78,p:'¿Cuáles son las estrategias mnemotécnicas para fomentar la fijación de la regla de transcripción de /r/ y /rr/ en la escritura?',a:'Ejercicios de formación de palabras que contengan el grupo \'mb\' o \'mp\'.',b:'Ejercicios de discriminación de /r/ y /rr/ en la lectura.',c:'Comparación de pares de palabras en que la confusión r-rr genere un cambio semántico.',d:'Ejercicios de completar palabras en las que falten \'m\' o \'n\'.',ok:'A',r:'Correcta: A. Ejercicios de formación de palabras que contengan el grupo \'mb\' o \'mp\'.',ref:'(M8, p. 1)'},
+    {id:15,p:'¿Qué elementos se deben observar en la evaluación de la morfología del lenguaje?',a:'Reflexión de preposiciones.',b:'Uso de pronombres personales.',c:'Automatización de las reglas gramaticales.',d:'Concordancia de género y número.',ok:'D',r:'Correcta: D. Concordancia de género y número.',ref:'(M8, p. 1)'},
+    {id:141,p:'¿Cuáles son las dificultades más frecuentes encontradas en los niños con retraso mental en la dimensión de la morfología y la sintaxis?',a:'Uso de elementos gramaticales.',b:'Comprensión de oraciones complejas.',c:'Pronunciación de palabras.',d:'Vocabulario limitado.',ok:'A',r:'Correcta: A. Uso de elementos gramaticales.',ref:'(M8, p. 1)'},
+    {id:47,p:'¿Qué habilidades previas necesarias debe tener el niño para trabajar en un programa de enseñanza de lectoescritura?',a:'Habilidades sociales.',b:'Habilidades deportivas.',c:'Habilidades lingüísticas.',d:'Habilidades matemáticas.',ok:'C',r:'Correcta: C. Habilidades lingüísticas.',ref:'(M8, p. 1)'},
+    {id:33,p:'¿Qué es la disfasia?',a:'Pérdida total del lenguaje.',b:'Pérdida de la comprensión verbal.',c:'Perturbación severa de la elaboración del lenguaje.',d:'Pérdida parcial del lenguaje.',ok:'C',r:'Correcta: C. Perturbación severa de la elaboración del lenguaje.',ref:'(M8, p. 1)'},
+    {id:122,p:'¿Cuáles son los tres niveles relacionados entre sí en la reeducación del habla y del lenguaje en discapacidad motora?',a:'Reeducación de la postura.',b:'Reeducación de la respiración.',c:'Reeducación del vocablo.',d:'Reeducación de la memoria.',ok:'C',r:'Correcta: C. Reeducación del vocablo.',ref:'(M8, p. 1)'},
+    {id:94,p:'¿Qué aspectos se evalúan en las evaluaciones previas del lenguaje en discapacidad auditiva?',a:'Audición y aparato fonador.',b:'Comprensión y producción.',c:'Sintaxis y semántica.',d:'Desarrollo cognitivo.',ok:'A',r:'Correcta: A. Audición y aparato fonador.',ref:'(M8, p. 1)'},
+    {id:61,p:'¿Qué tipo de preguntas se refieren a la información no explícita en el texto, pero necesaria para su comprensión?',a:'Preguntas de conocimientos de la lectora o el lector.',b:'Preguntas de conocimiento general.',c:'Preguntas de inferencia.',d:'Preguntas de vocabulario.',ok:'C',r:'Correcta: C. Preguntas de inferencia.',ref:'(M8, p. 1)'},
+    {id:116,p:'¿Cuál es uno de los objetivos específicos del tratamiento de facilitación postural en discapacidad motora?',a:'Controlar la respiración y la fonación.',b:'Inhibir el reflejo de enderezamiento cervical.',c:'Realizar una disociación e independencia segmentaria.',d:'Normalizar la sensibilidad dentro y fuera de la zona oral.',ok:'A',r:'Correcta: A. Controlar la respiración y la fonación.',ref:'(M8, p. 1)'},
+    {id:95,p:'¿Qué aspecto del lenguaje se evalúa al observar si aparecen alteraciones rítmicas y de entonación en el habla de una persona con discapacidad auditiva?',a:'Entonación.',b:'Léxico.',c:'Estructuración sintáctica.',d:'Fonética.',ok:'A',r:'Correcta: A. Entonación.',ref:'(M8, p. 1)'},
+    {id:42,p:'¿Cuál es un ejercicio adecuado para aumentar el vocabulario en niños con Trastorno Específico del Lenguaje (TEL)?',a:'Juegos de semejanzas y diferencias.',b:'Imitar sonidos de animales.',c:'Juegos de memoria.',d:'Juegos de roles.',ok:'A',r:'Correcta: A. Juegos de semejanzas y diferencias.',ref:'(M8, p. 1)'},
+    {id:125,p:'¿Qué aspectos deben ser evaluados en los casos de discapacidad intelectual?',a:'Respiración y soplo.',b:'Coordinación ojo-mano.',c:'Motricidad fina y gruesa.',d:'Memoria y atención.',ok:'A',r:'Correcta: A. Respiración y soplo.',ref:'(M8, p. 1)'},
+    {id:8,p:'¿Qué aspecto del lenguaje se evalúa a través de la capacidad auditiva y la eliminación de elementos no verbales?',a:'Comprensión.',b:'Desarrollo cognitivo.',c:'Lectoescritura.',d:'Producción.',ok:'A',r:'Correcta: A. Comprensión.',ref:'(M8, p. 1)'},
+    {id:144,p:'¿En qué momento sería apropiado que el logopeda trabaje con los profesores para diseñar un programa de enseñanza de lectoescritura?',a:'Cuando el niño no ha recibido tratamiento logopédico.',b:'Cuando el niño alcanza la adolescencia.',c:'A temprana edad.',d:'Cuando el niño cumple 6-7 años.',ok:'D',r:'Correcta: D. Cuando el niño cumple 6-7 años.',ref:'(M8, p. 1)'},
+    {id:35,p:'¿Qué técnica de intervención se refiere a modelar la conducta lingüística por medio de sucesivos ensayos?',a:'Inducción.',b:'Ensayos discretos.',c:'Imitación inmediata.',d:'Feed-back correctivo.',ok:'B',r:'Correcta: B. Ensayos discretos.',ref:'(M8, p. 1)'},
+    {id:119,p:'¿Cuál es el objetivo de trabajar la respiración y emisión vocal en la intervención del lenguaje en discapacidad motora?',a:'Realizar masajes circulares en labios, mejillas y cuello.',b:'Fortalecer la musculatura diafragmática.',c:'Desarrollar la musculatura de los labios.',d:'Realizar movimientos giratorios y laterales internos.',ok:'B',r:'Correcta: B. Fortalecer la musculatura diafragmática.',ref:'(M8, p. 1)'},
+    {id:65,p:'¿Cuál es el primer paso del Programa de Entrenamiento Multisensorial para asociar letras y sonidos?',a:'El profesor dicta el nombre de la letra y el niño la escribe.',b:'El profesor escribe la letra y el alumno la repite.',c:'Se presenta la letra y el niño dice su sonido.',d:'El profesor dice el nombre de la letra y el niño lo repite.',ok:'D',r:'Correcta: D. El profesor dice el nombre de la letra y el niño lo repite.',ref:'(M8, p. 1)'},
+    {id:68,p:'¿Qué tipo de tarea se puede utilizar para aumentar la comprensión de un texto?',a:'Relacionar una oración con un dibujo.',b:'Formular preguntas conforme va leyendo.',c:'Elegir un final para un texto inacabado.',d:'Predecir el contenido de un texto atendiendo al título y a los subtítulos.',ok:'B',r:'Correcta: B. Formular preguntas conforme va leyendo.',ref:'(M8, p. 1)'},
+  ],
+];
+// ─── STATE ───────────────────────────────────────────
+let currentSim = 0;
+let currentQ = 0;
+let answers = [];    // {selected, correct} per question
+let answered = false;
+
+const LABELS = ['A', 'B', 'C', 'D'];
+const KEYS = ['a', 'b', 'c', 'd'];
+
+// Persist scores in localStorage
+function getScores() {
+  try { return JSON.parse(localStorage.getItem('m8_scores') || '{}'); } catch { return {}; }
+}
+function saveScore(simIdx, pct) {
+  const s = getScores(); s[simIdx] = pct; localStorage.setItem('m8_scores', JSON.stringify(s));
+}
+
+// ─── HOME ─────────────────────────────────────────────
+function renderHome() {
+  const scores = getScores();
+  const grid = document.getElementById('simGrid');
+  grid.innerHTML = '';
+  SIMS.forEach((sim, i) => {
+    const card = document.createElement('div');
+    card.className = 'sim-card';
+    card.onclick = () => startQuiz(i);
+    let badge = '';
+    if (scores[i] !== undefined) {
+      const p = scores[i];
+      const cls = p >= 70 ? 'pass' : p >= 50 ? 'partial' : 'fail';
+      badge = `<div class="sim-score-badge shown ${cls}">${p}% — ${p >= 70 ? '✓ Aprobado' : p >= 50 ? '~ En progreso' : '✗ A mejorar'}</div>`;
+    }
+    card.innerHTML = `
+      <div class="sim-num">0${i+1}</div>
+      <div class="sim-label">Simulacro ${i+1}</div>
+      <div class="sim-count">30 preguntas · opción múltiple</div>
+      ${badge}
+    `;
+    grid.appendChild(card);
+  });
+}
+
+// ─── START QUIZ ───────────────────────────────────────
+function startQuiz(simIdx) {
+  currentSim = simIdx;
+  currentQ = 0;
+  answers = new Array(SIMS[simIdx].length).fill(null);
+  answered = false;
+
+  document.getElementById('home').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('quiz').style.display = 'block';
+  document.getElementById('quizTitle').textContent = `Simulacro ${simIdx + 1}`;
+  renderQuestion();
+}
+
+// ─── RENDER QUESTION ──────────────────────────────────
+function renderQuestion() {
+  const sim = SIMS[currentSim];
+  const q = sim[currentQ];
+  answered = answers[currentQ] !== null;
+
+  // Progress
+  const answered_count = answers.filter(a => a !== null).length;
+  const correct_so_far = answers.filter(a => a && a.correct).length;
+  const pct = ((currentQ + 1) / sim.length * 100).toFixed(0);
+  document.getElementById('progressText').textContent = `Pregunta ${currentQ + 1} de ${sim.length}`;
+  document.getElementById('scoreText').textContent = `${correct_so_far} correctas`;
+  document.getElementById('progressFill').style.width = pct + '%';
+
+  const wrap = document.getElementById('qWrap');
+  const savedAns = answers[currentQ];
+
+  const opts = KEYS.map((k, i) => {
+    let cls = '';
+    if (savedAns) {
+      const letter = LABELS[i];
+      if (letter === q.ok) cls = savedAns.selected === letter ? 'selected-correct' : 'show-correct';
+      else if (letter === savedAns.selected) cls = 'selected-wrong';
+    }
+    return `
+      <button class="opt-btn ${cls}" onclick="selectAnswer('${LABELS[i]}')" ${savedAns ? 'disabled' : ''}>
+        <div class="opt-letter">${LABELS[i]}</div>
+        <div>${q[k]}</div>
+      </button>
+    `;
+  }).join('');
+
+  let feedbackHTML = '';
+  if (savedAns) {
+    const isCorrect = savedAns.correct;
+    feedbackHTML = `
+      <div class="feedback-box ${isCorrect ? 'correct' : 'wrong'}" style="display:block">
+        <strong>${isCorrect ? '✅ ¡Correcto!' : '❌ Respuesta incorrecta'}</strong><br>
+        ${q.r}
+        <div class="feedback-ref">${q.ref}</div>
+      </div>
+    `;
+  }
+
+  const isLast = currentQ === sim.length - 1;
+  const nextLabel = isLast ? '🏁 Ver resultados' : 'Siguiente →';
+  const prevBtn = currentQ > 0
+    ? `<button class="btn-secondary" onclick="goToPrev()">← Anterior</button>`
+    : `<div></div>`;
+
+  wrap.innerHTML = `
+    <div class="q-card fade-in">
+      <div class="q-number">Pregunta ${currentQ + 1}</div>
+      <div class="q-text">${q.p}</div>
+      <div class="options">${opts}</div>
+      ${feedbackHTML}
+    </div>
+    <div class="quiz-actions">
+      ${prevBtn}
+      <button class="btn-primary" id="btnNext" onclick="goToNext()" ${!savedAns ? 'disabled' : ''}>${nextLabel}</button>
+    </div>
+  `;
+}
+
+// ─── SELECT ANSWER ────────────────────────────────────
+function selectAnswer(letter) {
+  if (answers[currentQ] !== null) return;
+  const q = SIMS[currentSim][currentQ];
+  answers[currentQ] = { selected: letter, correct: letter === q.ok };
+  renderQuestion();
+}
+
+function goToNext() {
+  if (currentQ < SIMS[currentSim].length - 1) {
+    currentQ++;
+    renderQuestion();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  } else {
+    showResults();
+  }
+}
+function goToPrev() {
+  if (currentQ > 0) { currentQ--; renderQuestion(); window.scrollTo({top: 0, behavior: 'smooth'}); }
+}
+
+// ─── RESULTS ──────────────────────────────────────────
+function showResults() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+
+  const sim = SIMS[currentSim];
+  const total = sim.length;
+  const correct = answers.filter(a => a && a.correct).length;
+  const wrong = total - correct;
+  const pct = Math.round(correct / total * 100);
+
+  saveScore(currentSim, pct);
+
+  const cls = pct >= 70 ? 'pass' : pct >= 50 ? 'partial' : 'fail';
+  const msg = pct >= 70 ? '¡Excelente trabajo!' : pct >= 50 ? 'Buen intento, sigue practicando' : 'Necesitas repasar más';
+
+  document.getElementById('scoreRing').className = 'results-score-ring ' + cls;
+  document.getElementById('scorePct').className = 'score-pct ' + cls;
+  document.getElementById('scorePct').textContent = pct + '%';
+  document.getElementById('resultsTitle').textContent = msg;
+  document.getElementById('resultsMeta').textContent = `Simulacro ${currentSim + 1} · ${correct} de ${total} correctas`;
+  document.getElementById('statCorr').textContent = correct;
+  document.getElementById('statWrong').textContent = wrong;
+  document.getElementById('statPct').textContent = pct + '%';
+
+  // Review
+  const list = document.getElementById('reviewList');
+  list.innerHTML = '';
+  sim.forEach((q, i) => {
+    const ans = answers[i];
+    if (!ans) return;
+    const div = document.createElement('div');
+    div.className = 'review-item ' + (ans.correct ? 'correct' : 'wrong');
+    const myText = ans.correct ? '' : `<div class="review-item-ans"><span class="icon">❌</span>Tu respuesta: <span class="my">${ans.selected}. ${q[ans.selected.toLowerCase()]}</span></div>`;
+    div.innerHTML = `
+      <div class="review-item-q"><strong>${i+1}.</strong> ${q.p}</div>
+      ${myText}
+      <div class="review-item-ans"><span class="icon">${ans.correct ? '✅' : '✔'}</span>Respuesta correcta: <span class="ok">${q.ok}. ${q[q.ok.toLowerCase()]}</span></div>
+      <div class="review-item-retro">${q.r} <em>${q.ref}</em></div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function retryQuiz() { startQuiz(currentSim); }
+
+function goHome() {
+  document.getElementById('quiz').style.display = 'none';
+  document.getElementById('results').style.display = 'none';
+  document.getElementById('home').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+  renderHome();
+}
+
+// ─── INIT ─────────────────────────────────────────────
+renderHome();
+</script>
+</body>
+</html>

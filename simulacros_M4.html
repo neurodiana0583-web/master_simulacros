@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulacros M4 — Dificultades del Aprendizaje</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #0c1a14;
+    --bg2:     #112010;
+    --bg3:     #162a1a;
+    --emerald: #1e9e62;
+    --emerald2:#28c47a;
+    --emerald3:#0a5c38;
+    --purple:  #7c3aed;
+    --purple2: #9d5ff5;
+    --purple3: #2d1060;
+    --cream:   #e8f2ec;
+    --cream2:  #c8ddd0;
+    --muted:   #5a7a66;
+    --border:  rgba(30,158,98,.25);
+    --green:   #22c55e;
+    --red:     #ef4444;
+    --shadow:  0 4px 24px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Syne', sans-serif; background: var(--bg); color: var(--cream); min-height: 100vh; }
+
+  /* HEADER */
+  .header {
+    background: var(--bg2);
+    border-bottom: 2px solid var(--emerald3);
+    padding: 0 32px; height: 56px;
+    display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .header-tag {
+    background: linear-gradient(135deg, var(--emerald), var(--emerald3));
+    color: #fff; font-weight: 800; font-size: .95rem;
+    padding: 5px 16px; border-radius: 8px; letter-spacing: .06em;
+  }
+  .header-title { font-size: 1rem; color: var(--cream); font-weight: 700; letter-spacing: .04em; }
+  .header-sub { font-size: .7rem; color: var(--muted); margin-top: 1px; }
+  .header-badge {
+    font-size: .72rem; color: var(--emerald2); letter-spacing: .08em;
+    border: 1px solid var(--border); padding: 4px 14px; border-radius: 20px;
+  }
+
+  /* HOME */
+  #home { max-width: 840px; margin: 0 auto; padding: 56px 24px; }
+
+  .home-hero { margin-bottom: 56px; position: relative; }
+  .hero-label {
+    font-size: .72rem; font-weight: 700; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--emerald2); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .hero-label::after { content: ''; flex: 1; max-width: 60px; height: 1px; background: var(--emerald3); }
+  .home-hero h1 {
+    font-size: 4rem; line-height: .95; font-weight: 800;
+    color: var(--cream); letter-spacing: -.01em;
+  }
+  .home-hero h1 .accent {
+    display: block;
+    background: linear-gradient(90deg, var(--emerald2), var(--purple2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .home-hero p {
+    color: var(--cream2); font-family: 'Lora', serif;
+    font-size: .95rem; margin-top: 20px; line-height: 1.75;
+    max-width: 500px; font-style: italic;
+  }
+  .hero-stats {
+    display: flex; gap: 32px; margin-top: 32px;
+  }
+  .hero-stat .val { font-size: 1.8rem; font-weight: 800; color: var(--emerald2); line-height: 1; }
+  .hero-stat .lbl { font-size: .7rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .1em; }
+
+  .sim-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px,1fr)); gap: 14px; }
+  .sim-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 14px; padding: 24px 22px;
+    cursor: pointer; transition: all .2s ease;
+    position: relative; overflow: hidden;
+  }
+  .sim-card::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(30,158,98,.06), rgba(124,58,237,.06));
+    opacity: 0; transition: opacity .2s;
+  }
+  .sim-card:hover { border-color: var(--emerald2); transform: translateY(-3px); box-shadow: var(--shadow); }
+  .sim-card:hover::after { opacity: 1; }
+  .sim-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+  .sim-num-big {
+    font-size: 3rem; font-weight: 800; line-height: 1;
+    background: linear-gradient(135deg, var(--emerald2), var(--purple2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .sim-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--emerald3); margin-top: 8px;
+    transition: background .2s;
+  }
+  .sim-card:hover .sim-dot { background: var(--emerald2); }
+  .sim-label { font-size: .78rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .1em; }
+  .sim-title { font-size: 1rem; font-weight: 700; color: var(--cream); margin-top: 2px; }
+  .sim-count { font-size: .74rem; color: var(--muted); margin-top: 6px; }
+  .sim-score-badge { display: none; margin-top: 10px; font-size: .74rem; font-weight: 700; padding: 4px 12px; border-radius: 6px; width: fit-content; text-transform: uppercase; letter-spacing: .06em; }
+  .sim-score-badge.shown { display: inline-block; }
+  .sim-score-badge.pass { background: rgba(34,197,94,.15); color: #4ade80; border: 1px solid rgba(34,197,94,.3); }
+  .sim-score-badge.fail { background: rgba(239,68,68,.15); color: #f87171; border: 1px solid rgba(239,68,68,.3); }
+  .sim-score-badge.partial { background: rgba(124,58,237,.2); color: var(--purple2); border: 1px solid rgba(124,58,237,.3); }
+
+  /* QUIZ */
+  #quiz { display: none; max-width: 760px; margin: 0 auto; padding: 32px 24px 80px; }
+  .quiz-nav { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .btn-back {
+    background: var(--bg2); border: 1px solid var(--border); color: var(--cream2);
+    padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: .82rem;
+    transition: .18s; font-family: 'Syne', sans-serif; font-weight: 600;
+  }
+  .btn-back:hover { border-color: var(--emerald2); color: var(--emerald2); }
+  .quiz-title { font-size: 1.1rem; font-weight: 800; color: var(--cream); flex: 1; letter-spacing: .02em; }
+
+  .progress-wrap { margin-bottom: 26px; }
+  .progress-meta { display: flex; justify-content: space-between; font-size: .74rem; color: var(--muted); margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  .progress-bar { height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--purple)); border-radius: 3px; transition: width .4s ease; }
+
+  .q-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 16px; padding: 32px 28px; margin-bottom: 20px;
+    box-shadow: var(--shadow);
+  }
+  .q-number {
+    font-size: .7rem; font-weight: 700; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--emerald2); margin-bottom: 14px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .q-number::before { content: ''; display: block; width: 20px; height: 2px; background: var(--emerald2); }
+  .q-text { font-family: 'Lora', serif; font-size: 1.05rem; line-height: 1.75; color: var(--cream); margin-bottom: 28px; }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+  .opt-btn {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.09);
+    border-radius: 10px; padding: 14px 16px; cursor: pointer;
+    text-align: left; color: var(--cream2);
+    font-family: 'Syne', sans-serif; font-size: .9rem; line-height: 1.55;
+    transition: all .16s ease;
+  }
+  .opt-btn:hover:not(:disabled) { border-color: var(--emerald2); background: rgba(30,158,98,.08); color: var(--cream); }
+  .opt-btn:disabled { cursor: default; }
+  .opt-letter {
+    min-width: 28px; height: 28px; border-radius: 6px;
+    background: rgba(255,255,255,.07); color: var(--muted);
+    display: flex; align-items: center; justify-content: center;
+    font-size: .74rem; font-weight: 800; letter-spacing: .06em;
+    flex-shrink: 0; margin-top: 1px; transition: .16s;
+  }
+  .opt-btn.selected-correct { border-color: var(--green); background: rgba(34,197,94,.1); color: var(--cream); }
+  .opt-btn.selected-correct .opt-letter { background: var(--green); color: #fff; }
+  .opt-btn.selected-wrong { border-color: var(--red); background: rgba(239,68,68,.1); }
+  .opt-btn.selected-wrong .opt-letter { background: var(--red); color: #fff; }
+  .opt-btn.show-correct { border-color: var(--green); background: rgba(34,197,94,.06); }
+  .opt-btn.show-correct .opt-letter { background: rgba(34,197,94,.4); color: #fff; }
+
+  .feedback-box {
+    display: none; margin-top: 16px; padding: 16px 20px;
+    border-radius: 10px; font-size: .87rem; line-height: 1.65;
+    animation: fadeUp .28s ease; font-family: 'Lora', serif;
+  }
+  .feedback-box.correct { background: rgba(34,197,94,.08); border: 1px solid rgba(34,197,94,.3); color: #4ade80; }
+  .feedback-box.wrong { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.3); color: #f87171; }
+  .feedback-ref { font-size: .77rem; margin-top: 6px; opacity: .6; font-style: italic; }
+
+  .quiz-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--emerald), var(--emerald3));
+    color: #fff; border: none; padding: 13px 30px; border-radius: 10px;
+    cursor: pointer; font-size: .9rem; font-weight: 700; letter-spacing: .06em;
+    transition: .18s; font-family: 'Syne', sans-serif;
+    box-shadow: 0 4px 18px rgba(30,158,98,.35);
+  }
+  .btn-primary:hover { filter: brightness(1.15); }
+  .btn-primary:disabled { opacity: .3; cursor: default; box-shadow: none; }
+  .btn-secondary {
+    background: none; border: 1px solid rgba(124,58,237,.5); color: var(--purple2);
+    padding: 12px 22px; border-radius: 10px; cursor: pointer;
+    font-size: .88rem; font-weight: 700; transition: .18s;
+    font-family: 'Syne', sans-serif;
+  }
+  .btn-secondary:hover { background: rgba(124,58,237,.1); border-color: var(--purple2); }
+
+  /* RESULTS */
+  #results { display: none; max-width: 700px; margin: 0 auto; padding: 52px 24px 80px; }
+  .results-header { text-align: center; margin-bottom: 44px; }
+  .results-score-ring {
+    width: 140px; height: 140px; border-radius: 50%;
+    margin: 0 auto 24px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+  }
+  .results-score-ring.pass { background: rgba(34,197,94,.1); border: 3px solid var(--green); }
+  .results-score-ring.fail { background: rgba(239,68,68,.1); border: 3px solid var(--red); }
+  .results-score-ring.partial { background: rgba(124,58,237,.12); border: 3px solid var(--purple); }
+  .score-pct { font-size: 2.8rem; font-weight: 800; line-height: 1; }
+  .score-pct.pass { color: #4ade80; }
+  .score-pct.fail { color: #f87171; }
+  .score-pct.partial { color: var(--purple2); }
+  .score-label { font-size: .68rem; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); margin-top: 4px; }
+  .results-title { font-size: 2rem; font-weight: 800; color: var(--cream); margin-bottom: 8px; letter-spacing: -.01em; }
+  .results-meta { font-size: .88rem; color: var(--muted); }
+
+  .results-stats { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin: 30px 0; }
+  .stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 18px; text-align: center; }
+  .stat-val { font-size: 2.2rem; font-weight: 800; }
+  .stat-val.green { color: #4ade80; }
+  .stat-val.red { color: #f87171; }
+  .stat-val.purple { color: var(--purple2); }
+  .stat-lbl { font-size: .7rem; color: var(--muted); margin-top: 4px; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; }
+
+  .review-section { margin-top: 36px; }
+  .review-title { font-size: 1.1rem; font-weight: 800; color: var(--cream); margin-bottom: 16px; letter-spacing: .04em; }
+  .review-item {
+    background: var(--bg2); border-radius: 10px; padding: 16px 20px;
+    margin-bottom: 10px; border-left: 3px solid transparent;
+    font-size: .86rem; line-height: 1.6; font-family: 'Lora', serif;
+  }
+  .review-item.correct { border-left-color: var(--green); }
+  .review-item.wrong { border-left-color: var(--red); }
+  .review-item-q { color: var(--cream); margin-bottom: 6px; font-weight: 500; }
+  .review-item-ans { font-size: .8rem; margin-top: 4px; color: var(--cream2); }
+  .review-item-ans .my { color: #f87171; font-weight: 600; }
+  .review-item-ans .ok { color: #4ade80; font-weight: 600; }
+  .review-item-retro { font-size: .77rem; color: var(--muted); margin-top: 4px; font-style: italic; }
+  .results-actions { display: flex; gap: 14px; justify-content: center; margin-top: 36px; flex-wrap: wrap; }
+
+  @keyframes fadeUp { from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);} }
+  .fade-in { animation: fadeUp .3s ease; }
+  @media(max-width:540px) { .home-hero h1{font-size:2.8rem;} .q-card{padding:22px 16px;} .results-stats{grid-template-columns:1fr 1fr;} .hero-stats{gap:20px;} }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="header-tag">M4</div>
+    <div>
+      <div class="header-title">Simulacros</div>
+      <div class="header-sub">Dificultades del aprendizaje</div>
+    </div>
+  </div>
+  <div class="header-badge">5 × 30 preguntas</div>
+</div>
+
+<!-- HOME -->
+<div id="home">
+  <div class="home-hero">
+    <div class="hero-label">Módulo 4 · Banco de preguntas</div>
+    <h1>Banco de<br><span class="accent">Simulacros</span></h1>
+    <p>Selecciona un simulacro para comenzar tu práctica. Cada uno contiene 30 preguntas con retroalimentación inmediata.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="val">5</div><div class="lbl">Simulacros</div></div>
+      <div class="hero-stat"><div class="val">30</div><div class="lbl">Preguntas c/u</div></div>
+      <div class="hero-stat"><div class="val">150</div><div class="lbl">Total preguntas</div></div>
+    </div>
+  </div>
+  <div class="sim-grid" id="simGrid"></div>
+</div>
+
+<!-- QUIZ -->
+<div id="quiz">
+  <div class="quiz-nav">
+    <button class="btn-back" onclick="goHome()">← Inicio</button>
+    <div class="quiz-title" id="quizTitle"></div>
+  </div>
+  <div class="progress-wrap">
+    <div class="progress-meta"><span id="progressText"></span><span id="scoreText"></span></div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </div>
+  <div id="qWrap"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="results">
+  <div class="results-header">
+    <div class="results-score-ring" id="scoreRing">
+      <div class="score-pct" id="scorePct"></div>
+      <div class="score-label">puntuación</div>
+    </div>
+    <div class="results-title" id="resultsTitle"></div>
+    <div class="results-meta" id="resultsMeta"></div>
+  </div>
+  <div class="results-stats">
+    <div class="stat-box"><div class="stat-val green" id="statCorr">0</div><div class="stat-lbl">Correctas</div></div>
+    <div class="stat-box"><div class="stat-val red" id="statWrong">0</div><div class="stat-lbl">Incorrectas</div></div>
+    <div class="stat-box"><div class="stat-val purple" id="statPct">0%</div><div class="stat-lbl">Porcentaje</div></div>
+  </div>
+  <div class="review-section">
+    <div class="review-title">📋 Revisión detallada</div>
+    <div id="reviewList"></div>
+  </div>
+  <div class="results-actions">
+    <button class="btn-secondary" onclick="retryQuiz()">🔁 Repetir simulacro</button>
+    <button class="btn-primary" onclick="goHome()">← Volver al inicio</button>
+  </div>
+</div>
+
+<script>
+const SIMS = [
+  [
+    {id:64,p:'¿Cuáles son los criterios diagnósticos para el trastorno de la lectura según el DSM 5?',a:'Alteraciones de origen orgánico como causa de las dificultades.',b:'Interferencia significativa en el rendimiento académico.',c:'Dificultades asociadas a un déficit sensorial.',d:'Rendimiento en lectura por encima de lo esperado para la edad.',ok:'B',r:'Correcta: B. Interferencia significativa en el rendimiento académico.. Evidencia: “…tancialmente y de forma cuantificable, por debajo de las esperadas para su edad cronológica, causando una significativa interferencia con” (M4, p. 15)',ref:'(M4, p. 15)'},
+    {id:134,p:'¿Cuál es una medida común de intervención remedial para las dificultades de aprendizaje?',a:'Adaptaciones curriculares no significativas.',b:'Refuerzos educativos.',c:'Programa de acompañamiento.',d:'Actividades en las aulas de libre disposición.',ok:'B',r:'Correcta: B. Refuerzos educativos.. Evidencia: “…de acompañamiento. Desdobles en áreas instrumentales. Agrupamientos flexibles. Apoyos en el aula en grupos ordinarios. Refuerzos educativos. Actividades en las aulas de libre disposición. Adaptaciones curriculares no significativas. Planes específicos persona…” (M4, p. 111)',ref:'(M4, p. 111)'},
+    {id:110,p:'¿Qué aspectos se evalúan en la fase 2 de la evaluación psicopedagógica?',a:'Cambios de centro, historia de éxitos, relaciones con profesores, forma de presentar las tareas.',b:'Desarrollo evolutivo, historia familiar, historia escolar, contexto escolar.',c:'Relaciones con iguales, cambios de domicilio, actitudes ante la escuela, tareas y actividades.',d:'Relaciones familiares, problemas de salud, medidas educativas, clima social.',ok:'B',r:'Correcta: B. Desarrollo evolutivo, historia familiar, historia escolar, contexto escolar.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183R] Detección e intervención en diﬁcultades de aprendizaje. 2. Evaluación en in…” (M4, p. 96)',ref:'(M4, p. 96)'},
+    {id:135,p:'¿Qué aspecto es importante tener en cuenta antes de desarrollar una intervención en los procesos de comprensión lectora?',a:'Los mecanismos responsables del déficit en la lectura.',b:'La individualización de los procesos de intervención.',c:'El diagnóstico previo.',d:'Los materiales disponibles.',ok:'C',r:'Correcta: C. El diagnóstico previo.. Evidencia: “…ura. En este sentido, sí que podemos establecer normas generales en función del tipo de afectación que nos haya marcado el diagnóstico previo: En personas donde la afectación en el proceso de lectura tenga origen evolutivo, debemos averiguar el mecanismo o meca…” (M4, p. 112)',ref:'(M4, p. 112)'},
+    {id:76,p:'¿Cuál es la característica principal de los Trastornos del cálculo?',a:'Manifestación en segundo de primaria.',b:'Asociación con el Síndrome de Gerstman.',c:'Acompañamiento de alteraciones emocionales.',d:'Alteración de la capacidad viso-espacial.',ok:'A',r:'Correcta: A. Manifestación en segundo de primaria.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183M] Diﬁcultades de Aprendizaje. 5. Trastornos Especíﬁcos del Aprendizaje ueca.e…” (M4, p. 65)',ref:'(M4, p. 65)'},
+    {id:62,p:'¿Cuál es la prevalencia total de los trastornos del neurodesarrollo en la población escolarizada?',a:'1-2%',b:'2-8%',c:'10-15%',d:'20-25%',ok:'B',r:'Correcta: B. 2-8%. Evidencia: “…bandono escolar (40% de los casos) y fracaso escolar. La prevalencia total de este tipo de trastornos se sitúa entre el 2-8% de la población escolarizada. DSM IV TR TRASTORNOS DE INICIO EN LA INFANCIA Y LA ADOLESCENCIA DSM 5 TRASTORNOS DEL NEUR…” (M4, p. 65)',ref:'(M4, p. 65)'},
+    {id:131,p:'¿Cuál es el tiempo de duración aproximado del Test de Token?',a:'30 minutos.',b:'Depende de la edad de los niños y de las pruebas que haya que realizar.',c:'48 minutos.',d:'Individual o colectiva.',ok:'A',r:'Correcta: A. 30 minutos.. Evidencia: “…s depende de la edad del sujeto y de la situación misma del examen. Como regla general, no se recomienda sobrepasar los 30 minutos con niños menores de 7 años; alrededor de los 45 minutos con niños de 7 a 13 años y una hora con niños de más de 13 año…” (M4, p. 14)',ref:'(M4, p. 14)'},
+    {id:40,p:'¿Qué evalúa la dimensión de Conciencia en el cuestionario BFQ-NA?',a:'Sociabilidad y actividad.',b:'Autonomía y orden.',c:'Tendencia al apoyo y a la prosocialidad.',d:'Tendencia al malestar y neuroticismo.',ok:'B',r:'Correcta: B. Autonomía y orden.. Evidencia: “…úa el cuestionario El cuestionario BFQ-NA mide cinco dimensiones principales que son las siguientes: Conciencia: evalúa autonomía, orden, precisión, perseverancia y el cumplimiento de normas y compromisos. Apertura: incluye elementos de aspectos int…” (M4, p. 49)',ref:'(M4, p. 49)'},
+    {id:41,p:'¿Qué evalúa el cuestionario Autoconcepto Forma A (AFA)?',a:'Percepción del entorno escolar.',b:'Percepción del entorno laboral.',c:'Percepción del entorno social.',d:'Percepción del entorno familiar.',ok:'C',r:'Correcta: C. Percepción del entorno social.. Evidencia: “…ión: 15 minutos aproximadamente. Edad de aplicación: de 12 a 18 años. Fundamentación teórica: El cuestionario evalúa la percepción que el individuo tiene de sí mismo en los aspectos familiar, escolar, emocional y en el de relaciones sociales. Consta…” (M4, p. 50)',ref:'(M4, p. 50)'},
+    {id:39,p:'Según el Cuestionario de personalidad de Eysenck (EPI), ¿cuáles son las principales características de la típica persona extrovertida?',a:'Impulsivo.',b:'Tranquilo.',c:'Serio.',d:'Introspectivo.',ok:'A',r:'Correcta: A. Impulsivo.. Evidencia: “…los niños o niñas que puntúan bajo se despreocupan de las normas, no aceptan obligaciones, son espontáneos, animados e impulsivos. Los que tienen puntuaciones elevadas son responsables, organizados, escrupulosos en su manera de actuar, se rigen por…” (M4, p. 46)',ref:'(M4, p. 46)'},
+    {id:66,p:'¿Cuál es la prevalencia de los trastornos de lectura en niños escolarizados?',a:'15%',b:'0.05',c:'10%',d:'20%',ok:'B',r:'Correcta: B. 0.05. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183M] Diﬁcultades de Aprendizaje. 5. Trastornos Especíﬁcos del Aprendizaje ueca.e…” (M4, p. 66)',ref:'(M4, p. 66)'},
+    {id:86,p:'¿Cuál es el factor etiológico dominante en la Discapacidad Intelectual Límite?',a:'Alteraciones neurológicas.',b:'Factores ambientales.',c:'Condiciones sociales.',d:'Alteraciones genéticas.',ok:'D',r:'Correcta: D. Alteraciones genéticas.. Evidencia: “…unda de la Discapacidad Intelectual pueden identificarse etiologías biomédicas conocidas, entre las que se incluyen las alteraciones genéticas. Más de 200 síndromes biológicos reconocidos que implican DIL, suponen la desorganización de, virtualmente, todos los s…” (M4, p. 78)',ref:'(M4, p. 78)'},
+    {id:1,p:'¿Qué implica el diagnóstico en dificultades del aprendizaje?',a:'Interpretación de resultados.',b:'Observación de habilidades.',c:'Diseño de intervención.',d:'Recopilación de información.',ok:'A',r:'Correcta: A. Interpretación de resultados.. Evidencia: “…. De esta prueba se utilizaron las sub-pruebas 1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 y 15 (Véase Tabla 2). Para la interpretación de resultados se utilizaron las "Páginas Resumen" que recogen los percentiles correspondientes a las puntuaciones de cada sub-prueba…” (M4, p. 227)',ref:'(M4, p. 227)'},
+    {id:142,p:'¿Por qué los alumnos suelen olvidar las palabras que han copiado?',a:'Por falta de interés.',b:'Por falta de memoria.',c:'Por falta de comprensión.',d:'Por falta de atención.',ok:'A',r:'Correcta: A. Por falta de interés.. Evidencia: “…ucativas familiares inadecuadas: algunas de las más comunes son las siguientes: Excesiva permisividad que condiciona la falta de hábitos y disciplina de trabajo en los niños. Insuficiente interés por el desarrollo escolar del/la hijo/a (en ocasi…” (M4, p. 59)',ref:'(M4, p. 59)'},
+    {id:96,p:'¿Cuál es el objetivo de la segunda fase en el proceso de detección e intervención en dificultades de aprendizaje?',a:'Evaluar el resultado final obtenido.',b:'Diseñar el programa que se va a llevar a cabo.',c:'Medir los resultados obtenidos.',d:'Realizar la evaluación de necesidades.',ok:'B',r:'Correcta: B. Diseñar el programa que se va a llevar a cabo.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183Y] Intervención en diﬁcultades de aprendizaje. 1. Intervención ante diﬁcultade…” (M4, p. 112)',ref:'(M4, p. 112)'},
+    {id:33,p:'¿Qué evalúa el Test de Aptitudes Mentales Primarias (PMA) en relación a las palabras?',a:'Cálculo numérico.',b:'Razonamiento general.',c:'Comprensión verbal.',d:'Razonamiento espacial.',ok:'C',r:'Correcta: C. Comprensión verbal.. Evidencia: “…omotora, la rapidez y la capacidad de planeamiento y previsión. Factores que componen el WISC: El primer factor mide la comprensión verbal, los conocimientos adquiridos con la educación y la capacidad para aplicar la habilidad verbal a situaciones nuevas. Su…” (M4, p. 28)',ref:'(M4, p. 28)'},
+    {id:132,p:'¿En qué deben basarse las propuestas de intervención de las dificultades de aprendizaje?',a:'En la imaginación.',b:'En la intuición.',c:'En la realidad.',d:'En los recursos educativos.',ok:'D',r:'Correcta: D. En los recursos educativos.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183H] Diﬁcultades de Aprendizaje. 1. Deﬁnición y tipos de diﬁcultades de aprendiz…” (M4, p. 53)',ref:'(M4, p. 53)'},
+    {id:19,p:'¿Qué evalúa el subtest de Aritmética de la Escala de Inteligencia para niños de Wechsler (WISC)?',a:'Capacidad de abstracción verbal.',b:'Memoria auditiva inmediata.',c:'Habilidad para seleccionar y verbalizar relaciones entre conceptos.',d:'Uso de conceptos numéricos abstractos.',ok:'D',r:'Correcta: D. Uso de conceptos numéricos abstractos.. Evidencia: “…mbiente en el que se desenvuelve). Semejanzas: mide la habilidad para seleccionar y verbalizar las relaciones entre dos conceptos, el pensamiento asociativo y la capacidad de abstracción verbal. Aritmética: evalúa la habilidad para utilizar concepto…” (M4, p. 27)',ref:'(M4, p. 27)'},
+    {id:84,p:'¿Cuál es la característica crónica de la Discapacidad Intelectual Límite?',a:'Ritmo de desarrollo rápido.',b:'Independencia para cuidar de sí mismos.',c:'Remisión total del problema.',d:'Notables avances pero no remisión total del problema.',ok:'D',r:'Correcta: D. Notables avances pero no remisión total del problema.. Evidencia: “…ptación; y lo hace con un carácter crónico, es decir, que mediante la experiencia y estimulación ambiental se consiguen notables avances pero no la remisión total del problema. Las personas con DIL suelen llegar a ser independientes para cuidar de…” (M4, p. 76)',ref:'(M4, p. 76)'},
+    {id:31,p:'¿Cuál es el enfoque teórico del Test de Aptitudes Escolares (TEA) para evaluar la inteligencia?',a:'Habilidades sociales.',b:'Capacidad de memoria.',c:'Aptitud del sujeto para aprender.',d:'Creatividad.',ok:'C',r:'Correcta: C. Aptitud del sujeto para aprender.. Evidencia: “…ión teórica: Se trata de un instrumento para evaluar la inteligencia desde el enfoque clásico que entiende ésta como la aptitud del sujeto para aprender. Se divide en 3 niveles (TEA1, TEA2 y TEA3) que evalúan de forma conjunta el rendimiento en tareas escolares y la medid…” (M4, p. 40)',ref:'(M4, p. 40)'},
+    {id:120,p:'¿Cuáles son las consecuencias a largo plazo de las dificultades de aprendizaje para el alumnado?',a:'Abandono escolar.',b:'Incorporación a la educación superior.',c:'Mayor motivación por el aprendizaje.',d:'Mejora en el rendimiento académico.',ok:'A',r:'Correcta: A. Abandono escolar.. Evidencia: “…mente con problemas emocionales y sociales como la disminución de la autoestima, el déficit en habilidades sociales, el abandono escolar (40% de los casos) y fracaso escolar. La prevalencia total de este tipo de trastornos se sitúa entre el 2-8% de la pobl…” (M4, p. 65)',ref:'(M4, p. 65)'},
+    {id:133,p:'¿Cuál es una estrategia eficaz para la prevención de dificultades de aprendizaje?',a:'Mejora de la convivencia en la comunidad educativa.',b:'Análisis de tareas.',c:'Apoyo a la coordinación con las familias.',d:'Formación de grupos segregados.',ok:'B',r:'Correcta: B. Análisis de tareas.. Evidencia: “…pretenden evitar que se produzcan las dificultades de aprendizaje. Para ello, una de las estrategias más eficaces es el análisis de las tareas.” (M4, p. 109)',ref:'(M4, p. 109)'},
+    {id:73,p:'¿Cuál es la edad de aplicación del Test de matrices de Raven en color?',a:'11 años en adelante.',b:'5,6-11 años.',c:'No especificado.',d:'Mayores de 12 años.',ok:'B',r:'Correcta: B. 5,6-11 años.. Evidencia: “…tegrada por 12 subtest distribuidos en dos escalas una verbal y otra manipulativa. La edad de aplicación es de 6 a 6,11 años y tras su corrección se pueden obtener información sobre un factor general de inteligencia y sobre factores más específ…” (M4, p. 70)',ref:'(M4, p. 70)'},
+    {id:124,p:'¿En qué se basa la Escala de observación de hábitos y modos de trabajo?',a:'Escala de observación del aprendizaje.',b:'Escala de observación de Likert.',c:'Evaluación psicopedagógica.',d:'Puntuación superior a 30 puntos.',ok:'B',r:'Correcta: B. Escala de observación de Likert.. Evidencia: “…de l(...) ueca.euroinnova.com 2 / 6 Escala de observación de hábitos y modos de trabajo: Esta escala está basada en la escala de observación de Likert. Se considera una puntuación significativa cuando se obtiene más de 30 puntos. Escala de observación del aprendizaje: A…” (M4, p. 104)',ref:'(M4, p. 104)'},
+    {id:129,p:'¿Cuál es el tiempo de duración aproximado de la prueba de Vocabulario en Imágenes (TEVI)?',a:'10 minutos.',b:'30 minutos.',c:'15 minutos.',d:'20 minutos.',ok:'D',r:'Correcta: D. 20 minutos.. Evidencia: “…esos cognitivos, lenguaje y habilidades psicolíngüísticas. Administración de la prueba: individual. Tiempo de duración: 20 minutos aproximadamente, dependiendo de la edad. TEST DE VOCABULARIO EN IMÁGENES (TEVI): Objetivo: evaluar el nivel de comprens…” (M4, p. 107)',ref:'(M4, p. 107)'},
+    {id:137,p:'¿Cuál es el primer paso del Programa de Entrenamiento Multisensorial para la asociación de letras?',a:'Se presenta la letra y el niño dice su sonido.',b:'El profesor escribe la letra.',c:'Se presenta una letra y el profesor dice su nombre.',d:'El niño dice el sonido de la letra.',ok:'C',r:'Correcta: C. Se presenta una letra y el profesor dice su nombre.. Evidencia: “…ientras escribe la letra. Asociación 4. El profesor dicta el nombre de la letra y el niño la escribe. Asociación 5 . Se presenta la letra y el niño dice su sonido. Asociación 6. El profesor dice el nombre de la letra y el niño dice el sonido. Asoci…” (M4, p. 114)',ref:'(M4, p. 114)'},
+    {id:4,p:'¿Cuál es la primera fase del proceso de evaluación de las dificultades de aprendizaje?',a:'Obtención de información correspondiente.',b:'Planificación de la secuencia de procedimientos.',c:'Solicitud de intervención y evaluación de la situación inicial.',d:'Uso de instrumentos de evaluación.',ok:'C',r:'Correcta: C. Solicitud de intervención y evaluación de la situación inicial.. Evidencia: “…s fases a seguir para el proceso de evaluación, de forma general, son las que se explican a continuación. Primera fase: solicitud de intervención y evaluación de la situación inicial: El proceso evaluador comienza con la solicitud de intervención y evaluación de la situación ini” (M4, p. 7)',ref:'(M4, p. 7)'},
+    {id:54,p:'¿Qué aspecto puede mitologizar determinados conocimientos según el texto?',a:'Sistema de creencias y actitudes.',b:'Falta de recursos humanos.',c:'Inadecuación curricular.',d:'Falta de motivación.',ok:'A',r:'Correcta: A. Sistema de creencias y actitudes.. Evidencia: “…ﬁcultades del Aprendizaje [UDI15183K] Diﬁcultades de Aprendizaje. 3. Problemas Escolares (PE) ueca.euroinnova.com 3 / 3 Sistema de creencias y actitudes que al tiempo que mitologiza determinados conocimientos (por ejemplo, hay que ser más inteligente para aprender matemát…” (M4, p. 60)',ref:'(M4, p. 60)'},
+    {id:128,p:'¿Cuál es el objetivo de la prueba de Funciones Básicas?',a:'Evaluar el nivel de comprensión de vocabulario pasivo.',b:'Evaluar el desempeño escolar básico en el proceso de aprendizaje lector.',c:'Evaluar algunas funciones psicológicas básicas relacionadas con el aprendizaje escolar.',d:'Determinar el funcionamiento de áreas de rendimiento psicolingüístico.',ok:'C',r:'Correcta: C. Evaluar algunas funciones psicológicas básicas relacionadas con el aprendizaje escolar.. Evidencia: “…rendizaje. 6. Instrumentos para la detección de l(...) ueca.euroinnova.com 6 / 6 PRUEBA DE FUNCIONES BÁSICAS: Objetivo: evaluar algunas funciones psicológicas básicas relacionadas con el aprendizaje escolar. Esta prueba proporciona un diagnóstico precoz de habilidades para la le” (M4, p. 108)',ref:'(M4, p. 108)'},
+    {id:93,p:'¿Cuál es uno de los elementos imprescindibles que señalan la mayoría de autores que defienden el modelo de programas?',a:'Identificación de necesidades.',b:'Desarrollo continuado.',c:'Evaluación previa.',d:'Colaboración abierta.',ok:'A',r:'Correcta: A. Identificación de necesidades.. Evidencia: “…que defienden el modelo de programas señalan los siguientes elementos imprescindibles: Todo programa debe basarse en la identificación de unas necesidades específicas. Todo programa debe dirigirse al logro de unos objetivos para cubrir las necesidades de…” (M4, p. 82)',ref:'(M4, p. 82)'},
+  ],
+  [
+    {id:61,p:'¿Cuál es la característica principal de los niños con trastornos del aprendizaje?',a:'Derivado de otros cuadros clínicos.',b:'Potencial intelectual inadecuado.',c:'Dificultades en todas las áreas de aprendizaje escolar.',d:'Progresan como se esperaría.',ok:'C',r:'Correcta: C. Dificultades en todas las áreas de aprendizaje escolar.. Evidencia: “…precisos. En general, los niños con trastornos del aprendizaje reúnen las siguientes características: Pueden presentar dificultades en todas las áreas de aprendizaje escolar pero la mayoría lo hacen en las destrezas básicas como la lectura, escritura y cálculo. A pesar de tener ” (M4, p. 64)',ref:'(M4, p. 64)'},
+    {id:68,p:'Según el modelo neuropsicológico, ¿cuál es uno de los subtipos de dislexia propuestos?',a:'Dislexia fonológica.',b:'Dislexia auditiva.',c:'Dislexia mixta.',d:'Dislexia visual.',ok:'C',r:'Correcta: C. Dislexia mixta.. Evidencia: “…ras y palabras de sonido similar. La comprensión lectora es deficiente y es más frecuente en niños de entre 10-12 años. Dislexia mixta: presenta una comprensión lectora nula, dificultades para escribir al dictado y para escribir palabras de significado s…” (M4, p. 68)',ref:'(M4, p. 68)'},
+    {id:43,p:'¿Cuál es un ejemplo de trastorno intrínseco al alumno dentro de las dificultades de aprendizaje?',a:'Trastorno por Déficit de Atención con o sin Hiperactividad (TDAH)',b:'Problemas Escolares (PE)',c:'Discapacidad Intelectual Límite (DIL)',d:'Bajo Rendimiento Escolar (BRE)',ok:'C',r:'Correcta: C. Discapacidad Intelectual Límite (DIL). Evidencia: “…249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183P] Diﬁcultades de Aprendizaje. 7. Discapacidad Intelectual Límite (DIL) ueca.euroinnova.com 1 / 3 Dificultades de Aprendizaje. 7. Discapacidad Intelectual Límite (DIL) Tipo de problema La Di…” (M4, p. 76)',ref:'(M4, p. 76)'},
+    {id:147,p:'¿Qué estrategia se recomienda para ayudar a un estudiante con dificultades en el aprendizaje del lenguaje escrito a comprender las tareas?',a:'No prestar atención a si el estudiante comprende las tareas.',b:'Repetir las tareas una sola vez.',c:'Dejar que el estudiante realice las tareas sin ayuda.',d:'Dividir las tareas en partes y comprobar que las comprende.',ok:'D',r:'Correcta: D. Dividir las tareas en partes y comprobar que las comprende.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183M] Diﬁcultades de Aprendizaje. 5. Trastornos Especíﬁcos del Aprendizaje ueca.e…” (M4, p. 65)',ref:'(M4, p. 65)'},
+    {id:138,p:'¿Cuáles son algunas técnicas para mejorar la comprensión lectora?',a:'Resolución de ecuaciones.',b:'Cocinar una receta.',c:'Subrayado.',d:'Aumento del tamaño de los signos.',ok:'D',r:'Correcta: D. Aumento del tamaño de los signos.. Evidencia: “…ura monótona. Técnicas para conseguir se basan en la utilización de claves que faciliten su visibilidad. Uso de colores Aumento del tamaño de los signos Apoyos a través de golpeteos encima de la mesa” (M4, p. 115)',ref:'(M4, p. 115)'},
+    {id:111,p:'¿Qué se evalúa en las capacidades cognitivas durante la fase de conclusiones?',a:'Control de la ansiedad.',b:'Autoconcepto.',c:'Flexibilidad motriz.',d:'Comprensión oral y escrita.',ok:'D',r:'Correcta: D. Comprensión oral y escrita.. Evidencia: “…guientes especificaciones: Limitaciones en la lectura: Precisión en la lectura de palabras, fluidez o tasa de lectura y comprensión lectora. Se puede utilizar "dislexia" como un término alternativo para referirse a un patrón de lectura con dificultade…” (M4, p. 16)',ref:'(M4, p. 16)'},
+    {id:119,p:'¿Cuáles son las consecuencias de las dificultades de aprendizaje a corto plazo?',a:'Aislamiento del grupo.',b:'Desánimo visible.',c:'Buenas calificaciones.',d:'Falta de coordinación.',ok:'A',r:'Correcta: A. Aislamiento del grupo.. Evidencia: “…ompañeros. Se ve afectada la autoestima y las reacciones normalmente suelen ser de dos tipos: Hacia la introversión: el aislamiento del grupo cada vez es mayor, lo que hace que las dificultades vayan aumentando. Es la opción más invisible para afrontar el probl…” (M4, p. 101)',ref:'(M4, p. 101)'},
+    {id:87,p:'¿Por qué es importante seguir un modelo como referente en la actividad profesional?',a:'Para restringir las opciones de intervención.',b:'Para limitar la creatividad en la intervención.',c:'Para evitar la detección de dificultades de aprendizaje.',d:'Para estandarizar la práctica profesional.',ok:'D',r:'Correcta: D. Para estandarizar la práctica profesional.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183Q] Detección e intervención en diﬁcultades de aprendizaje. 1. Modelos teóricos…” (M4, p. 79)',ref:'(M4, p. 79)'},
+    {id:117,p:'¿Cuántos aspectos deben darse simultáneamente para considerar que estamos ante un caso de Dificultades de Aprendizaje?',a:'1',b:'2',c:'4',d:'3',ok:'D',r:'Correcta: D. 3. Evidencia: “…s del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI151833] Evaluación diagnóstica de las diﬁcultades de aprendizaje. 13. Evaluación del potencial de apre(...) ueca.euroinnova.c…” (M4, p. 34)',ref:'(M4, p. 34)'},
+    {id:67,p:'¿Cuál es el curso de los trastornos de lectura si se implementan intervenciones adecuadas?',a:'Persisten durante toda la vida.',b:'Varía en función de las intervenciones.',c:'Se resuelven por sí solos.',d:'Tienen un mal pronóstico.',ok:'B',r:'Correcta: B. Varía en función de las intervenciones.. Evidencia: “…adecido el trastorno. Curso Normalmente, los trastornos de lectura se suelen diagnosticas antes de los 7 años. Su curso varía en función de las intervenciones que se lleven a cabo, de manera que tendría un buen pronóstico si se implementan intervenciones adecuadas o podría pers…” (M4, p. 67)',ref:'(M4, p. 67)'},
+    {id:82,p:'¿El TDAH puede ocurrir conjuntamente con otros trastornos?',a:'Sí, pero solo con trastornos emocionales graves.',b:'No, nunca se presenta con otros trastornos.',c:'Sí, solo con deficiencia sensorial.',d:'No, siempre es un trastorno aislado.',ok:'A',r:'Correcta: A. Sí, pero solo con trastornos emocionales graves.. Evidencia: “…prendizaje y la adaptación escolar de los niños. Las Dificultades en el Aprendizaje pueden darse a lo largo de la vida, pero se suelen presentar en mayor medida antes de la adolescencia y durante los procesos educativos intencionales de enseñan…” (M4, p. 53)',ref:'(M4, p. 53)'},
+    {id:102,p:'¿En qué consiste la consulta colaborativa en la intervención de dificultades de aprendizaje?',a:'Implicación directa del orientador.',b:'Participación pasiva del orientador.',c:'Intervención individual.',d:'Exclusiva participación de los padres.',ok:'A',r:'Correcta: A. Implicación directa del orientador.. Evidencia: “…convierte en el dinamizador de la acción orientadora de todo el profesorado, facilitando las competencias adecuadas, la implicación y la formación necesaria a los distintos agentes educativos. A partir de un plano de igualdad y de la voluntad de parti…” (M4, p. 86)',ref:'(M4, p. 86)'},
+    {id:92,p:'¿Cuál es el objetivo principal del counseling en el modelo de intervención en dificultades de aprendizaje?',a:'Potenciar el autoconcepto.',b:'Ayudar a tomar decisiones personales.',c:'Establecer planes de actuación.',d:'Evaluar el efecto de la intervención.',ok:'B',r:'Correcta: B. Ayudar a tomar decisiones personales.. Evidencia: “…a dirección que debe seguir para solucionar su problema. Esto se debe a que el counseling tiene como objetivo principal ayudar a tomar decisiones personales. Se potencia el autoconcepto, la autoaceptación y la autoestima. Seguimiento y evaluación de los cambios. Se llevan a c…” (M4, p. 81)',ref:'(M4, p. 81)'},
+    {id:17,p:'¿Qué aspecto evalúa el Test de dibujo de la figura humana Goodenough?',a:'Congruencia.',b:'Transparencia.',c:'Plasticidad.',d:'Coordinación viso motora.',ok:'C',r:'Correcta: C. Plasticidad.. Evidencia: “…ndas de vestir o los cabellos ¿son opacos o transparentes? Congruencia: si existe unión de los miembros al tronco o no. Plasticidad: el pulgar está en oposición, la mano se diferencia del brazo y de los dedos, la orejas están correctamente ubicadas, e…” (M4, p. 25)',ref:'(M4, p. 25)'},
+    {id:105,p:'¿Qué se requiere para realizar una evaluación en dificultades del aprendizaje?',a:'Formulación de la demanda.',b:'Rendimiento académico sobresaliente.',c:'Redacción de un informe final.',d:'Evaluación de la institución educativa.',ok:'A',r:'Correcta: A. Formulación de la demanda.. Evidencia: “…cidades, así como también para el desarrollo de la institución. Para que se pueda hacer una evaluación debe existir una formulación de la demanda, en los términos que en cada caso se establezcan; y el proceso concluye con la redacción de un informe y unas orientaci…” (M4, p. 88)',ref:'(M4, p. 88)'},
+    {id:89,p:'¿Qué aspecto da más importancia el modelo clínico de counseling?',a:'Elementos emocionales.',b:'Elementos intelectuales.',c:'Relación terapéutica.',d:'Situación pasada.',ok:'A',r:'Correcta: A. Elementos emocionales.. Evidencia: “…al como señala Barreto et. al. (1997) "no es hacer algo a alguien sino algo con alguien". Concede más importancia a los elementos emocionales que a los intelectuales. Da más importancia a la situación presente que a la pasada. Se destaca, por primera vez, que l…” (M4, p. 80)',ref:'(M4, p. 80)'},
+    {id:50,p:'¿Qué característica define a los Problemas Escolares como Tipo I de las Dificultades de aprendizaje?',a:'Variables personales del alumno afectadas.',b:'Necesidad de intervención especializada.',c:'No ser graves.',d:'Prolongarse en el tiempo.',ok:'C',r:'Correcta: C. No ser graves.. Evidencia: “…eriormente, los Problemas Escolares son el Tipo I de las Dificultades de aprendizaje, es decir, que se caracterizan por no ser graves, por no manifestar variables personales del alumno afectadas y por no prolongarse en el tiempo; ya que suelen remitir e…” (M4, p. 58)',ref:'(M4, p. 58)'},
+    {id:146,p:'¿Cuál es uno de los ejercicios de estructuración de los componentes gramaticales que se recomienda para intervenir en dificultades del aprendizaje del lenguaje escrito?',a:'Nombre + de + nombre.',b:'Verbo ir o estar + preposición + nombre.',c:'Pronombre + verbo.',d:'Nombre + verbo estar + adjetivo.',ok:'D',r:'Correcta: D. Nombre + verbo estar + adjetivo.. Evidencia: “…as siguientes clases de estructuras. Nombre sin articulo +verbo (Ana canta). Artículo + Nombre + Verbo (la niña juega). Nombre + verbo estar + adjetivo (Pedro está alegre). Nombre + verbo estar + gerundio (Papá esta comiendo). (+ Verbo + (Artículo) nombre + adjetivo (El…” (M4, p. 125)',ref:'(M4, p. 125)'},
+    {id:99,p:'¿En qué consiste la función del consultor en el campo educativo?',a:'Ayudar al consultante a afrontar situaciones problemáticas.',b:'Ayudar al alumno a través del profesor.',c:'Proporcionar competencias para resolver problemas.',d:'Actuar como agente de cambio en las organizaciones.',ok:'B',r:'Correcta: B. Ayudar al alumno a través del profesor.. Evidencia: “…modelo de consulta, se pueden destacar tres campos de intervención: Campo de la salud mental: en este campo se trata de ayudar al consultante a que afronte cada una de las situaciones problemáticas que se le presentan a través de una información…” (M4, p. 85)',ref:'(M4, p. 85)'},
+    {id:65,p:'¿Cuáles son los trastornos específicos del aprendizaje según el DSM 5?',a:'Trastorno de la expresión escrita.',b:'Trastorno del cálculo.',c:'Trastorno del aprendizaje no especificado.',d:'Trastorno de la lectura.',ok:'C',r:'Correcta: C. Trastorno del aprendizaje no especificado.. Evidencia: “…OLLO Trastornos del aprendizaje • Trastorno de la lectura • Trastorno de la expresión escrita • Trastorno del cálculo • Trastorno del aprendizaje no especificado Trastorno específico del aprendizaje Especificar si: • Con dificultades en lectura • Con dificultades en la expresión” (M4, p. 65)',ref:'(M4, p. 65)'},
+    {id:123,p:'¿Cuál es una técnica fundamental para la recogida de información que permite emitir un diagnóstico de dificultades de aprendizaje?',a:'Análisis de laboratorio.',b:'Prueba escrita.',c:'Observación.',d:'Entrevista.',ok:'C',r:'Correcta: C. Observación.. Evidencia: “…es de aprendizaje Para detectar las dificultades de aprendizaje, se pueden utilizar varios medios. Entre ellos, está la observación de ciertos aspectos del alumnado; y además, existen una serie de instrumentos para medir el funcionamiento de las áreas…” (M4, p. 103)',ref:'(M4, p. 103)'},
+    {id:97,p:'¿Cómo se define el modelo de consulta según el texto?',a:'Relación entre un consultor y un consultante.',b:'Relación entre dos profesionales de diferentes campos.',c:'Relación entre un orientador y un psicopedagogo.',d:'Actividades para ayudar a una tercera persona o institución.',ok:'A',r:'Correcta: A. Relación entre un consultor y un consultante.. Evidencia: “…e confundir el modelo de consulta con el modelo de counseling. Cuando hablamos de consulta nos estamos refiriendo a una relación entre profesionales, con status similares que se aceptan y respetan, desempeñando cada uno su papel (consultor/consulta…” (M4, p. 85)',ref:'(M4, p. 85)'},
+    {id:77,p:'¿Cuál es uno de los criterios diagnósticos del Trastorno de la expresión escrita?',a:'Evaluación de las habilidades para escribir en grupo.',b:'Habilidades para escribir por encima de la edad cronológica.',c:'Interferencia significativa en el rendimiento académico.',d:'Déficit sensorial que afecta la capacidad para escribir.',ok:'C',r:'Correcta: C. Interferencia significativa en el rendimiento académico.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183M] Diﬁcultades de Aprendizaje. 5. Trastornos Especíﬁcos del Aprendizaje ueca.e…” (M4, p. 65)',ref:'(M4, p. 65)'},
+    {id:37,p:'¿Qué evalúa la escala de dependencia/independencia del Cuestionario de personalidad para niños (CPQ)?',a:'Tendencia a culparse.',b:'Inhibición en contactos personales.',c:'Necesidad de otros.',d:'Responsabilidad.',ok:'C',r:'Correcta: C. Necesidad de otros.. Evidencia: “…lidad: mide la tendencia al apoyo y a la prosocialidad, el grado de cooperación y la sensibilidad hacia los otros y sus necesidades. Inestabilidad emocional: evalúa la tendencia al malestar y al neuroticismo, los cambios de humor, la tendencia a la…” (M4, p. 49)',ref:'(M4, p. 49)'},
+    {id:116,p:'¿Cuáles son las líneas actuales en la intervención de las dificultades de aprendizaje?',a:'Detección.',b:'Evaluación.',c:'Intervención.',d:'Diagnóstico.',ok:'C',r:'Correcta: C. Intervención.. Evidencia: “…versitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183Y] Intervención en diﬁcultades de aprendizaje. 1. Intervención ante diﬁcultades…” (M4, p. 112)',ref:'(M4, p. 112)'},
+    {id:5,p:'¿Cuál es la primera fase del proceso de evaluación de las dificultades de aprendizaje?',a:'Recopilación de información del alumno.',b:'Establecimiento de objetivos compartidos.',c:'Análisis del punto de partida.',d:'Selección y aplicación de estrategias.',ok:'C',r:'Correcta: C. Análisis del punto de partida.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15182S] Evaluación diagnóstica de las diﬁcultades de aprendizaje. 3. Fases del proc…” (M4, p. 7)',ref:'(M4, p. 7)'},
+    {id:18,p:'¿Qué aspecto evalúa el Test de dibujo de la figura humana Goodenough?',a:'Inteligencia general.',b:'Memoria visual.',c:'Capacidad artística.',d:'Coordinación motora.',ok:'A',r:'Correcta: A. Inteligencia general.. Evidencia: “…14. Duración de la prueba: de 10 a 15 minutos. Fundamentación teórica: Se trata de una técnica utilizada para medir la inteligencia general mediante el análisis de los detalles de la figura humana que aparecen en el dibujo que realizan los niños. La autora de…” (M4, p. 24)',ref:'(M4, p. 24)'},
+    {id:26,p:'¿Cuál es el objetivo de la fase de entrenamiento en la evaluación del potencial de aprendizaje?',a:'Evaluar la enseñanza producida en la fase anterior.',b:'Evaluar la resolución de problemas por parte del niño.',c:'Evaluar la respuesta a la intervención por parte del niño.',d:'Dotar al alumno de habilidades básicas para su desarrollo escolar.',ok:'D',r:'Correcta: D. Dotar al alumno de habilidades básicas para su desarrollo escolar.. Evidencia: “…de aprendizaje. 13. Evaluación del potencial de apre(...) ueca.euroinnova.com 2 / 4 maestro; que tiene la finalidad de dotar al alumno de las habilidades básicas que necesite para su correcto desarrollo escolar. Fase dinámica: otra fase que se…” (M4, p. 35)',ref:'(M4, p. 35)'},
+    {id:70,p:'¿Qué tipo de dislexia se asocia a un déficit en el procesamiento simultáneo por lo que el sujeto no puede hacer una lectura global sino que tiende a deletrear palabras?',a:'Dislexia superficial.',b:'Dislexia profunda.',c:'Dislexia secuencial.',d:'Dislexia simultánea.',ok:'D',r:'Correcta: D. Dislexia simultánea.. Evidencia: “…ria: este autor hace una clasificación de las dislexias en función del tipo de procesamiento afectado. Distingue entre: Dislexia simultánea: se asocia a un déficit en el procesamiento simultáneo por lo que el sujeto no puede hacer una lectura global sino que…” (M4, p. 69)',ref:'(M4, p. 69)'},
+    {id:52,p:'¿Cuáles son las causas de los Problemas Escolares según el texto?',a:'Factores genéticos.',b:'Factores socio-educativos.',c:'Factores intrínsecos.',d:'Factores emocionales.',ok:'B',r:'Correcta: B. Factores socio-educativos.. Evidencia: “…cas para el aprendizaje. Otros, por el contrario, (como PE y BRE) pueden ser extrínsecos al alumno, es decir, debidos a factores socio-educativos y/o instruccionales, que interfirieren la adecuación necesaria del alumno a las exigencias de los procesos de enseñanza…” (M4, p. 53)',ref:'(M4, p. 53)'},
+  ],
+  [
+    {id:3,p:'¿Cuáles son los protagonistas principales en el proceso de enseñanza y aprendizaje escolar?',a:'Alumno y Tarea.',b:'Maestro y Familia.',c:'Entorno social y Cultural.',d:'Alumno y Maestro.',ok:'D',r:'Correcta: D. Alumno y Maestro.. Evidencia: “…anza y aprendizaje escolar en el que se dan las dificultades. En este proceso, los dos protagonistas principales son el alumno y el maestro, los cuales se centran en una tarea (contenidos, problemas, juegos, situaciones, etc.) que el segundo debe…” (M4, p. 6)',ref:'(M4, p. 6)'},
+    {id:53,p:'¿En qué etapa escolar suelen presentarse en mayor medida los Problemas Escolares?',a:'En la ESO.',b:'En la Educación Universitaria.',c:'En la Educación Infantil.',d:'En la Enseñanza Primaria.',ok:'A',r:'Correcta: A. En la ESO.. Evidencia: “…go de toda la vida escolar, aunque se suelen presentar en mayor medida en los últimos cursos de la Enseñanza Primaria y en la ESO. El origen de los problemas escolares suele ser extrínseco al alumno, ya que normalmente se debe a factores socio-educa…” (M4, p. 58)',ref:'(M4, p. 58)'},
+    {id:15,p:'¿Cuál es uno de los instrumentos de evaluación de la inteligencia más utilizados para medir la inteligencia de los niños en etapas de infantil, primaria y secundaria?',a:'Test de dibujo de la figura humana Goodenough.',b:'Escala de inteligencia de Stanford-Binet.',c:'Matrices Progresivas de Raven.',d:'Escala de Inteligencia para niños de Wechsler (WISC)',ok:'C',r:'Correcta: C. Matrices Progresivas de Raven.. Evidencia: “…e Intervención en Diﬁcultades del Aprendizaje [UDI15182Y] Evaluación diagnóstica de las diﬁcultades de aprendizaje. 8. Matrices Progresivas de Raven ueca.euroinnova.com 1 / 2 Evaluación diagnóstica de las dificultades de aprendizaje. 8. Matrices Progresivas de Raven C…” (M4, p. 22)',ref:'(M4, p. 22)'},
+    {id:139,p:'¿Qué estrategia se sugiere para aumentar la comprensión lectora en niños con dificultades?',a:'Formular preguntas al final de la lectura.',b:'Elegir un final para un texto inacabado.',c:'Predecir el contenido de un texto antes de leerlo.',d:'Relacionar una frase con un dibujo.',ok:'B',r:'Correcta: B. Elegir un final para un texto inacabado.. Evidencia: “…s de aprendizaje. 1. Intervención ante diﬁcultades de comprensión l(...) ueca.euroinnova.com 6 / 6 las vaya formulando. Elegir un final para un texto inacabado. Predecir el contenido de un texto atendiendo al título y a los subtítulos. Una vez leído un texto, elegir un título de” (M4, p. 117)',ref:'(M4, p. 117)'},
+    {id:42,p:'¿Qué tipo de dificultad de aprendizaje puede ser extrínseca al alumno?',a:'Discapacidad Intelectual Límite (DIL)',b:'Trastorno por Déficit de Atención con o sin Hiperactividad (TDAH)',c:'Problemas Escolares (PE)',d:'Trastornos Específicos de Aprendizaje (DEA)',ok:'C',r:'Correcta: C. Problemas Escolares (PE). Evidencia: “…249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183K] Diﬁcultades de Aprendizaje. 3. Problemas Escolares (PE) ueca.euroinnova.com 1 / 3 Dificultades de Aprendizaje. 3. Problemas Escolares (PE) Tipo de problema Los problemas esco…” (M4, p. 58)',ref:'(M4, p. 58)'},
+    {id:150,p:'¿Qué estrategia se recomienda para reforzar las bases de las matemáticas periódicamente?',a:'Reforzar las bases de las matemáticas periódicamente.',b:'Usar material lo más concreto posible.',c:'Hacer más atractivo e interactivo el aprendizaje de las matemáticas.',d:'Practicar pequeñas estimaciones.',ok:'A',r:'Correcta: A. Reforzar las bases de las matemáticas periódicamente.. Evidencia: “…egos de ordenador). Practicar mucho cada nueva habilidad o concepto. No dar nunca por aprendida una habilidad numérica. Reforzar las bases de las matemáticas periódicamente.” (M4, p. 128)',ref:'(M4, p. 128)'},
+    {id:75,p:'¿Cuáles son las escalas que componen el Test de análisis lecto-escritura (TALE)?',a:'Escala de exactitud lectora y escala de comprensión lectora.',b:'Escala de lectura y escala de escritura.',c:'Escala de exactitud lectora y escala de velocidad lectora.',d:'Escala de velocidad lectora y escala de escritura.',ok:'B',r:'Correcta: B. Escala de lectura y escala de escritura.. Evidencia: “…lisis lecto-escritura (TALE): diseñado por Cervera y Toro y aplicable hasta los 10 años de edad. Está compuesto por una escala de lectura y una escala de escritura y sus items son de complejidad creciente. EDIL: es una batería que explora las dif…” (M4, p. 71)',ref:'(M4, p. 71)'},
+    {id:83,p:'¿Qué es la Discapacidad Intelectual Límite (DIL)?',a:'Disfunción neurológica.',b:'Retraso en el desarrollo grave.',c:'Alteración sensorial.',d:'Trastorno emocional grave.',ok:'B',r:'Correcta: B. Retraso en el desarrollo grave.. Evidencia: “…Intelectual Límite es el Tipo V de los problemas que se incluyen en las Dificultades en el Aprendizaje. Se trata de un retraso en el desarrollo grave, que afecta a la persona de modo dominante en procesos y funciones psicológicas que son fundamentales para el aprendiza…” (M4, p. 76)',ref:'(M4, p. 76)'},
+    {id:136,p:'¿Cuál es el enfoque de los ejercicios para tratar déficits en los procesos perceptivos en la comprensión lectora?',a:'Actividades de escritura creativa.',b:'Actividades de cálculo matemático.',c:'Actividades de discriminación de dibujos y letras.',d:'Actividades de comprensión oral.',ok:'C',r:'Correcta: C. Actividades de discriminación de dibujos y letras.. Evidencia: “…ervención ante diﬁcultades de comprensión l(...) ueca.euroinnova.com 2 / 6 En este caso los ejercicios deben basarse en actividades de discriminación de dibujos y letras, búsqueda de determinados estímulos, etc. Conviene comenzar con materiales no verbales; figuras, signos, etc.” (M4, p. 113)',ref:'(M4, p. 113)'},
+    {id:79,p:'¿Cuándo suelen manifestarse las dificultades de escritura asociadas a los trastornos específicos del aprendizaje?',a:'Durante el primer curso escolar.',b:'Durante el segundo curso escolar.',c:'Durante el tercer curso escolar.',d:'Durante el cuarto curso escolar.',ok:'B',r:'Correcta: B. Durante el segundo curso escolar.. Evidencia: “…aprendizaje. Aparecen cuando el niño comienza a desarrollar tareas de escritura formales por lo que se suele manifestar durante el segundo curso escolar. Etiología Su etiología aún permanece desconocida aunque se considera que está asociado al trastorno de lectura por lo…” (M4, p. 73)',ref:'(M4, p. 73)'},
+    {id:32,p:'¿Qué evalúa el Test de Aptitudes en Educación Infantil (AEI) en niños de 4 ó 5 años de edad?',a:'Habilidades sociales.',b:'Habilidades verbales y de memoria.',c:'Habilidades matemáticas.',d:'Capacidad de lectura.',ok:'B',r:'Correcta: B. Habilidades verbales y de memoria.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI151837] Evaluación diagnóstica de las diﬁcultades de aprendizaje. 17. Test de Aptit…” (M4, p. 41)',ref:'(M4, p. 41)'},
+    {id:103,p:'¿Cuándo se plantea normalmente la evaluación psicopedagógica?',a:'Cuando los padres detectan una situación-problema.',b:'Cuando se requiere una opinión técnica.',c:'Antes de que los profesores detecten una situación-problema.',d:'Después de resolver la situación-problema.',ok:'B',r:'Correcta: B. Cuando se requiere una opinión técnica.. Evidencia: “…na situación-problema que no se ha podido resolver a través de los procedimientos y recursos ordinarios a su alcance, o cuando se requiere una opinión técnica fundamentada para tomar alguna decisión que afecta al futuro escolar del alumno. La finalidad de la evaluación es ident…” (M4, p. 87)',ref:'(M4, p. 87)'},
+    {id:22,p:'¿Cuál es el objetivo del Test Breve de Inteligencia de Kaufman (K-BIT)?',a:'Medir la inteligencia verbal y no verbal.',b:'Evaluar el nivel de motivación.',c:'Tomar decisiones sobre el aprendizaje escolar.',d:'Observar el modo de intentar la solución de problemas.',ok:'A',r:'Correcta: A. Medir la inteligencia verbal y no verbal.. Evidencia: “…na exploración de la inteligencia en mayor profundidad con instrumentos de mayor amplitud. El K-BIT tiene como objetivo medir la inteligencia verbal y no verbal en niños y niñas, adolescentes y personas adultas. El K-BIT se aplica de forma individual, lo que permite que el exami” (M4, p. 30)',ref:'(M4, p. 30)'},
+    {id:10,p:'¿Cuáles son las limitaciones en la expresión escrita según la evaluación diagnóstica de las dificultades de aprendizaje?',a:'Precisión en la gramática.',b:'Precisión en la lectura.',c:'Precisión en la comprensión lectora.',d:'Precisión en la puntuación.',ok:'A',r:'Correcta: A. Precisión en la gramática.. Evidencia: “…on la comprensión lectora o el razonamiento matemático. Limitaciones en la expresión escrita: Precisión en el deletreo, precisión en la gramática y en la puntuación, claridad u organización en la expresión escrita. Limitaciones en matemáticas: Conceptos numéricos,…” (M4, p. 16)',ref:'(M4, p. 16)'},
+    {id:35,p:'¿Cuál es la edad de aplicación del cuestionario de personalidad para niños (CPQ)?',a:'De 12 a 16 años.',b:'De 8 a 12 años.',c:'De 5 a 8 años.',d:'De 16 a 18 años.',ok:'B',r:'Correcta: B. De 8 a 12 años.. Evidencia: “…o colectiva. Duración de la prueba: nivel 1: 26 minutos, nivel 2: 42 minutos y nivel 3: 27 minutos. Edad de aplicación: de 8 a 12 años (Nivel 1), de 11 a 14 años (Nivel 2) y de 14 a 18 años (Nivel 3). Fundamentación teórica: Se trata de un instrumento pa…” (M4, p. 40)',ref:'(M4, p. 40)'},
+    {id:144,p:'¿Cuál es una actividad recomendada para trabajar las omisiones y adiciones en el aprendizaje del lenguaje escrito?',a:'Lectura de letras y sílabas omitidas.',b:'Juegos de memoria.',c:'Ejercicios de matemáticas.',d:'Vivenciación de las letras o sílabas omitidas.',ok:'D',r:'Correcta: D. Vivenciación de las letras o sílabas omitidas.. Evidencia: “…de la "s" final, la omisión de "n" y "m" en posición media. Para estas dificultades, las actividades más indicadas son: Vivenciación de las letras o sílabas que suelen añadirse u omitirse. Se trata de que 91 niño tome conciencia de la naturaleza de su…” (M4, p. 123)',ref:'(M4, p. 123)'},
+    {id:112,p:'¿Qué aspectos se evalúan en la fase de evaluación psicopedagógica?',a:'Relaciones familiares.',b:'Capacidades motrices.',c:'Estilo de aprendizaje.',d:'Competencia curricular.',ok:'D',r:'Correcta: D. Competencia curricular.. Evidencia: “…Condiciones físicas-ambientales más adecuadas. Tipos de agrupamientos más idóneos para el aprendizaje del alumno. Nivel Competencia Curricular: información sobre lo que el alumno es capaz de hacer en relación con los objetivos y contenidos de las diferentes área…” (M4, p. 19)',ref:'(M4, p. 19)'},
+    {id:48,p:'¿Qué diferencias presentan las dificultades de aprendizaje?',a:'Diferencias en las causas que las producen.',b:'Diferencias en la alimentación.',c:'Diferencias en la altura de los niños.',d:'Diferencias en la vestimenta escolar.',ok:'A',r:'Correcta: A. Diferencias en las causas que las producen.. Evidencia: “…niños para aprender de forma óptima y con eficacia en el tiempo establecido. Además, estos problemas presentan grandes diferencias sobre las causas que los producen, sobre los procesos y variables psicológicas afectadas y en las consecuencias que tie…” (M4, p. 56)',ref:'(M4, p. 56)'},
+    {id:125,p:'¿Cuándo se considera un caso significativo en la Escala de observación del aprendizaje?',a:'Más de 30 puntos.',b:'Puntuación superior.',c:'Escala de observación de Likert.',d:'Evaluación psicopedagógica.',ok:'A',r:'Correcta: A. Más de 30 puntos.. Evidencia: “…a escala está basada en la escala de observación de Likert. Se considera una puntuación significativa cuando se obtiene más de 30 puntos. Escala de observación del aprendizaje: Al igual que en la anterior, en esta escala también se considera un caso signif…” (M4, p. 104)',ref:'(M4, p. 104)'},
+    {id:95,p:'¿Cuáles son las fases del proceso de detección e intervención en dificultades de aprendizaje?',a:'Aplicación, medición, evaluación, diseño.',b:'Evaluación, diagnóstico, intervención, medición.',c:'Diseño, aplicación, evaluación, diagnóstico.',d:'Evaluación, diseño, aplicación, evaluación.',ok:'D',r:'Correcta: D. Evaluación, diseño, aplicación, evaluación.. Evidencia: “…O028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI151841] Intervención en diﬁcultades de aprendizaje. 4. N…” (M4, p. 130)',ref:'(M4, p. 130)'},
+    {id:107,p:'¿Qué información se debe recoger para definir el problema en el proceso de evaluación psicopedagógica?',a:'Nombre y apellidos.',b:'Fecha de nacimiento y edad.',c:'Dirección y teléfono.',d:'Color favorito y mascota.',ok:'B',r:'Correcta: B. Fecha de nacimiento y edad.. Evidencia: “…a recogida de información inicial sobre el alumno o alumna. Se debe recoger la siguiente información: Datos personales: Fecha de nacimiento y edad. Dirección, teléfono, localidad y provincia. Datos familiares: Nombre del padre, edad y ocupación.” (M4, p. 89)',ref:'(M4, p. 89)'},
+    {id:121,p:'¿Qué desean hacer los estudiantes que han experimentado dificultades de aprendizaje?',a:'Mejorar su rendimiento escolar.',b:'Abandonar el sistema educativo.',c:'Continuar su educación.',d:'Buscar apoyo académico.',ok:'B',r:'Correcta: B. Abandonar el sistema educativo.. Evidencia: “…ctoria escolar fuertemente marcada por el fracaso escolar. Ha aprendido que el sistema educativo no es su sitio y desea abandonar. Las consecuencias a largo plazo de las dificultades de aprendizaje para la sociedad son muy graves, ya que este alumna…” (M4, p. 102)',ref:'(M4, p. 102)'},
+    {id:101,p:'¿Cuál es una de las fases del modelo de consulta según Bisquerra?',a:'Establecer relación.',b:'Analizar situación.',c:'Implementar alternativas.',d:'Evaluar planes.',ok:'B',r:'Correcta: B. Analizar situación.. Evidencia: “…consultor (orientador) y un consultante (por ejemplo el tutor, un profesor, la familia o la institución). Segunda fase: analizar el conjunto de la situación y clarificar el problema. Tercera fase: explorar posibles alternativas. Cuarta fase: establ…” (M4, p. 86)',ref:'(M4, p. 86)'},
+    {id:113,p:'¿Qué aspectos deben considerarse al especificar las necesidades educativas que presenta un alumno?',a:'Aspectos emocionales, sociales y lingüísticos.',b:'Aspectos físicos, emocionales y lingüísticos.',c:'Aspectos cognitivos, emocionales y sociales.',d:'Aspectos cognitivos, lingüísticos y físicos.',ok:'C',r:'Correcta: C. Aspectos cognitivos, emocionales y sociales.. Evidencia: “…cesidades fueran numerosas, convendrá especificar aquellas que resultan prioritarias. Líneas generales de intervención: aspectos cognitivos y lingüísticos; aspectos emocionales y afectivos; relaciones sociales (en el ámbito familiar, escolar y/o so…” (M4, p. 92)',ref:'(M4, p. 92)'},
+    {id:88,p:'¿Qué es un modelo clínico o modelo de counseling en la detección e intervención en dificultades de aprendizaje?',a:'Un enfoque basado en programas de intervención.',b:'Un diseño para conceptualizar la naturaleza de la actividad pedagógica.',c:'Un método de evaluación psicológica.',d:'Un modelo de consulta para profesionales.',ok:'B',r:'Correcta: B. Un diseño para conceptualizar la naturaleza de la actividad pedagógica.. Evidencia: “…prendizaje. 1. Modelos teóricos clásicos y la detección e intervención en dificultades de aprendizaje Un "modelo" es el diseño que se utiliza para conceptualizar la naturaleza de la actividad pedagógica llevada a cabo ante las dificultades de apr…” (M4, p. 79)',ref:'(M4, p. 79)'},
+    {id:100,p:'¿Cuál es la diferencia entre el modelo de consulta y el modelo de counseling?',a:'Relación triádica.',b:'Relación indirecta.',c:'Relación terapéutica.',d:'Relación entre profesionales.',ok:'C',r:'Correcta: C. Relación terapéutica.. Evidencia: “…ue a los intelectuales. Da más importancia a la situación presente que a la pasada. Se destaca, por primera vez, que la relación terapéutica es en sí misma una experiencia de crecimiento. Rogers se dio cuenta de la necesidad de cambiar las medidas curativas po…” (M4, p. 80)',ref:'(M4, p. 80)'},
+    {id:118,p:'¿Qué puede ser eficaz para mejorar la situación de las dificultades de aprendizaje a medio plazo?',a:'Apoyo de la orientación educativa.',b:'Desánimo visible.',c:'Mayor aislamiento.',d:'Falta de coordinación.',ok:'A',r:'Correcta: A. Apoyo de la orientación educativa.. Evidencia: “…registrar la demanda de evaluación mediante el informe de tutoría. En los centros donde haya un Equipo de Orientación y Apoyo (EOA), este será el que valore primeramente el informe emitido por el tutor. Si la problemática es transitoria o leve,…” (M4, p. 11)',ref:'(M4, p. 11)'},
+    {id:30,p:'¿Cuál es el propósito de la Batería de aptitudes para el aprendizaje escolar (BAPAE)?',a:'Evaluar la memoria de trabajo.',b:'Evaluar la comprensión verbal, aptitud numérica y aspectos perceptivo-visuales.',c:'Evaluar la velocidad de procesamiento.',d:'Evaluar la atención sostenida.',ok:'B',r:'Correcta: B. Evaluar la comprensión verbal, aptitud numérica y aspectos perceptivo-visuales.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI151835] Evaluación diagnóstica de las diﬁcultades de aprendizaje. 15. Batería de ap…” (M4, p. 39)',ref:'(M4, p. 39)'},
+    {id:85,p:'¿Cuáles son algunas de las posibles causas de la Discapacidad Intelectual Límite?',a:'Problemas durante la infancia.',b:'Condiciones genéticas.',c:'Influencias extrínsecas.',d:'Trauma obstétrico.',ok:'B',r:'Correcta: B. Condiciones genéticas.. Evidencia: “…tales, perinatales y postnatales. Las hipótesis más frecuentes sobre las causas que producen la DIL son las siguientes: Condiciones genéticas: en algunos casos la DIL es la consecuencia de genes anormales heredados de los padres, errores en la combinación de lo…” (M4, p. 77)',ref:'(M4, p. 77)'},
+    {id:106,p:'¿Cuál es la finalidad de la evaluación en dificultades del aprendizaje?',a:'Seleccionar alumnas destacadas.',b:'Determinar la edad de los alumnos.',c:'Identificar necesidades educativas.',d:'Evaluar el rendimiento académico.',ok:'C',r:'Correcta: C. Identificar necesidades educativas.. Evidencia: “…cnica fundamentada para tomar alguna decisión que afecta al futuro escolar del alumno. La finalidad de la evaluación es identificar las necesidades educativas de determinados alumnos o alumnas que presentan dificultades en su desarrollo personal o des…” (M4, p. 87)',ref:'(M4, p. 87)'},
+  ],
+  [
+    {id:143,p:'¿Cuál es la actividad idónea para trabajar la asociación del fonema con su grafema correspondiente?',a:'Dictar sílabas.',b:'Manipulación de letras.',c:'Escuchar pares de palabras.',d:'Comparación de letras.',ok:'B',r:'Correcta: B. Manipulación de letras.. Evidencia: “…la "b" tiene el palote hada araba y en el lado izquierdo. La "d" tiene el palote hacia amos pero en el lado derecho. – Manipulación y vivenciación de las letras, mediante el recorte, el picado, la pintura, letras de lija, etc. Identificación y reconoc…” (M4, p. 122)',ref:'(M4, p. 122)'},
+    {id:91,p:'¿Cuál es la finalidad de la fase de diagnóstico en el modelo de intervención en dificultades de aprendizaje?',a:'Establecer planes de actuación.',b:'Potenciar el autoconcepto.',c:'Evaluar el efecto de la intervención.',d:'Clarificar el problema del niño.',ok:'D',r:'Correcta: D. Clarificar el problema del niño.. Evidencia: “…iño o niña. Segunda fase. Exploración: En esta fase es habitual realizar algún tipo de diagnóstico, con la finalidad de clarificar el problema que tiene el niño o niña. Es importante indagar en las experiencias, vivencias, sentimientos y percepciones…” (M4, p. 80)',ref:'(M4, p. 80)'},
+    {id:25,p:'¿Qué se evalúa en la evaluación del potencial de aprendizaje?',a:'Cociente intelectual del alumno.',b:'Habilidades específicas del alumno.',c:'Rendimiento académico del alumno.',d:'Capacidad general del alumno.',ok:'D',r:'Correcta: D. Capacidad general del alumno.. Evidencia: “…onándole las ayudas o guías necesarias para ello. El potencial de aprendizaje se puede definir como la evaluación de la capacidad general del alumno para aprender en respuesta a una instrucción que le permita resolver problemas que en principio no podía resolver sólo.…” (M4, p. 34)',ref:'(M4, p. 34)'},
+    {id:74,p:'¿Cuál es el propósito del Test de Habilidades lingüísticas de Illinois (ITPA)?',a:'Diagnosticar trastornos del lenguaje.',b:'Evaluar la capacidad de cálculo.',c:'Explorar dificultades de lectura.',d:'Aplicar pruebas de lectura y escritura.',ok:'A',r:'Correcta: A. Diagnosticar trastornos del lenguaje.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183M] Diﬁcultades de Aprendizaje. 5. Trastornos Especíﬁcos del Aprendizaje ueca.e…” (M4, p. 65)',ref:'(M4, p. 65)'},
+    {id:47,p:'¿A qué grupo pertenecen los alumnos con Trastornos Específicos de Aprendizaje?',a:'Tipo II.',b:'Tipo I.',c:'Tipo III.',d:'Tipo IV.',ok:'C',r:'Correcta: C. Tipo III.. Evidencia: “…ersonal moderada, y se pueden recuperar si se proporcionan las atenciones educativas escolares y familiares necesarias. Tipo III (gravedad moderada-alta, afectación moderada-alta, cronicidad moderada-baja): en este grupo se incluye a los alumnos co…” (M4, p. 54)',ref:'(M4, p. 54)'},
+    {id:80,p:'¿Cuál es el Tipo IV de los problemas que integran los Trastornos del Neurodesarrollo?',a:'Trastorno por Hiperactividad.',b:'Trastorno por Déficit de Atención.',c:'Trastorno por Déficit de Atención con Hiperactividad.',d:'Trastorno por Déficit de Atención sin Hiperactividad.',ok:'B',r:'Correcta: B. Trastorno por Déficit de Atención.. Evidencia: “…storno por Déﬁcit de Atención con o sin Hiperactividad (TDAH) ueca.euroinnova.com 1 / 2 Dificultades de Aprendizaje. 6. Trastorno por Déficit de Atención con o sin Hiperactividad (TDAH) Tipo de problema El Trastorno por Déficit de Atención con o sin Hiperactividad es el Ti…” (M4, p. 74)',ref:'(M4, p. 74)'},
+    {id:81,p:'¿Cuáles son los procesos psicológicos afectados de modo directo en el Trastorno por Déficit de Atención con o sin Hiperactividad (TDAH)?',a:'La creatividad.',b:'La atención sostenida.',c:'La percepción visual.',d:'La memoria a largo plazo.',ok:'B',r:'Correcta: B. La atención sostenida.. Evidencia: “…esos psicológicos que están implicados en las tareas de enseñanza-aprendizaje y adaptación escolar. Son las siguientes: La atención sostenida. La memoria de trabajo. La autorregulación de la motivación y el afecto. La internalización del lenguaje. Los procesos…” (M4, p. 75)',ref:'(M4, p. 75)'},
+    {id:38,p:'¿Qué evalúa la dimensión \'E\' del cuestionario de personalidad de Eysenck?',a:'Impulsividad y sociabilidad.',b:'Facilidad para el condicionamiento.',c:'Preferencia por actuar que por pensar.',d:'Necesidad de tener gente hablándole.',ok:'B',r:'Correcta: B. Facilidad para el condicionamiento.. Evidencia: “…ble". Dimensiones que evalúa el cuestionario DIMENSIÓN "E". INTROVERSIÓN – EXTROVERSIÓN: Está ligada a la mayor o menor facilidad para el condicionamiento que pueden tener las personas. Las personas introvertidas requieren pocas exposiciones a una situación para establecer…” (M4, p. 47)',ref:'(M4, p. 47)'},
+    {id:148,p:'¿Cuál es una medida fundamental para desarrollar la autoestima de un alumno con dificultades en el aprendizaje del lenguaje escrito?',a:'Hacer chistes sobre sus dificultades.',b:'Elogiarle y alentarle.',c:'Permitirle aprender de la manera que le sea posible.',d:'Compararle con otros alumnos.',ok:'B',r:'Correcta: B. Elogiarle y alentarle.. Evidencia: “…es positivas sobre su trabajo, sin dejar de señalar aquello en lo que necesita mejorar y está más a su alcance. Hay que elogiarles y alentarles siempre que sea posible. 14. Es fundamental ser consciente de la necesidad que tiene de que se desarrolle…” (M4, p. 127)',ref:'(M4, p. 127)'},
+    {id:11,p:'¿Qué indica el manual sobre la gravedad de la discalculia?',a:'Grave.',b:'Ninguna de las anteriores.',c:'Leve.',d:'Moderado.',ok:'A',r:'Correcta: A. Grave.. Evidencia: “…aprendizaje se suelen dividir en función de una serie de criterios. Algunos de los más importantes son los siguientes: Gravedad: se refiere a la perspectiva de la persona que presenta la dificultad. Por lo tanto, no se trata de una consideració…” (M4, p. 54)',ref:'(M4, p. 54)'},
+    {id:114,p:'¿Qué se debe concretar en la fase de seguimiento de la intervención psicopedagógica?',a:'Un calendario de actividades extraescolares y los compromisos de los profesores.',b:'Un calendario de actividades escolares y los compromisos de los padres.',c:'Un calendario de exámenes y los compromisos de los alumnos.',d:'Un calendario de revisión de las intervenciones y los compromisos de los participantes.',ok:'D',r:'Correcta: D. Un calendario de revisión de las intervenciones y los compromisos de los participantes.. Evidencia: “…Fase 5. Seguimiento En esta fase se concretaría el plan de seguimiento, donde se elabora, entre otras muchas cosas: Un calendario de revisión de las intervenciones. Los compromisos de los participantes. Etc.” (M4, p. 92)',ref:'(M4, p. 92)'},
+    {id:16,p:'¿Cuántas series integran el test de Matrices Progresivas de Raven infantil?',a:'4 series.',b:'2 series.',c:'1 serie.',d:'3 series.',ok:'D',r:'Correcta: D. 3 series.. Evidencia: “…consta de 36 matrices o dibujos a color. A cada uno de los dibujos le falta una parte. Las matrices se agrupan en tres series (A, B, C). Cada serie está integrada por 12 ítems. Dentro de cada serie, a medida que avanza la tarea, va aumentado el…” (M4, p. 22)',ref:'(M4, p. 22)'},
+    {id:69,p:'¿Cuál es la característica de la dislexia perceptivo-visual según el modelo neuropsicológico?',a:'Lectura rápida y precisa.',b:'Más común en niños mayores de 10 años.',c:'Comprensión lectora deficiente.',d:'Confusión de letras de grafía similar.',ok:'D',r:'Correcta: D. Confusión de letras de grafía similar.. Evidencia: “…ﬁcultades de Aprendizaje. 5. Trastornos Especíﬁcos del Aprendizaje ueca.euroinnova.com 5 / 10 a una lectura lenta y con confusión de letras de grafía similar. La comprensión lectora es variable y es común en niños más pequeños (7-8 años) donde la lectura depende más de proceso…” (M4, p. 68)',ref:'(M4, p. 68)'},
+    {id:59,p:'¿Qué constituye el Tipo II de las Dificultades de Aprendizaje?',a:'Problemas de afectación personal moderada.',b:'Problemas recuperables.',c:'Problemas de inadaptación escolar.',d:'Problemas de gravedad.',ok:'A',r:'Correcta: A. Problemas de afectación personal moderada.. Evidencia: “…. Son los siguientes: Tipo I (no hay gravedad, ni afectación, ni cronicidad): en este grupo se incluyen los alumnos con problemas escolares debidos a factores externos al alumno, que les afectan de modo coyuntural y que remiten de forma espontánea (…” (M4, p. 54)',ref:'(M4, p. 54)'},
+    {id:94,p:'Según el texto, ¿cómo define Repetto un programa?',a:'Acción continuada.',b:'Actividad planificada.',c:'Prevención de necesidades.',d:'Desarrollo de competencias.',ok:'B',r:'Correcta: B. Actividad planificada.. Evidencia: “…necesidades, y/o enriquecer, desarrollar o potenciar determinadas competencias". Todo programa, por tanto, implica una actividad planificada, la cual debe encontrar su fundamento en teorías que se hayan desarrollado anteriormente. Además, la aplicación del pro…” (M4, p. 82)',ref:'(M4, p. 82)'},
+    {id:6,p:'¿Qué características deben tener las directrices de intervención para ser útiles en la evaluación de las dificultades de aprendizaje?',a:'Ser ambiguas.',b:'Ser flexibles.',c:'Ser generales.',d:'Ser asumibles, concretas y evaluables.',ok:'D',r:'Correcta: D. Ser asumibles, concretas y evaluables.. Evidencia: “…papel activo para solucionar el problema. Respecto a las directrices de intervención, para que éstas sean útiles deben ser asumibles, concretas y evaluables, y han de quedar recogidos en un plan de acción que incluya el seguimiento y evaluación compartida del proceso educativ…” (M4, p. 9)',ref:'(M4, p. 9)'},
+    {id:126,p:'¿Cuál es el propósito de utilizar otros instrumentos de medición además de la observación en la detección de dificultades de aprendizaje?',a:'Obtener información adicional.',b:'Confirmar la observación.',c:'Comparar resultados.',d:'Ninguna de las anteriores.',ok:'A',r:'Correcta: A. Obtener información adicional.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183W] Detección e intervención en diﬁcultades de aprendizaje. 6. Instrumentos par…” (M4, p. 103)',ref:'(M4, p. 103)'},
+    {id:34,p:'¿Cuál es uno de los instrumentos de evaluación de la personalidad más utilizados para medir la personalidad de los niños de las etapas de infantil, primaria y secundaria?',a:'BFQ-NA.',b:'EPI.',c:'CPQ.',d:'AFA.',ok:'C',r:'Correcta: C. CPQ.. Evidencia: “…nnova.com 1 / 3 Evaluación diagnóstica de las dificultades de aprendizaje. 20. Cuestionario de personalidad para niños (CPQ) El cuestionario de personalidad para niños (CPQ) es una adaptación del cuestionario factorial de la personalidad de Ca…” (M4, p. 44)',ref:'(M4, p. 44)'},
+    {id:78,p:'¿En qué consiste la disgrafía fonológica asociada a los trastornos específicos del aprendizaje?',a:'Alteración en la vía indirecta de la escritura.',b:'Alteración en la vía directa de la escritura.',c:'Alteración en la coordinación manual.',d:'Alteración en la coordinación mano-ojo.',ok:'A',r:'Correcta: A. Alteración en la vía indirecta de la escritura.. Evidencia: “…e que intervengan la doble vía propuesta para la escritura. Por tanto, se hablaría de se disgrafía fonológica cuando la alteración está en la vía indirecta lo que llevaría a cometer errores en la escritura de pseudopalabras; y una disgrafía superfici…” (M4, p. 73)',ref:'(M4, p. 73)'},
+    {id:45,p:'¿Qué criterio se refiere a la perspectiva de la persona que presenta la dificultad?',a:'Afectación.',b:'Influencia.',c:'Cronicidad.',d:'Gravedad.',ok:'D',r:'Correcta: D. Gravedad.. Evidencia: “…aprendizaje se suelen dividir en función de una serie de criterios. Algunos de los más importantes son los siguientes: Gravedad: se refiere a la perspectiva de la persona que presenta la dificultad. Por lo tanto, no se trata de una consideración e…” (M4, p. 54)',ref:'(M4, p. 54)'},
+    {id:141,p:'¿Cuál es una crítica contra los métodos de dictado como técnica para intervenir en dificultades en el aprendizaje del lenguaje escrito?',a:'No permite corregir errores de forma inmediata.',b:'Ayuda a segmentar el habla.',c:'Fortalece el aprendizaje correcto.',d:'Permite la corrección inmediata de errores.',ok:'A',r:'Correcta: A. No permite corregir errores de forma inmediata.. Evidencia: “…ada vez una palabra es escrita incorrectamente, se está fortaleciendo ese aprendizaje erróneo. Así mismo, el dictado no permite la corrección de un error de forma inmediata, sino que generalmente es corregido con posterioridad. 2.1.2. Las Copias G…” (M4, p. 120)',ref:'(M4, p. 120)'},
+    {id:46,p:'¿Qué tipo de alumnos se encuentran en el grupo Tipo V?',a:'Alumnos con gravedad moderada-alta.',b:'Alumnos con Déficit de Atención con Hiperactividad.',c:'Alumnos con Trastornos Específicos de Aprendizaje.',d:'Alumnos con Discapacidad Intelectual Límite.',ok:'D',r:'Correcta: D. Alumnos con Discapacidad Intelectual Límite.. Evidencia: “…ema puede disminuir significativamente. Tipo V (hay gravedad, afectación y cronicidad): en este grupo se encuentran los alumnos con Discapacidad Intelectual Límite, debida a causas personales graves que afectan a áreas dominantes de modo profundo y que tienen un carácter crónico” (M4, p. 55)',ref:'(M4, p. 55)'},
+    {id:13,p:'¿Qué aspectos evalúa la recogida de datos en la evaluación diagnóstica de las dificultades de aprendizaje?',a:'Competencia motriz.',b:'Habilidades sociales.',c:'Capacidad intelectual.',d:'Competencia lingüística.',ok:'B',r:'Correcta: B. Habilidades sociales.. Evidencia: “…í como en otros lenguajes o sistemas alternativos que el alumno utilice y que no recoge el currículo ordinario. Social: Habilidades sociales y nivel de integración social. Personalidad: autoconcepto, estilo atributivo, motivación, sentimiento de confianza en u…” (M4, p. 19)',ref:'(M4, p. 19)'},
+    {id:49,p:'¿Qué caracteriza a las dificultades de aprendizaje?',a:'Dificultades para realizar actividades físicas.',b:'Dificultades para enseñar de forma óptima.',c:'Dificultades para aprender de forma óptima.',d:'Dificultades para socializar en el entorno escolar.',ok:'C',r:'Correcta: C. Dificultades para aprender de forma óptima.. Evidencia: “…izaje [UDI15183J] Diﬁcultades de Aprendizaje. 2. Las diﬁcultades de aprendizaje: Clasiﬁcación ueca.euroinnova.com 1 / 2 Dificultades de Aprendizaje. 2. Las dificultades de aprendizaje: Clasificación Como ya se ha comentado en el apartado anterior, form…” (M4, p. 56)',ref:'(M4, p. 56)'},
+    {id:12,p:'¿Qué tipo de información se debe recoger para llevar a cabo la evaluación de las dificultades de aprendizaje?',a:'Información sobre el contexto y el desarrollo general del alumno, así como información médica.',b:'Información sobre el contexto.',c:'Información sobre el desarrollo general del alumno.',d:'Información sobre el contexto y el desarrollo general del alumno.',ok:'A',r:'Correcta: A. Información sobre el contexto y el desarrollo general del alumno, así como información médica.. Evidencia: “…dopción de ciertas medidas para solucionar las dificultades de aprendizaje del alumnado, se realiza la devolución de la información junto a una propuesta de intervención, que se recoge por escrito en un informe. Este Informe especifica la situación ed…” (M4, p. 9)',ref:'(M4, p. 9)'},
+    {id:14,p:'¿Qué aspectos del entorno social pueden favorecer o dificultar el desarrollo del alumno?',a:'Ambiente de trabajo cooperativo.',b:'Número de alumnado por grupo.',c:'Relación profesor-alumno.',d:'Falta de recursos.',ok:'D',r:'Correcta: D. Falta de recursos.. Evidencia: “…roinnova.com 3 / 3 centro, etc. Aspectos del entorno social que puedan favorecer o dificultar el desarrollo del alumno: falta de recursos y situaciones de riesgo en medio rural y zonas urbanas marginales. Contexto Escolar: aspectos que favorecen o dificulta…” (M4, p. 20)',ref:'(M4, p. 20)'},
+    {id:122,p:'¿Qué instrumento se puede utilizar para medir el funcionamiento de las áreas del alumnado que puedan indicar la existencia de dificultades de aprendizaje?',a:'Cuestionario de personalidad.',b:'Escala de observación de hábitos y modos de trabajo.',c:'Prueba de memoria.',d:'Entrevista estructurada.',ok:'B',r:'Correcta: B. Escala de observación de hábitos y modos de trabajo.. Evidencia: “…es de aprendizaje. Para facilitar el proceso de observación, se pueden utilizar algunos de los siguientes instrumentos: Escala de observación de hábitos y modos de trabajo. Escala de observación el aprendizaje.” (M4, p. 103)',ref:'(M4, p. 103)'},
+    {id:127,p:'¿Qué instrumentos se pueden utilizar para medir las posibles dificultades de aprendizaje en los niños, además de la observación?',a:'Entrevistas.',b:'Pruebas estandarizadas.',c:'Todas las anteriores.',d:'Cuestionarios.',ok:'C',r:'Correcta: C. Todas las anteriores.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183W] Detección e intervención en diﬁcultades de aprendizaje. 6. Instrumentos par…” (M4, p. 103)',ref:'(M4, p. 103)'},
+    {id:28,p:'¿Cuál es el propósito del método de entrenamiento mencionado en el texto?',a:'Mejorar la memoria.',b:'Aumentar la velocidad de respuesta.',c:'Enseñar a prestar atención.',d:'Desarrollar la intuición.',ok:'C',r:'Correcta: C. Enseñar a prestar atención.. Evidencia: “…mas que se presentan dependen de la búsqueda activa por parte del alumno. El método de entrenamiento está diseñado para enseñar a los alumnos a prestar atención a todas las elecciones que se le presenten en cada problema, y pensar sobre todas ella…” (M4, p. 37)',ref:'(M4, p. 37)'},
+    {id:20,p:'¿Qué evalúa la tarea de figuras incompletas en la Escala de Inteligencia para niños de Wechsler (WISC)?',a:'Destreza visomotora.',b:'Capacidad numérica.',c:'Comprensión verbal.',d:'Coordinación visomotora.',ok:'D',r:'Correcta: D. Coordinación visomotora.. Evidencia: “…te. Mide la capacidad para sintetizar un objeto conocido a partir de sus partes. Requiere capacidad de síntesis visual, coordinación visomotora y capacidad para trabajar imaginando lo que se está construyendo. Claves: la tarea del sujeto es completar, con los sím…” (M4, p. 28)',ref:'(M4, p. 28)'},
+  ],
+  [
+    {id:145,p:'¿Cuál es uno de los ejercicios más adecuados para corregir el problema de uniones y separaciones en el aprendizaje del lenguaje escrito?',a:'Ejercicios de lectura de letras y sílabas.',b:'Ejercicios de análisis rítmico.',c:'Ejercicios de inversiones.',d:'Ejercicios de escucha a cámara lenta.',ok:'B',r:'Correcta: B. Ejercicios de análisis rítmico.. Evidencia: “…conjuntamente con un desconocimiento de las unidades lingüísticas Los ejercicios más adecuados para su corrección son: Ejercicios de análisis rítmico: El niño debe acostumbrarse a descomponer las frases que escucha en palabras. Se puede comenzar marcando cada palabra p…” (M4, p. 124)',ref:'(M4, p. 124)'},
+    {id:44,p:'¿En qué grupo se incluyen los alumnos con problemas escolares debidos a factores externos al alumno, que les afectan de modo coyuntural y que remiten de forma espontánea o mediante acción tutorial?',a:'Tipo II.',b:'Tipo IV.',c:'Tipo III.',d:'Tipo I.',ok:'D',r:'Correcta: D. Tipo I.. Evidencia: “…upos, que van de menor a mayor gravedad, de menor a mayor afectación y de mayor a menor cronicidad. Son los siguientes: Tipo I (no hay gravedad, ni afectación, ni cronicidad): en este grupo se incluyen los alumnos con problemas escolares debidos…” (M4, p. 54)',ref:'(M4, p. 54)'},
+    {id:55,p:'¿Cuáles son algunas de las posibles causas de los problemas escolares según el texto?',a:'Falta de apoyo familiar.',b:'Inadecuación curricular.',c:'Falta de recursos humanos.',d:'Expectativas positivas del profesor.',ok:'B',r:'Correcta: B. Inadecuación curricular.. Evidencia: “…odológicos y/o materiales para afrontar los problemas (por ejemplo, la falta de orientaciones eficaces al profesorado). Inadecuación curricular a las características y conocimientos del alumno (por ejemplo, un mal diseño de los procesos de enseñanza-aprendizaje e…” (M4, p. 60)',ref:'(M4, p. 60)'},
+    {id:90,p:'¿Quién fue el propulsor del modelo clínico de counseling o relación de ayuda?',a:'Profesores.',b:'Carl Rogers.',c:'Barreto.',d:'Tutores.',ok:'B',r:'Correcta: B. Carl Rogers.. Evidencia: “…l autoconocimiento, la aceptación, el crecimiento emocional y los recursos personales". El propulsor de este modelo fue Carl Rogers, quien, con la publicación de su obra "Counseling and Psychoterapy" (1942), indicó que el foco de atención del asesoram…” (M4, p. 80)',ref:'(M4, p. 80)'},
+    {id:21,p:'¿Cuál es el campo al que puede corresponder el tercer factor de la Escala de Inteligencia para niños de Wechsler (WISC)?',a:'Todas las anteriores.',b:'Afectivo.',c:'Conductual.',d:'Cognitivo.',ok:'A',r:'Correcta: A. Todas las anteriores.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183B] Evaluación diagnóstica de las diﬁcultades de aprendizaje. 20. Cuestionario …” (M4, p. 45)',ref:'(M4, p. 45)'},
+    {id:104,p:'¿Qué es la evaluación psicopedagógica?',a:'Opinión técnica.',b:'Problema sin resolver.',c:'Proceso de enseñanza.',d:'Análisis de información.',ok:'D',r:'Correcta: D. Análisis de información.. Evidencia: “…y abordar las dificultades que puedan afectar el proceso de aprendizaje de un individuo. Se refiere a la recopilación y análisis de información relevante sobre el rendimiento académico, habilidades cognitivas, emocionales y sociales de un estudiante. Mediante div…” (M4, p. 1)',ref:'(M4, p. 1)'},
+    {id:98,p:'Según el texto, ¿cuál es la función del modelo de consulta en la intervención en dificultades de aprendizaje?',a:'Intervención indirecta sobre los agentes educativos.',b:'Intervención grupal sobre el colectivo.',c:'Consulta a la institución educativa.',d:'Intervención directa sobre el alumnado.',ok:'A',r:'Correcta: A. Intervención indirecta sobre los agentes educativos.. Evidencia: “…versitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI15183Q] Detección e intervención en diﬁcultades de aprendizaje. 1. Modelos teóricos…” (M4, p. 84)',ref:'(M4, p. 84)'},
+    {id:2,p:'¿Cuál es el objetivo de la evaluación en dificultades del aprendizaje?',a:'Diseñar intervención efectiva.',b:'Obtener comprensión completa.',c:'Identificar causas subyacentes.',d:'Recopilar información académica.',ok:'B',r:'Correcta: B. Obtener comprensión completa.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI151842] Presentación ueca.euroinnova.com 1 / 3 Introducción La evaluación, diagnóst…” (M4, p. 1)',ref:'(M4, p. 1)'},
+    {id:72,p:'¿Qué evalúa la prueba de Piaget-Head?',a:'Funcionamiento intelectual.',b:'Esquema corporal lateralizado.',c:'Percepción auditiva no verbal.',d:'Atención y concentración sostenida.',ok:'B',r:'Correcta: B. Esquema corporal lateralizado.. Evidencia: “…arse superior a la media. Esquema corporal Pruebas de Piaget-Head: fue desarrollada por Galifret-Grajon para evaluar el esquema corporal lateralizado en sujetos entre 6 y 14 años. Con ella se puede observar la posibilidad que tiene el niño de distinguir entre derecho-i…” (M4, p. 70)',ref:'(M4, p. 70)'},
+    {id:115,p:'¿Qué aspectos se consideran en la detección e intervención en dificultades de aprendizaje?',a:'Líneas actuales.',b:'Diagnóstico.',c:'Evaluación.',d:'Intervención.',ok:'C',r:'Correcta: C. Evaluación.. Evidencia: “…O028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI151833] Evaluación diagnóstica de las diﬁcultades de apr…” (M4, p. 34)',ref:'(M4, p. 34)'},
+    {id:57,p:'¿Cuál es una de las pautas educativas familiares inadecuadas que pueden causar Bajo Rendimiento Escolar?',a:'Hábitos de trabajo y disciplina.',b:'Desinterés de los padres por el desenvolvimiento escolar.',c:'Interés de los padres en el desenvolvimiento escolar.',d:'Estimulación psicolingüística adecuada.',ok:'B',r:'Correcta: B. Desinterés de los padres por el desenvolvimiento escolar.. Evidencia: “…inadecuadas: algunas de las más comunes son las siguientes: Deficiente y/o insuficiente estimulación psicolingüística. Desinterés de los padres por el desenvolvimiento escolar de sus hijos. Con frecuencia, los padres suelen mostrar actitudes y creencias que se caracterizan por l” (M4, p. 62)',ref:'(M4, p. 62)'},
+    {id:108,p:'¿En qué fase del proceso de evaluación psicopedagógica se realiza la propuesta de intervención?',a:'Fase 3. Conclusiones.',b:'Fase 1. Definición del problema.',c:'Fase 2. Evaluación psicopedagógica.',d:'Fase 4. Orientaciones.',ok:'D',r:'Correcta: D. Fase 4. Orientaciones.. Evidencia: “…Definición del problema. Fase 2. Evaluación psicopedagógica. Recogida sistemática de información. Fase 3. Conclusiones. Fase 4. Orientaciones. Propuesta de intervención. Fase 5. Seguimiento. Fase 1. Definición del problema Para poder definir el problema, se deb…” (M4, p. 89)',ref:'(M4, p. 89)'},
+    {id:51,p:'¿Qué tipo de problema constituyen los Problemas Escolares según la clasificación presentada?',a:'Menos graves.',b:'Leves.',c:'Moderados.',d:'Graves.',ok:'A',r:'Correcta: A. Menos graves.. Evidencia: “…nte, los Problemas Escolares son el Tipo I de las Dificultades de aprendizaje, es decir, que se caracterizan por no ser graves, por no manifestar variables personales del alumno afectadas y por no prolongarse en el tiempo; ya que suelen remitir e…” (M4, p. 58)',ref:'(M4, p. 58)'},
+    {id:149,p:'¿Cuál es uno de los objetivos recomendados a la hora de planificar la intervención en niños con dificultades en el aprendizaje de las matemáticas?',a:'Enseñar estrategias para compensar las dificultades de base en niños más pequeños.',b:'No iniciar el apoyo psicopedagógico precozmente.',c:'Explicar al niño/a el diagnóstico de discalculia.',d:'Afianzar el concepto de número en niños mayores.',ok:'C',r:'Correcta: C. Explicar al niño/a el diagnóstico de discalculia.. Evidencia: “…. De manera bastante general, recomendamos considerar los siguientes objetivos a la hora de planificar la intervención: Explicar al niño/a el diagnóstico de discalculia para evitar que piense que no es listo o que no se esfuerza lo suficiente. Sistematizar las sesiones de reeduc” (M4, p. 128)',ref:'(M4, p. 128)'},
+    {id:130,p:'¿Cuál es el objetivo del Test de Token?',a:'Evaluar funciones cognitivas y pensamiento.',b:'Evaluar la comprensión y percepción del lenguaje oral.',c:'Evaluar la comprensión verbal en niños de 4 a 14 años.',d:'Evaluar el desarrollo cognitivo según la teoría piagetana.',ok:'B',r:'Correcta: B. Evaluar la comprensión y percepción del lenguaje oral.. Evidencia: “…os. Tiempo de duración: depende de la edad de los niños y de las pruebas que haya que realizar. TEST DE TOKEN Objetivo: evaluar la comprensión y percepción del lenguaje oral a través de órdenes verbales de complejidad reciente. Edad de aplicación: niños entre 6 y 12 años. Áreas ” (M4, p. 108)',ref:'(M4, p. 108)'},
+    {id:60,p:'¿Cuál es el término que hace referencia a cualquier trastorno, perturbación o dificultad en la lectura?',a:'Dislexia.',b:'Disortografia.',c:'Discalculia.',d:'Alexia.',ok:'A',r:'Correcta: A. Dislexia.. Evidencia: “…es común en niños más pequeños (7-8 años) donde la lectura depende más de procesos visuo- perceptivo que lingüísticos. Dislexia auditivo-lingüística: presenta déficit en memoria auditiva inmediata, discriminación auditiva y habilidades psicolingüí…” (M4, p. 68)',ref:'(M4, p. 68)'},
+    {id:56,p:'¿Cuál es la causa principal de las Dificultades de Aprendizaje en el Bajo Rendimiento Escolar?',a:'Factores personales.',b:'Trastornos de conducta.',c:'Falta de motivación.',d:'Factores extrínsecos.',ok:'D',r:'Correcta: D. Factores extrínsecos.. Evidencia: “…damental de dichos procesos. El Bajo Rendimiento Escolar es el resultado de la influencia predominante y persistente de factores extrínsecos al alumno (como pautas educativas inadecuadas, influencias sociales de los iguales inapropiadas, prácticas instrucciona…” (M4, p. 62)',ref:'(M4, p. 62)'},
+    {id:24,p:'¿Cuál es el subtest del Test Breve de Inteligencia de Kaufman que consta de varias tareas relacionadas con el razonamiento lógico no verbal y espacial?',a:'Subtest de Matrices.',b:'Subtest de Comprensión.',c:'Subtest de Razonamiento.',d:'Subtest de Vocabulario.',ok:'A',r:'Correcta: A. Subtest de Matrices.. Evidencia: “…nar es NEGRO. Ejemplo: La puntuación del subtest de Vocabulario es la suma de los puntos obtenidos en esas dos pruebas. Subtest de Matrices: sus 48 elementos están construidos con dibujos y figuras abstractas, lo que lo hace un test libre de influencia cultur…” (M4, p. 32)',ref:'(M4, p. 32)'},
+    {id:8,p:'¿Quién es el encargado de poner en conocimiento la problemática al Equipo de Orientación Educativa (EOE) cuando los centros no cuentan con EOA?',a:'El tutor.',b:'El orientador.',c:'El Jefe de estudios.',d:'El director del centro.',ok:'C',r:'Correcta: C. El Jefe de estudios.. Evidencia: “…r de referencia del Equipo de Orientación Educativa (EOE) que atiende al centro. Cuando los centros no cuentan con EOA, el Jefe de estudios es el encargado de poner en” (M4, p. 11)',ref:'(M4, p. 11)'},
+    {id:9,p:'¿Qué aspecto es importante considerar al realizar una evaluación con niños?',a:'La iluminación y ventilación del lugar de aplicación.',b:'El efecto negativo del cansancio.',c:'La duración de las sesiones de examen.',d:'La edad del sujeto.',ok:'A',r:'Correcta: A. La iluminación y ventilación del lugar de aplicación.. Evidencia: “…tarea puede presentar un alivio. El examinador debe crear condiciones de aplicación favorables como la ventilación, la iluminación, etc., que faciliten la concentración de los niños y creen un ambiente que permita la intimidad, sobre todo si se traba…” (M4, p. 14)',ref:'(M4, p. 14)'},
+    {id:109,p:'¿Qué datos se deben recoger en la evaluación psicopedagógica en la fase 1?',a:'Datos de la historia escolar, datos de la historia familiar, contexto escolar, medidas educativas previas.',b:'Datos familiares, desarrollo evolutivo, historia escolar, relaciones familiares.',c:'Datos de la evaluación, datos de la historia familiar, datos de la historia escolar, datos sobre el desarrollo evolutivo.',d:'Datos familiares, datos de la evaluación, datos de la historia escolar, datos de la historia familiar.',ok:'C',r:'Correcta: C. Datos de la evaluación, datos de la historia familiar, datos de la historia escolar, datos sobre el desarrollo evolutivo.. Evidencia: “…ueca.euroinnova.com 4 / 12 Nombre de la madre, edad y ocupación. Nombre de los hermanos/as, edad, estudios y ocupación. Datos de la evaluación: Indicación de la persona o cargo que demandó la evaluación. Motivo, problema o dificultad por el cual…” (M4, p. 90)',ref:'(M4, p. 90)'},
+    {id:23,p:'¿En qué consiste la prueba de vocabulario expresivo del Test Breve de Inteligencia de Kaufman (K-BIT)?',a:'Responder preguntas sobre objetos cercanos.',b:'Adivinar palabras con pistas.',c:'Definir palabras desconocidas.',d:'Recordar nombres de objetos lejanos.',ok:'A',r:'Correcta: A. Responder preguntas sobre objetos cercanos.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI151832] Evaluación diagnóstica de las diﬁcultades de aprendizaje. 12. Test Breve de…” (M4, p. 30)',ref:'(M4, p. 30)'},
+    {id:140,p:'¿Qué aspecto es importante considerar al diseñar un programa de intervención para dificultades en el aprendizaje del lenguaje escrito?',a:'La organización de los conocimientos.',b:'El uso de ayudas externas.',c:'La recuperación del proceso de planificación.',d:'La falta de información.',ok:'C',r:'Correcta: C. La recuperación del proceso de planificación.. Evidencia: “…intervención esté dirigida recuperar los procesos concretos que se están viendo afectados. Así, podemos centrarnos en: Recuperación del proceso de planificación La planificación de cualquier texto, requiere de diversos procesos mentales, es lo que alg…” (M4, p. 118)',ref:'(M4, p. 118)'},
+    {id:27,p:'¿Cuál es el objetivo del entrenamiento del Potencial de Evaluación del Aprendizaje?',a:'Obtener puntuaciones pre-test y post-test.',b:'Entrenar habilidades intelectuales o estrategias cognitivas.',c:'Reforzar las respuestas correctas.',d:'Evaluar la posibilidad de déficit intelectual.',ok:'B',r:'Correcta: B. Entrenar habilidades intelectuales o estrategias cognitivas.. Evidencia: “[AFO028VTC] Master Oﬁcial Universitario en Diﬁcultades de Aprendizaje y Trastornos del Lenguaje + 60 Créd(...) [MOD0249KN] Evaluación, Diagnóstico e Intervención en Diﬁcultades del Aprendizaje [UDI151833] Evaluación diagnóstica de las diﬁcultades de aprendizaje. 13. Evaluación de…” (M4, p. 35)',ref:'(M4, p. 35)'},
+    {id:36,p:'¿Qué evalúa la escala de dominancia del cuestionario de personalidad para niños (CPQ)?',a:'Deseo de control.',b:'Habilidad para abstraer relaciones.',c:'Capacidad de adaptación.',d:'Orientación emocional.',ok:'A',r:'Correcta: A. Deseo de control.. Evidencia: “…tidianos y sus retos. Sumisa/Dominante (Factor E): el concepto de dominancia que evalúa esta escala se entiende como el deseo de control sobre los demás, o sobre el control que el niño o niña percibe que ejerce sobre el mismo. Sobria/Entusiasta (Factor F):…” (M4, p. 45)',ref:'(M4, p. 45)'},
+    {id:58,p:'¿Qué se entiende por \'Bajo Rendimiento Escolar\'?',a:'Alumnos que rinden por encima de sus capacidades.',b:'Alumnos con adaptación escolar adecuada.',c:'Alumnos que rinden significativamente por debajo de sus capacidades.',d:'Alumnos con dificultades en el aprendizaje.',ok:'C',r:'Correcta: C. Alumnos que rinden significativamente por debajo de sus capacidades.. Evidencia: “…se refiere a un grupo de alteraciones en los procesos de enseñanza y aprendizaje caracterizado por el hecho de que los alumnos rinden significativamente por debajo de sus capacidades. Estas alteraciones se manifiestan como dificultades en el apre…” (M4, p. 61)',ref:'(M4, p. 61)'},
+    {id:63,p:'¿Cuáles son las características de las dificultades de aprendizaje primarias?',a:'Alteración del potencial sensorial.',b:'Perturbaciones mínimas.',c:'Deficiencias neurológicas.',d:'Causa orgánica específica.',ok:'B',r:'Correcta: B. Perturbaciones mínimas.. Evidencia: “…/ 10 Características de las dificultades de aprendizaje primarias: No tienen una causa orgánica específica Se trata de perturbaciones en las adquisiciones del lenguaje hablado, escrito o numérico. El potencial sensorial, intelectual, motor o social está…” (M4, p. 65)',ref:'(M4, p. 65)'},
+    {id:71,p:'Según el modelo de adquisición de la lectura de Uta Frith, ¿en qué fase el niño deletrea pseudopalabras porque divide las palabras en fonemas?',a:'Fase logográfica.',b:'Fase alfabética.',c:'Fase ortográfica.',d:'No se menciona en el texto.',ok:'B',r:'Correcta: B. Fase alfabética.. Evidencia: “…s familiares porque se fija en las características gráficas. El bloqueo en esta fase iría asociado a dislexia profunda. Fase alfabética (5-6 años): el niño deletrea pseudopalabras porque divide las palabras en fonemas (conversión grafema-fonema). El bloqu…” (M4, p. 69)',ref:'(M4, p. 69)'},
+    {id:7,p:'¿Qué proceso inicia generalmente la evaluación de las dificultades de aprendizaje en Educación Infantil y Primaria?',a:'Registro de la demanda de evaluación mediante el informe de tutoría.',b:'Adopción de medidas de carácter interno.',c:'Detección de dificultades por parte del tutor.',d:'Informar a los padres sobre las dificultades.',ok:'C',r:'Correcta: C. Detección de dificultades por parte del tutor.. Evidencia: “…ducación Infantil y Primaria, el proceso de evaluación de las dificultades de aprendizaje se inicia generalmente con la detección de dificultades por parte del tutor, a lo que le sigue la adopción de medidas de carácter interno. En el caso de que persistan los problemas de apren” (M4, p. 11)',ref:'(M4, p. 11)'},
+    {id:29,p:'¿Cuál es uno de los instrumentos de evaluación de aptitudes y rendimiento escolar mencionados en el texto?',a:'PMEI.',b:'BAPAE.',c:'PMA.',d:'TEA.',ok:'B',r:'Correcta: B. BAPAE.. Evidencia: “…s de infantil, primaria y secundaria, se pueden citar las siguientes: Batería de aptitudes para el aprendizaje escolar (BAPAE). Test de Aptitudes Escolares (TEA). Test de Aptitudes en Educación Infantil (AEI). Test de Aptitudes Mentales Primaria…” (M4, p. 38)',ref:'(M4, p. 38)'},
+  ],
+];
+let currentSim=0,currentQ=0,answers=[];
+const LABELS=['A','B','C','D'],KEYS=['a','b','c','d'];
+
+function getScores(){try{return JSON.parse(localStorage.getItem('m4_scores')||'{}');}catch{return{};}}
+function saveScore(i,pct){const s=getScores();s[i]=pct;localStorage.setItem('m4_scores',JSON.stringify(s));}
+
+function renderHome(){
+  const scores=getScores(),grid=document.getElementById('simGrid');
+  grid.innerHTML='';
+  SIMS.forEach((sim,i)=>{
+    const card=document.createElement('div');
+    card.className='sim-card';card.onclick=()=>startQuiz(i);
+    let badge='';
+    if(scores[i]!==undefined){
+      const p=scores[i],cls=p>=70?'pass':p>=50?'partial':'fail';
+      badge=`<div class="sim-score-badge shown ${cls}">${p}% — ${p>=70?'✓ Aprobado':p>=50?'~ En progreso':'✗ A mejorar'}</div>`;
+    }
+    card.innerHTML=`
+      <div class="sim-card-top">
+        <div class="sim-num-big">0${i+1}</div>
+        <div class="sim-dot"></div>
+      </div>
+      <div class="sim-label">Simulacro</div>
+      <div class="sim-title">Módulo 4</div>
+      <div class="sim-count">${sim.length} preguntas · opción múltiple</div>
+      ${badge}`;
+    grid.appendChild(card);
+  });
+}
+
+function startQuiz(simIdx){
+  currentSim=simIdx;currentQ=0;answers=new Array(SIMS[simIdx].length).fill(null);
+  document.getElementById('home').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('quiz').style.display='block';
+  document.getElementById('quizTitle').textContent=`Simulacro 0${simIdx+1} · M4`;
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const sim=SIMS[currentSim],q=sim[currentQ];
+  const correct_so_far=answers.filter(a=>a&&a.correct).length;
+  document.getElementById('progressText').textContent=`Pregunta ${currentQ+1} de ${sim.length}`;
+  document.getElementById('scoreText').textContent=`${correct_so_far} correctas`;
+  document.getElementById('progressFill').style.width=((currentQ+1)/sim.length*100).toFixed(0)+'%';
+
+  const savedAns=answers[currentQ];
+  const opts=KEYS.map((k,i)=>{
+    let cls='';
+    if(savedAns){
+      const l=LABELS[i];
+      if(l===q.ok)cls=savedAns.selected===l?'selected-correct':'show-correct';
+      else if(l===savedAns.selected)cls='selected-wrong';
+    }
+    return `<button class="opt-btn ${cls}" onclick="selectAnswer('${LABELS[i]}')" ${savedAns?'disabled':''}><div class="opt-letter">${LABELS[i]}</div><div>${q[k]}</div></button>`;
+  }).join('');
+
+  let fb='';
+  if(savedAns)fb=`<div class="feedback-box ${savedAns.correct?'correct':'wrong'}" style="display:block"><strong>${savedAns.correct?'✅ ¡Correcto!':'❌ Respuesta incorrecta'}</strong><br>${q.r}<div class="feedback-ref">${q.ref}</div></div>`;
+
+  const isLast=currentQ===sim.length-1;
+  const prevBtn=currentQ>0?`<button class="btn-secondary" onclick="goToPrev()">← Anterior</button>`:`<div></div>`;
+
+  document.getElementById('qWrap').innerHTML=`
+    <div class="q-card fade-in">
+      <div class="q-number">Pregunta ${currentQ+1}</div>
+      <div class="q-text">${q.p}</div>
+      <div class="options">${opts}</div>${fb}
+    </div>
+    <div class="quiz-actions">
+      ${prevBtn}
+      <button class="btn-primary" onclick="goToNext()" ${!savedAns?'disabled':''}>${isLast?'🏁 Ver resultados':'Siguiente →'}</button>
+    </div>`;
+}
+
+function selectAnswer(letter){
+  if(answers[currentQ]!==null)return;
+  answers[currentQ]={selected:letter,correct:letter===SIMS[currentSim][currentQ].ok};
+  renderQuestion();
+}
+function goToNext(){
+  if(currentQ<SIMS[currentSim].length-1){currentQ++;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}
+  else showResults();
+}
+function goToPrev(){if(currentQ>0){currentQ--;renderQuestion();window.scrollTo({top:0,behavior:'smooth'});}}
+
+function showResults(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  const sim=SIMS[currentSim],total=sim.length;
+  const correct=answers.filter(a=>a&&a.correct).length;
+  const pct=Math.round(correct/total*100);
+  saveScore(currentSim,pct);
+  const cls=pct>=70?'pass':pct>=50?'partial':'fail';
+  const msg=pct>=70?'¡Excelente trabajo!':pct>=50?'Buen intento, sigue practicando':'Necesitas repasar más';
+  document.getElementById('scoreRing').className='results-score-ring '+cls;
+  document.getElementById('scorePct').className='score-pct '+cls;
+  document.getElementById('scorePct').textContent=pct+'%';
+  document.getElementById('resultsTitle').textContent=msg;
+  document.getElementById('resultsMeta').textContent=`Simulacro ${currentSim+1} · ${correct} de ${total} correctas`;
+  document.getElementById('statCorr').textContent=correct;
+  document.getElementById('statWrong').textContent=total-correct;
+  document.getElementById('statPct').textContent=pct+'%';
+
+  const list=document.getElementById('reviewList');list.innerHTML='';
+  sim.forEach((q,i)=>{
+    const ans=answers[i];if(!ans)return;
+    const div=document.createElement('div');
+    div.className='review-item '+(ans.correct?'correct':'wrong');
+    const myText=ans.correct?'':`<div class="review-item-ans">❌ Tu respuesta: <span class="my">${ans.selected}. ${q[ans.selected.toLowerCase()]}</span></div>`;
+    div.innerHTML=`<div class="review-item-q"><strong>${i+1}.</strong> ${q.p}</div>${myText}<div class="review-item-ans">${ans.correct?'✅':'✔'} Correcta: <span class="ok">${q.ok}. ${q[q.ok.toLowerCase()]}</span></div><div class="review-item-retro">${q.r} <em>${q.ref}</em></div>`;
+    list.appendChild(div);
+  });
+}
+
+function retryQuiz(){startQuiz(currentSim);}
+function goHome(){
+  document.getElementById('quiz').style.display='none';
+  document.getElementById('results').style.display='none';
+  document.getElementById('home').style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  renderHome();
+}
+renderHome();
+</script>
+</body>
+</html>
